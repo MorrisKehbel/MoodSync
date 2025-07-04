@@ -1,0 +1,12 @@
+client/node_modules/
+server/node_modules/
+
+client/dist/
+server/build/
+
+client/.env*
+server/.env*
+
+.DS_Store
+Thumbs.db
+*.log
