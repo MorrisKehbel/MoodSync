@@ -95,7 +95,11 @@ export const Footer = () => {
                   Our mission
                 </Link>
               </li>
-
+              <li>
+                <Link to="/science" className="hover:text-gray-600">
+                  Blog
+                </Link>
+              </li>
               <li>
                 <Link to="/about" className="hover:text-gray-600">
                   About us
@@ -104,11 +108,6 @@ export const Footer = () => {
               <li>
                 <Link to="/contact" className="hover:text-gray-600">
                   Contact
-                </Link>
-              </li>
-              <li>
-                <Link to="/placeholder" className="hover:text-gray-600">
-                  Placeholder
                 </Link>
               </li>
             </ul>

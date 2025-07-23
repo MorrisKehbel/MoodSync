@@ -6,8 +6,9 @@ import {
   Navigate,
 } from "react-router";
 
-import { Home, HowItWorks, Science, AboutUs, Signup, OurMission } from "./pages";
-import { Dashboard, ActivityGoals, History } from "./pages/auth";
+import { Home, HowItWorks, Science, AboutUs } from "./pages";
+import { Dashboard, MyJourney, GoalVision, UserSettings } from "./pages/auth";
+import { WhyItMatters } from "./pages/blog";
 
 import { MainLayout } from "./layouts/MainLayout";
 
@@ -25,8 +26,12 @@ const App = () => {
         <Route path="signup" element={<Signup />} />
 
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="activity-goals" element={<ActivityGoals />} />
-        <Route path="history" element={<History />} />
+        <Route path="activitys" element={<MyJourney />} />
+        <Route path="goals" element={<GoalVision />} />
+        <Route path="settings" element={<UserSettings />} />
+
+        <Route path="why-it-matters" element={<WhyItMatters />} />
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     )

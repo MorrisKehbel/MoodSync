@@ -1,6 +1,32 @@
 @import "tailwindcss";
 
-html {
+/* html {
   overflow-y: scroll;
   scroll-behavior: smooth;
+} */
+
+@keyframes modalFlipOut {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(-90deg);
+  }
+}
+
+@keyframes modalFlipIn {
+  0% {
+    transform: rotateY(90deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
+.modal-flip-out {
+  animation: modalFlipOut 0.25s ease-in-out forwards;
+}
+
+.modal-flip-in {
+  animation: modalFlipIn 0.25s ease-in-out forwards;
 }
