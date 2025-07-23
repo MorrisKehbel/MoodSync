@@ -1,6 +1,13 @@
 import { PublicNavbar } from "./PublicNavbar";
 import { Footer } from "./Footer";
 import { ErrorFallback } from "./ErrorFallback";
-import { LoginModal } from "./LoginModal";
+import { AuthModal, LoginModal, SignupModal } from "./auth";
 
-export { PublicNavbar, Footer, ErrorFallback, LoginModal };
+export {
+  PublicNavbar,
+  Footer,
+  ErrorFallback,
+  AuthModal,
+  LoginModal,
+  SignupModal,
+};

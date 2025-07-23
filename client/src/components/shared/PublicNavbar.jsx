@@ -15,7 +15,7 @@ import {
 } from "react-icons/fa";
 
 import { useUser } from "../../context";
-import { LoginModal } from "./LoginModal";
+import { AuthModal } from "./auth";
 import { AnimatedButton } from "./ui/AnimatedButton";
 
 const publicNavItems = [
@@ -57,19 +57,19 @@ export const PublicNavbar = () => {
 
   const navItems = isAuthenticated ? authNavItems : publicNavItems;
 
-  const [showLogin, setShowLogin] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    if (showLogin) {
-      setShowLogin(false);
+    if (showAuth) {
+      setShowAuth(false);
     }
   }, [location]);
 
   return (
     <>
-      {showLogin && (
-        <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
+      {showAuth && (
+        <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
       )}
       <nav
         aria-label="Main navigation"
@@ -141,7 +141,7 @@ export const PublicNavbar = () => {
             <div className="hidden sm:flex">
               <AnimatedButton
                 onClick={() => {
-                  setShowLogin((prev) => !prev);
+                  setShowAuth((prev) => !prev);
                 }}
               >
                 Sync Me In
