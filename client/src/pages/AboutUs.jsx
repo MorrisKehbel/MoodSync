@@ -18,12 +18,13 @@ export const AboutUs = () => {
     },
     {
       id: 2,
-      name: "Placeholder",
-      role: "Placeholder",
-      avatar: "Placeholder",
+      name: "Shraddha Bhikadiya",
+      role: "Full-Stack Developer",
+      avatar: "https://avatars.githubusercontent.com/u/207018621?s=400&u=8c00e4adc4f5c1a510969d67c1fe1fd6855b9657&v=4",
       contact: [
-        { href: "Placeholder", Icon: FaLinkedin },
-        { href: "Placeholder", Icon: FaGithubSquare },
+        { href: "https://www.linkedin.com/in/shraddhabhikadiya/", 
+          Icon: FaLinkedin },
+        { href: "https://github.com/shraddhabhikadiya2017", Icon: FaGithubSquare },
       ],
     },
     {
