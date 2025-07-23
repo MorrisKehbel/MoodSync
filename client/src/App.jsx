@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router";
 
-import { Home, HowItWorks, Science, AboutUs } from "./pages";
+import { Home, HowItWorks, Science, AboutUs, OurMission } from "./pages";
 import { Dashboard, MyJourney, GoalVision, UserSettings } from "./pages/auth";
 import { WhyItMatters } from "./pages/blog";
 
@@ -22,9 +22,6 @@ const App = () => {
         <Route path="about" element={<AboutUs />} />
 
         <Route path="our-mission" element={<OurMission/>}/>
-
-        <Route path="signup" element={<Signup />} />
-
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="activitys" element={<MyJourney />} />
         <Route path="goals" element={<GoalVision />} />
