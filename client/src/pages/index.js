@@ -4,4 +4,6 @@ import { Science } from "./Science";
 import { AboutUs } from "./AboutUs";
 import { Signup } from "./Signup";
 
-export { Home, HowItWorks, Science, AboutUs, Signup };
+import { OurMission } from "./OurMission";
+
+export { Home, HowItWorks, Science, AboutUs, Signup, OurMission };
