@@ -15,7 +15,7 @@ import {
 import { FaGear } from "react-icons/fa6";
 
 import { useUser } from "../../context";
-import { LoginModal } from "./LoginModal";
+import { AuthModal } from "./auth";
 import { AnimatedButton } from "./ui/AnimatedButton";
 
 const publicNavItems = [
@@ -54,15 +54,15 @@ const authNavItems = [
 
 export const PublicNavbar = () => {
   const { isAuthenticated, logout } = useUser();
-  const [showLogin, setShowLogin] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
 
   const navItems = isAuthenticated ? authNavItems : publicNavItems;
 
   useEffect(() => {
-    if (showLogin) {
-      setShowLogin(false);
+    if (showAuth) {
+      setShowAuth(false);
     }
     if (menuOpen) {
       setMenuOpen(false);
@@ -71,8 +71,8 @@ export const PublicNavbar = () => {
 
   return (
     <>
-      {showLogin && (
-        <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
+      {showAuth && (
+        <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
       )}
       <nav
         aria-label="Main navigation"
@@ -137,14 +137,19 @@ export const PublicNavbar = () => {
                 ))}
               </ul>
               <div className="hidden sm:flex">
-                <AnimatedButton
-                  onClick={() => {
-                    setMenuOpen(false);
-                    setShowLogin((prev) => !prev);
-                  }}
-                >
-                  Sync Me In
-                </AnimatedButton>
+                {isAuthenticated ? (
+                  <AnimatedButton onClick={() => logout()}>
+                    Logout
+                  </AnimatedButton>
+                ) : (
+                  <AnimatedButton
+                    onClick={() => {
+                      setShowAuth((prev) => !prev);
+                    }}
+                  >
+                    Sync Me In
+                  </AnimatedButton>
+                )}
               </div>
             </div>
             {menuOpen && (
@@ -187,14 +192,25 @@ export const PublicNavbar = () => {
                   </li>
                 ))}
                 <li className="mt-4 sm:hidden">
-                  <AnimatedButton
-                    onClick={() => {
-                      setMenuOpen(false);
-                      setShowLogin((prev) => !prev);
-                    }}
-                  >
-                    Sync Me In
-                  </AnimatedButton>
+                  {isAuthenticated ? (
+                    <AnimatedButton
+                      onClick={() => {
+                        setMenuOpen(false);
+                        logout();
+                      }}
+                    >
+                      Logout
+                    </AnimatedButton>
+                  ) : (
+                    <AnimatedButton
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setShowAuth((prev) => !prev);
+                      }}
+                    >
+                      Sync Me In
+                    </AnimatedButton>
+                  )}
                 </li>
               </ul>
             )}
