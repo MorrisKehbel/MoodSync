@@ -5,4 +5,4 @@ import { AboutUs } from "./AboutUs";
 
 import { OurMission } from "./OurMission";
 
-export { Home, HowItWorks, Science, AboutUs, Signup, OurMission };
+export { Home, HowItWorks, Science, AboutUs, OurMission };
