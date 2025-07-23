@@ -33,7 +33,13 @@ export const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
     setShowWelcomeMessage(false);
     setLoginData({ login: "", password: "" });
     setCurrentMode("login");
-    onClose();
+
+    setIsAnimating(true);
+
+    setTimeout(() => {
+      setIsAnimating(false);
+      onClose();
+    }, 250);
   };
 
   const handleLoginSuccess = () => {

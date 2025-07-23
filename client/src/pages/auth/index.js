@@ -1,5 +1,6 @@
 import { Dashboard } from "./Dashboard";
-import { ActivityGoals } from "./ActivityGoals";
-import { History } from "./Histoy";
+import { GoalVision } from "./GoalVision";
+import { MyJourney } from "./MyJourney";
+import { UserSettings } from "./UserSettings";
 
-export { Dashboard, ActivityGoals, History };
+export { Dashboard, GoalVision, MyJourney, UserSettings };

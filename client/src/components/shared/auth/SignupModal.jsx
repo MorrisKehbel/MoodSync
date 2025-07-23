@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -32,6 +32,15 @@ export const SignupModal = ({
   });
 
   if (!isOpen) return null;
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

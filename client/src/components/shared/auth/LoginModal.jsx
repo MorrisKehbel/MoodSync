@@ -34,11 +34,14 @@ export const LoginModal = ({
 
   if (!isOpen) return null;
 
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     document.body.style.overflow = "hidden";
-  //   }
-  // }, [isOpen]);
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
