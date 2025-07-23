@@ -13,12 +13,9 @@ export const Home = () => {
             Always pay attention to your mental health
           </h1>
           {/* placeholder text */}
-          <p className="text-lg text-gray-700 text-center max-w-md">
-            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-            nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-            erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
-            et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
-            Lorem ipsum dolor sit amet.
+          <p className="text-lg text-gray-700 text-center max-w-md text-justify">
+            MoodSync helps you understand and improve your emotional well-being through daily mood tracking, smart activity logging, and personalized AI reflections. Whether you're managing stress, building healthy habits, or simply becoming more self-aware, MoodSync gives you the tools to grow.
+Track your feelings, reflect with intention, and watch your mental health improve—one mindful step at a time.
           </p>
           <Link to="/signup">
             <button className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:scale-105 transition cursor-pointer">
