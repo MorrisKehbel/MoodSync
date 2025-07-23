@@ -9,6 +9,8 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [checkSession, setCheckSession] = useState(true);
 
+  const [showAuth, setShowAuth] = useState(false);
+
   const logout = async () => {
     await signout();
     setIsAuthenticated(false);
@@ -53,6 +55,8 @@ export const UserProvider = ({ children }) => {
     setUser,
     checkSession,
     setCheckSession,
+    showAuth,
+    setShowAuth,
     logout,
   };
 

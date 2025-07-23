@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
-html {
+/* html {
   overflow-y: scroll;
   scroll-behavior: smooth;
-}
+} */
 
 @keyframes modalFlipOut {
   0% {

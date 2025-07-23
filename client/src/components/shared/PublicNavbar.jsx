@@ -40,7 +40,7 @@ const authNavItems = [
     label: "Dashboard",
   },
   {
-    to: "/activity",
+    to: "/activitys",
     icon: <FaHistory size={20} />,
     label: "My Journey",
   },
@@ -53,8 +53,7 @@ const authNavItems = [
 ];
 
 export const PublicNavbar = () => {
-  const { isAuthenticated, logout } = useUser();
-  const [showAuth, setShowAuth] = useState(false);
+  const { isAuthenticated, logout, showAuth, setShowAuth } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
 
