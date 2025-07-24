@@ -4,6 +4,9 @@ import * as bcrypt from "bcrypt";
 import crypto from "crypto";
 import User from "../models/User.js";
 
+import { oauth2Client } from "../utils/googleConfig.js";
+import axios from "axios";  
+
 const secret = process.env.JWT_SECRET;
 const tokenOptions = { expiresIn: "14d" };
 const isProduction = process.env.NODE_ENV === "production";
@@ -159,4 +162,50 @@ const resetPassword = async (req, res, next) => {
   }
 };
 
-export { signUp, signIn, me, signOut, forgotPassword, resetPassword };
+const googleLogin = async (req, res) => {
+  try {
+    const { code } = req.body;
+    const googleRes = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(googleRes.tokens);
+
+    const userRes = await axios.get(
+      "https://www.googleapis.com/oauth2/v3/userinfo",
+      {
+        headers: {
+          Authorization: `Bearer ${googleRes.tokens.access_token}`,
+        },
+      }
+    );
+    const { email, name,given_name,family_name, picture } = userRes.data;
+    let user = await User.findOne({ email });
+    if (!user) {
+      const dummyPassword = await bcrypt.hash("google-oauth", 10);
+
+      user = await User.create({
+        email,
+        username: `${given_name}${family_name}`,
+        password: dummyPassword,
+        picture,
+      });
+    }
+
+    const payload = {
+      userId: user._id,
+      userRole: user.role || "user",
+    };
+
+    const token = jwt.sign(payload, secret, tokenOptions);
+    res.cookie("token", token, cookieOptions);
+    return res.status(200).json({
+      message: "Logged in successfully",
+      user,
+    });
+  } catch (err) {
+    console.error("Google login error:", err)
+    res.status(500).json({
+      message: "Google login failed",
+    });
+  }
+};
+
+export { signUp, signIn, me, signOut, forgotPassword, resetPassword, googleLogin };

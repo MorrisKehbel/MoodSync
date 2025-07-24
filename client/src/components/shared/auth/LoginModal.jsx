@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
+import {useGoogleLogin} from "@react-oauth/google";
 
 import { FcGoogle } from "react-icons/fc";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 import { useUser } from "../../../context/index";
-import { signin } from "../../../data/auth";
+import { signin, googleLogin } from "../../../data/auth";
 import { ForgotPasswordModal } from "./ForgotPasswordModal";
 
 export const LoginModal = ({
@@ -42,7 +43,30 @@ export const LoginModal = ({
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  const responseGoogle = async (authResult) => {
+  try {
+    const user = await googleLogin(authResult.code);
+
+    setCheckSession(true);
+    if (onLoginSuccess) onLoginSuccess();
+    onClose();
+    navigate("/dashboard");
+    toast.success("Logged in with Google!");
+  } catch (err) {
+    toast.error("Google login failed, please try again.");
+    console.error("Error while requesting google code:", err);
+  }
+};
+
+  const googleLoginHandler = useGoogleLogin({
+    onSuccess: responseGoogle,
+    onError: responseGoogle,
+    flow: 'auth-code'
+  });
+  
   if (!isOpen) return null;
+  
   if (showForgotPassword) {
     return (
       <ForgotPasswordModal
@@ -98,6 +122,8 @@ export const LoginModal = ({
       toast.error("Login failed, please try again.");
     }
   };
+
+  
 
   return (
     <>
@@ -239,6 +265,7 @@ export const LoginModal = ({
         <div className="mt-6 text-center text-black/80">Or</div>
 
         <button
+          onClick={googleLoginHandler}
           type="button"
           className="mt-4 flex items-center bg-gray-300/30 hover:bg-gray-200/30 cursor-pointer justify-center w-full py-3 border border-white/70 rounded-lg text-black/90  transition"
         >
