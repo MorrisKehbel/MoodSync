@@ -39,3 +39,19 @@ export const signInSchema = z.object({
     .max(128, "Limit password to a maximum of 128 characters"),
   rememberme: z.boolean().optional().default(false),
 });
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .email("Invalid e-mail address format")
+    .transform((v) => v.toLowerCase()),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string().trim().min(1, "Reset token is required"),
+  newPassword: z
+    .string()
+    .min(8, "Password must have at least 8 characters")
+    .max(128, "Limit password to a maximum of 128 characters"),
+});
