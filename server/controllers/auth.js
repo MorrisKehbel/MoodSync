@@ -162,8 +162,7 @@ const resetPassword = async (req, res, next) => {
   }
 };
 
-export { signUp, signIn, me, signOut, forgotPassword, resetPassword };
-export const googleLogin = async (req, res) => {
+const googleLogin = async (req, res) => {
   try {
     const { code } = req.body;
     const googleRes = await oauth2Client.getToken(code);
@@ -209,4 +208,4 @@ export const googleLogin = async (req, res) => {
   }
 };
 
-export { signUp, signIn, me, signOut};
+export { signUp, signIn, me, signOut, forgotPassword, resetPassword, googleLogin };
