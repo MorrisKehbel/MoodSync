@@ -48,6 +48,7 @@ export const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
       const response = await forgotPassword(email);
       if (response.resetToken) {
         const formElement = form.current;
+
         formElement.querySelector('input[name="to_email"]').value =
           response.email;
         formElement.querySelector('input[name="to_name"]').value =
@@ -57,8 +58,8 @@ export const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
         ).value = `${window.location.origin}/reset-password?token=${response.resetToken}`;
         formElement.querySelector('input[name="from_name"]').value =
           "MoodSync Team";
-
         formElement.querySelector('input[name="email"]').value = response.email;
+
         const emailResult = await sendEmail();
 
         if (emailResult.type === "success") {
