@@ -1,7 +1,35 @@
 import { Link } from "react-router";
 
 import { PageSlideContainer } from "../components/shared/wrapper/PageSlideContainer";
-import imgWhyItMatters from "../assets/blog/img_why_it_matters.webp";
+import {
+  imgWhyItMatters,
+  imgResearchMethods,
+  imgMoodTracking,
+  imgDimensionsWellbeing,
+} from "../assets/blog/";
+
+const blogItems = [
+  {
+    to: "/blog/why-it-matters",
+    src: imgWhyItMatters,
+    alt: "Why it Matters",
+  },
+  {
+    to: "/blog/research-methods",
+    src: imgResearchMethods,
+    alt: "Research Methods",
+  },
+  {
+    to: "/blog/mood-tracking",
+    src: imgMoodTracking,
+    alt: "Mood Tracking",
+  },
+  {
+    to: "/blog/dimensions-of-wellbeing",
+    src: imgDimensionsWellbeing,
+    alt: "Dimensions of Wellbeing",
+  },
+];
 
 export const Science = () => {
   return (
@@ -18,34 +46,16 @@ export const Science = () => {
         </p>
 
         <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-8 mt-16 mx-auto">
-          <Link to="/why-it-matters">
-            <img
-              src={imgWhyItMatters}
-              className="shadow-xl rounded-2xl border border-white/60 transition-all hover:scale-105 cursor-pointer h-45"
-              alt="Why it Matters"
-            />
-          </Link>
-          <Link to="#">
-            <img
-              src="placeholder"
-              className="shadow-xl rounded-2xl border border-white/60 transition-all hover:scale-105 cursor-pointer h-45"
-              alt=""
-            />
-          </Link>
-          <Link to="#">
-            <img
-              src="placeholder"
-              className="shadow-xl rounded-2xl border border-white/60 transition-all hover:scale-105 cursor-pointer h-45"
-              alt=""
-            />
-          </Link>
-          <Link to="#">
-            <img
-              src="placeholder"
-              className="shadow-xl rounded-2xl border border-white/60 transition-all hover:scale-105 cursor-pointer h-45"
-              alt=""
-            />
-          </Link>
+          {blogItems.map(({ to, src, alt }) => (
+            <Link to={to} key={to}>
+              <img
+                src={src}
+                loading="lazy"
+                className="w-full aspect-[3/2] max-w-sm object-cover shadow-md hover:shadow-xl rounded-2xl border border-white/60 transition-all hover:scale-105 cursor-pointer"
+                alt={alt}
+              />
+            </Link>
+          ))}
         </div>
       </div>
     </PageSlideContainer>

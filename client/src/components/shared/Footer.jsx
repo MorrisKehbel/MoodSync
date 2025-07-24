@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { useUser } from "../../context";
 
 import {
   FaHeartbeat,
@@ -9,6 +10,8 @@ import {
 } from "react-icons/fa";
 
 export const Footer = () => {
+  const { isAuthenticated, setCurrentMode, setShowAuth } = useUser();
+
   return (
     <footer className="w-full">
       <div className="max-w-7xl mx-auto px-6 py-12">
@@ -65,9 +68,21 @@ export const Footer = () => {
             <h3 className="font-semibold text-lg">Services</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/dashboard" className="hover:text-gray-600">
-                  Dashboard
-                </Link>
+                {isAuthenticated ? (
+                  <Link to="/dashboard" className="hover:text-gray-600">
+                    Dashboard
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setCurrentMode("login");
+                      setShowAuth(true);
+                    }}
+                    className="hover:text-gray-600 cursor-pointer"
+                  >
+                    Dashboard
+                  </button>
+                )}
               </li>
 
               <li>
@@ -96,13 +111,13 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/science" className="hover:text-gray-600">
-                  Blog
+                <Link to="/about" className="hover:text-gray-600">
+                  About us
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="hover:text-gray-600">
-                  About us
+                <Link to="/science" className="hover:text-gray-600">
+                  Blog
                 </Link>
               </li>
               <li>

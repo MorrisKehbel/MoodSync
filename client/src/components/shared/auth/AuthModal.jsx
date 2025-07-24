@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { LoginModal } from "./LoginModal";
 import { SignupModal } from "./SignupModal";
+import { useUser } from "../../../context";
 
-export const AuthModal = ({ isOpen, onClose, initialMode = "login" }) => {
-  const [currentMode, setCurrentMode] = useState(initialMode);
+export const AuthModal = ({ isOpen, onClose }) => {
+  // const [currentMode, setCurrentMode] = useState(initialMode);
   const [isAnimating, setIsAnimating] = useState(false);
   const [loginData, setLoginData] = useState({ login: "", password: "" });
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
+
+  const { currentMode, setCurrentMode } = useUser();
 
   const switchMode = (newMode) => {
     if (isAnimating || currentMode === newMode) return;
