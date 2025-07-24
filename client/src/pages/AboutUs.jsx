@@ -49,12 +49,12 @@ export const AboutUs = () => {
     },
     {
       id: 4,
-      name: "Placeholder",
-      role: "Placeholder",
-      avatar: "Placeholder",
+      name: "Maryna Shymkova",
+      role: "Full-Stack Developer",
+      avatar: "https://avatars.githubusercontent.com/u/207185993?v=4",
       contact: [
-        { href: "Placeholder", Icon: FaLinkedin },
-        { href: "Placeholder", Icon: FaGithubSquare },
+        { href: "https://www.linkedin.com/in/marynashymkova/", Icon: FaLinkedin },
+        { href: "https://github.com/Maryna2221", Icon: FaGithubSquare },
       ],
     },
   ];
