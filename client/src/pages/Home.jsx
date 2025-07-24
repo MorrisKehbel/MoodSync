@@ -2,7 +2,8 @@ import { PageSlideContainer } from "../components/shared/wrapper/PageSlideContai
 import { useUser } from "../context";
 
 export const Home = () => {
-  const { setShowAuth } = useUser();
+  const { setShowAuth, setCurrentMode } = useUser();
+
   return (
     <PageSlideContainer>
       <section className="flex flex-col p-4">
@@ -27,7 +28,10 @@ export const Home = () => {
           </p>
 
           <button
-            onClick={() => setShowAuth(true)}
+            onClick={() => {
+              setShowAuth(true);
+              setCurrentMode("signup");
+            }}
             className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:scale-105 transition cursor-pointer"
           >
             Start now
