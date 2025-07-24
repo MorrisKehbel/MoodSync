@@ -103,3 +103,55 @@ export const me = async () => {
     throw error;
   }
 };
+
+export const forgotPassword = async (email) => {
+  try {
+    const res = await fetch(`${baseURL}/forgot-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      if (!errorData.error) {
+        throw new Error("An error occurred while processing your request.");
+      }
+      throw new Error(errorData.error);
+    }
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const resetPassword = async (token, newPassword) => {
+  try {
+    const res = await fetch(`${baseURL}/reset-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token, newPassword }),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      if (!errorData.error) {
+        throw new Error("An error occurred while resetting your password.");
+      }
+      throw new Error(errorData.error);
+    }
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

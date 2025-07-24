@@ -6,7 +6,14 @@ import {
   Navigate,
 } from "react-router";
 
-import { Home, HowItWorks, Science, AboutUs, OurMission } from "./pages";
+import {
+  Home,
+  HowItWorks,
+  Science,
+  AboutUs,
+  OurMission,
+  ResetPasswordPage,
+} from "./pages";
 import { Dashboard, MyJourney, GoalVision, UserSettings } from "./pages/auth";
 import {
   WhyItMatters,
@@ -20,6 +27,7 @@ import { MainLayout } from "./layouts/MainLayout";
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
+
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="how-it-works" element={<HowItWorks />} />
@@ -39,11 +47,12 @@ const App = () => {
           path="blog/dimensions-of-wellbeing"
           element={<DimensionsOfWellBeing />}
         />
-
+        <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     )
   );
+
   return <RouterProvider router={router} />;
 };
 

@@ -7,6 +7,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 import { useUser } from "../../../context/index";
 import { signin } from "../../../data/auth";
+import { ForgotPasswordModal } from "./ForgotPasswordModal";
 
 export const LoginModal = ({
   isOpen,
@@ -24,6 +25,7 @@ export const LoginModal = ({
   const [rememberMe, setRememberMe] = useState(false);
   const [hidePassword, setHidePassword] = useState(true);
   const [errors, setErrors] = useState({ login: "", password: "" });
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   useEffect(() => {
     if (prefilledData && prefilledData.login && prefilledData.password) {
@@ -31,8 +33,6 @@ export const LoginModal = ({
       setPassword(prefilledData.password);
     }
   }, [prefilledData]);
-
-  if (!isOpen) return null;
 
   useEffect(() => {
     if (isOpen) {
@@ -42,6 +42,19 @@ export const LoginModal = ({
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+  if (!isOpen) return null;
+  if (showForgotPassword) {
+    return (
+      <ForgotPasswordModal
+        isOpen={true}
+        onClose={() => {
+          setShowForgotPassword(false);
+          onClose();
+        }}
+        onBackToLogin={() => setShowForgotPassword(false)}
+      />
+    );
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,8 +83,6 @@ export const LoginModal = ({
         password: password,
         rememberme: rememberMe,
       });
-
-      console.log(rememberMe);
 
       setCheckSession(true);
       setPassword("");
@@ -204,9 +215,13 @@ export const LoginModal = ({
               />
               <span className="ml-2 text-sm">Remember me</span>
             </label>
-            <Link to="/reset-password" className="text-sm text-black underline">
+            <button
+              type="button"
+              onClick={() => setShowForgotPassword(true)}
+              className="text-sm text-black underline bg-transparent border-none cursor-pointer"
+            >
               Forgot password?
-            </Link>
+            </button>
           </div>
 
           <button
