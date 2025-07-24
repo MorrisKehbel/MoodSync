@@ -1,6 +1,7 @@
 import { isValidObjectId } from "mongoose";
 import jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
+import crypto from "crypto";
 import User from "../models/User.js";
 
 const secret = process.env.JWT_SECRET;
@@ -99,4 +100,63 @@ const signOut = async (req, res, next) => {
   }
 };
 
-export { signUp, signIn, me, signOut };
+const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.sanitizedBody;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.json({
+        message:
+          "If the email exists in our system, you will receive a password reset link.",
+      });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpires = Date.now() + 30 * 60 * 1000;
+    await user.save();
+
+    res.json({
+      message: "Password reset token generated",
+      resetToken,
+      email: user.email,
+      username: user.username,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const resetPassword = async (req, res, next) => {
+  try {
+    const { token, newPassword } = req.sanitizedBody;
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      throw new Error("Token is invalid or has expired", { cause: 400 });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.json({ message: "Password has been reset successfully" });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export { signUp, signIn, me, signOut, forgotPassword, resetPassword };

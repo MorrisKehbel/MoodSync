@@ -39,6 +39,10 @@ export const UserProvider = ({ children }) => {
           setIsAuthenticated(null);
           return;
         }
+
+        if (!error.message.includes("Unauthorized")) {
+          console.error("Authentication check error:", error);
+        }
         setIsAuthenticated(false);
       } finally {
         setCheckSession(false);
