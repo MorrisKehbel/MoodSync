@@ -13,7 +13,7 @@ import {
   signUp,
   signIn,
   me,
-  signOut,
+  signOut, googleLogin,
   forgotPassword,
   resetPassword,
 } from "../controllers/auth.js";
@@ -27,6 +27,10 @@ authRouter
 authRouter
   .route("/signin")
   .post(rateLimiter, validateSchema(signInSchema), signIn);
+
+authRouter.route("/google-login").post(
+  rateLimiter, googleLogin
+);
 
 authRouter.route("/me").get(verifyToken, me);
 

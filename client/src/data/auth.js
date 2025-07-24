@@ -155,3 +155,30 @@ export const resetPassword = async (token, newPassword) => {
     throw error;
   }
 };
+
+export const googleLogin = async (code) => {
+  try {
+    const res = await fetch(`${baseURL}/google-login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ code }),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      if (!errorData.error) {
+        throw new Error("Google login failed. Please try again.");
+      }
+      throw new Error(errorData.error);
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Google login error:", error);
+    throw error;
+  }
+};

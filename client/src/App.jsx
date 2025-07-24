@@ -23,8 +23,11 @@ import {
 } from "./pages/blog";
 
 import { MainLayout } from "./layouts/MainLayout";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
+const GOOGLE_CLIENT_ID ="181156862586-8fsggnovuneeev67vt796r9q7hthbj8f.apps.googleusercontent.com"
 const App = () => {
+
   const router = createBrowserRouter(
     createRoutesFromElements(
 
@@ -52,8 +55,11 @@ const App = () => {
       </Route>
     )
   );
-
-  return <RouterProvider router={router} />;
+  return (
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <RouterProvider router={router} />
+    </GoogleOAuthProvider>
+  );
 };
 
 export default App;
