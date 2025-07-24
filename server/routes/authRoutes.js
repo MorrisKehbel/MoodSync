@@ -13,7 +13,8 @@ import {
   signUp,
   signIn,
   me,
-  signOut, googleLogin,
+  signOut, 
+  googleLogin,
   forgotPassword,
   resetPassword,
 } from "../controllers/auth.js";

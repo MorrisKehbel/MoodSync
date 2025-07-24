@@ -43,19 +43,6 @@ export const LoginModal = ({
       document.body.style.overflow = "";
     };
   }, [isOpen]);
-  if (!isOpen) return null;
-  if (showForgotPassword) {
-    return (
-      <ForgotPasswordModal
-        isOpen={true}
-        onClose={() => {
-          setShowForgotPassword(false);
-          onClose();
-        }}
-        onBackToLogin={() => setShowForgotPassword(false)}
-      />
-    );
-  }
 
   const responseGoogle = async (authResult) => {
   try {
@@ -77,6 +64,21 @@ export const LoginModal = ({
     onError: responseGoogle,
     flow: 'auth-code'
   });
+  
+  if (!isOpen) return null;
+  
+  if (showForgotPassword) {
+    return (
+      <ForgotPasswordModal
+        isOpen={true}
+        onClose={() => {
+          setShowForgotPassword(false);
+          onClose();
+        }}
+        onBackToLogin={() => setShowForgotPassword(false)}
+      />
+    );
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -120,6 +122,8 @@ export const LoginModal = ({
       toast.error("Login failed, please try again.");
     }
   };
+
+  
 
   return (
     <>
