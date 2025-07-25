@@ -25,7 +25,8 @@ import {
 import { MainLayout } from "./layouts/MainLayout";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
-const GOOGLE_CLIENT_ID =import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
 const App = () => {
 
   const router = createBrowserRouter(
