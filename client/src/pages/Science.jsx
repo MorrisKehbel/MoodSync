@@ -11,21 +11,25 @@ import {
 const blogItems = [
   {
     to: "/blog/why-it-matters",
+    title: "Why it Matters",
     src: imgWhyItMatters,
     alt: "Why it Matters",
   },
   {
     to: "/blog/research-methods",
+    title: "From Research to Recovery",
     src: imgResearchMethods,
     alt: "Research Methods",
   },
   {
     to: "/blog/mood-tracking",
+    title: "Mood Tracking - Makes a Difference",
     src: imgMoodTracking,
     alt: "Mood Tracking",
   },
   {
     to: "/blog/dimensions-of-wellbeing",
+    title: "The Dimensions of Well-Being",
     src: imgDimensionsWellbeing,
     alt: "Dimensions of Wellbeing",
   },
@@ -46,14 +50,17 @@ export const Science = () => {
         </p>
 
         <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-8 mt-16 mx-auto">
-          {blogItems.map(({ to, src, alt }) => (
-            <Link to={to} key={to}>
+          {blogItems.map(({ to, src, alt, title }) => (
+            <Link to={to} key={to} className="group">
               <img
                 src={src}
                 loading="lazy"
-                className="w-full aspect-[3/2] max-w-sm object-cover shadow-md hover:shadow-xl rounded-2xl border border-white/60 transition-all hover:scale-105 cursor-pointer"
+                className="w-full aspect-[3/2] max-w-sm object-cover shadow-md group-hover:shadow-lg rounded-2xl border border-white/60 transition-all group-hover:scale-105 cursor-pointer"
                 alt={alt}
               />
+              <h2 className="text-center text-sm font-semibold transition-all mt-2 tracking-widest group-hover:text-gray-600 group-hover:scale-102">
+                {title}
+              </h2>
             </Link>
           ))}
         </div>

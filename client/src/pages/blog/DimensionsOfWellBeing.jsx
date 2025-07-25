@@ -12,7 +12,7 @@ export const DimensionsOfWellBeing = () => {
           alt="Dimensions of Well-Being"
         />
 
-        <h1 className="text-4xl font-bold text-gray-800 my-6 text-center">
+        <h1 className="text-4xl leading-snug font-bold text-gray-800 my-6 text-center">
           The Dimensions of Well-Being
         </h1>
 
