@@ -54,7 +54,7 @@ export const ResetPasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-pink-50 to-blue-100 p-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <ToastContainer
         position="top-center"
         autoClose={3000}
@@ -65,7 +65,15 @@ export const ResetPasswordPage = () => {
         style={{ zIndex: 100 }}
       />
 
-      <div className="w-full max-w-md p-8 bg-white/90 backdrop-blur-lg rounded-2xl shadow-lg">
+      <div className="relative w-full max-w-md p-8 bg-white/90 backdrop-blur-lg rounded-2xl shadow-lg">
+        <button
+          onClick={() => navigate("/")}
+          className="absolute top-4 right-4 text-black/70 hover:text-black text-2xl leading-none cursor-pointer"
+          aria-label="Close modal"
+        >
+          &times;
+        </button>
+
         <h2 className="text-3xl font-bold text-center text-black mb-2">
           Set New Password
         </h2>
@@ -149,15 +157,6 @@ export const ResetPasswordPage = () => {
             {isLoading ? "Resetting..." : "Reset Password"}
           </button>
         </form>
-
-        <div className="mt-6 text-center">
-          <button
-            onClick={() => navigate("/")}
-            className="text-sm text-black underline bg-transparent border-none cursor-pointer"
-          >
-            Back to Home
-          </button>
-        </div>
       </div>
     </div>
   );
