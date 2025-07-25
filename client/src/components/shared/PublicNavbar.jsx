@@ -75,7 +75,7 @@ export const PublicNavbar = () => {
       )}
       <nav
         aria-label="Main navigation"
-        className="sticky top-12 left-0 w-full z-25 sm:z-50 flex justify-center items-center"
+        className="sticky top-12 left-0 w-full z-25 lg:z-50 flex justify-center items-center"
       >
         <div className="flex justify-center items-center gap-8 sm:gap-16 lg:gap-4 px-8 sm:px-4 py-3 bg-gradient-to-r from-white/20 via-white/40 to-white/20 backdrop-blur-md shadow-xl rounded-2xl border border-white/60">
           <div className="flex flex-col gap-6">
