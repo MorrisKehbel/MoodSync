@@ -119,7 +119,7 @@ export const SignupModal = ({
         style={{ zIndex: 100 }}
       />
       <div className="z-50 flex items-center justify-center p-4 backdrop-blur-lg">
-        <div className="relative w-full max-w-md p-8 max-h-[90vh] overflow-y-auto bg-white/90 border border-white rounded-2xl shadow-lg">
+        <div className="relative w-full max-w-md p-8 max-h-[90dvh] overflow-y-auto bg-white/90 border border-white rounded-2xl shadow-lg">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 text-black/70 hover:text-black text-2xl leading-none cursor-pointer"
@@ -136,7 +136,7 @@ export const SignupModal = ({
             balance and inner peace.
           </p>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" autoComplete="on" onSubmit={handleSubmit}>
             <div>
               <label
                 htmlFor="username"
@@ -146,6 +146,7 @@ export const SignupModal = ({
               </label>
               <input
                 id="username"
+                autoComplete="username"
                 name="username"
                 placeholder="Enter your username"
                 value={formData.username}
@@ -168,6 +169,7 @@ export const SignupModal = ({
               </label>
               <input
                 id="email"
+                autoComplete="email"
                 name="email"
                 type="email"
                 placeholder="example@email.com"
@@ -192,6 +194,7 @@ export const SignupModal = ({
               <div className="relative">
                 <input
                   id="password"
+                  autoComplete="new-password"
                   name="password"
                   type={hidePassword ? "password" : "text"}
                   placeholder="••••••••"
@@ -228,6 +231,7 @@ export const SignupModal = ({
               <div className="relative">
                 <input
                   id="confirmPassword"
+                  autoComplete="new-password"
                   name="confirmPassword"
                   type={hideConfirmPassword ? "password" : "text"}
                   placeholder="••••••••"
