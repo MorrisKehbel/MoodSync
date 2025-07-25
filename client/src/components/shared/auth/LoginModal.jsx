@@ -135,7 +135,7 @@ export const LoginModal = ({
         style={{ zIndex: 100 }}
       />
       <div className="z-50 flex items-center justify-center p-4 backdrop-blur-lg">
-        <div className="relative w-full max-w-md p-8 max-h-[90vh] overflow-y-auto bg-white/90 border border-white rounded-2xl shadow-lg">
+        <div className="relative w-full max-w-md p-8 max-h-[90dvh] overflow-y-auto bg-white/90 border border-white rounded-2xl shadow-lg">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 text-black/70 hover:text-black text-2xl leading-none cursor-pointer"
@@ -166,7 +166,7 @@ export const LoginModal = ({
               : "Sign in to continue your personalized journey toward balance and inner peace."}
           </p>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" autoComplete="on" onSubmit={handleSubmit}>
             <div>
               <label
                 htmlFor="login"
@@ -177,6 +177,8 @@ export const LoginModal = ({
 
               <input
                 id="login"
+                autoComplete="username"
+                name="username"
                 placeholder="example@email.com"
                 value={login}
                 onChange={(e) => setLogin(e.target.value)}
@@ -205,6 +207,8 @@ export const LoginModal = ({
                 <input
                   id="password"
                   type={hidePassword ? "password" : "text"}
+                  autoComplete="current-password"
+                  name="password"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -236,6 +240,8 @@ export const LoginModal = ({
             <div className="flex items-center justify-between">
               <label className="flex items-center text-black/90">
                 <input
+                  id="remember"
+                  name="remember"
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
