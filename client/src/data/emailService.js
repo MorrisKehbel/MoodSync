@@ -1,16 +1,31 @@
 import emailjs from "@emailjs/browser";
 
 const EMAIL_CONFIG = {
-  serviceID: import.meta.env.VITE_EMAILJS_SERVICE_ID || "service_l7ljht9",
-  templateID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || "template_t6342xo",
-  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "sQwe6SyvduUQRNwRS",
-  recipientEmails:
-    import.meta.env.VITE_EMAIL_RECIPIENTS ||
-    "your-main-email@example.com, your-second-email@example.com",
+  serviceID: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+  templateID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+  recipientEmails: import.meta.env.VITE_EMAIL_RECIPIENTS,
+};
+
+const validateEmailConfig = () => {
+  const requiredEnvVars = [
+    { key: "VITE_EMAILJS_SERVICE_ID", value: EMAIL_CONFIG.serviceID },
+    { key: "VITE_EMAILJS_TEMPLATE_ID", value: EMAIL_CONFIG.templateID },
+    { key: "VITE_EMAILJS_PUBLIC_KEY", value: EMAIL_CONFIG.publicKey },
+    { key: "VITE_EMAIL_RECIPIENTS", value: EMAIL_CONFIG.recipientEmails },
+  ];
+
+  const missingVars = requiredEnvVars.filter((envVar) => !envVar.value);
+
+  if (missingVars.length > 0) {
+    const missingKeys = missingVars.map((envVar) => envVar.key).join(", ");
+    throw new Error(`Missing required environment variables: ${missingKeys}`);
+  }
 };
 
 export const sendContactEmail = async (formData) => {
   try {
+    validateEmailConfig();
     const templateParams = {
       name: formData.name,
       email: formData.email,
@@ -44,7 +59,13 @@ export const sendContactEmail = async (formData) => {
 };
 
 export const initializeEmailJS = () => {
-  emailjs.init(EMAIL_CONFIG.publicKey);
+  try {
+    validateEmailConfig();
+    emailjs.init(EMAIL_CONFIG.publicKey);
+  } catch (error) {
+    console.error("EmailJS initialization failed:", error.message);
+    throw error;
+  }
 };
 
 export { EMAIL_CONFIG };
