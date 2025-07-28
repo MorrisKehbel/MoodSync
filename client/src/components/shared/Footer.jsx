@@ -95,21 +95,11 @@ export const Footer = () => {
                   Placeholder
                 </Link>
               </li>
-              <li>
-                <Link to="/placeholder" className="hover:text-gray-600">
-                  Placeholder
-                </Link>
-              </li>
             </ul>
           </div>
           <div className="py-4 px-8 bg-gradient-to-r from-white/10 via-white/20 to-white/10 backdrop-blur-md shadow-sm sm:shadow-md rounded-2xl border border-white/60 space-y-4 text-gray-700 text-center lg:text-left">
             <h3 className="font-semibold text-lg">Company</h3>
             <ul className="space-y-2">
-              <li>
-                <Link to="/our-mission" className="hover:text-gray-600">
-                  Our mission
-                </Link>
-              </li>
               <li>
                 <Link to="/about" className="hover:text-gray-600">
                   About us

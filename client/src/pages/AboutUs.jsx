@@ -53,7 +53,10 @@ export const AboutUs = () => {
       role: "Full-Stack Developer",
       avatar: "https://avatars.githubusercontent.com/u/207185993?v=4",
       contact: [
-        { href: "https://www.linkedin.com/in/marynashymkova/", Icon: FaLinkedin },
+        {
+          href: "https://www.linkedin.com/in/marynashymkova/",
+          Icon: FaLinkedin,
+        },
         { href: "https://github.com/Maryna2221", Icon: FaGithubSquare },
       ],
     },
@@ -61,46 +64,52 @@ export const AboutUs = () => {
 
   return (
     <PageSlideContainer>
-      <div className="flex flex-col p-4">
-        <h1 className="text-3xl md:text-4xl font-bold mb-16 mt-8 lg:mt-12 text-center">
-          About Us
-        </h1>
-
-        <p className="text-gray-700 mx-auto text-center mb-12">
-          What started as a final project at the WBS Coding School grew into a
-          mission to support mental health. We believe evidence-based self-care
-          should be accessible to everyone. Our mission is to empower daily
-          growth by combining expert-backed methods with intuitive technology so
-          your mental wellbeing becomes part of your daily routine.
-        </p>
-      </div>
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 justify-items-center items-center px-4">
-        {team.map(({ id, name, role, avatar, contact }) => (
-          <div
-            key={id}
-            className="
-              flex flex-col border lg:border-0 rounded-2xl items-center text-center w-full py-4"
-          >
-            <img
-              src={avatar}
-              alt={`Avatar of ${name}`}
-              className="w-24 h-24 rounded-full border-2 border-white/40 shadow-md mb-2"
-            />
-            <h3 className="font-semibold text-lg ">{name}</h3>
-            <p className="text-sm text-gray-500">{role}</p>
-            <div className="flex gap-4 mt-4">
-              {contact.map(({ href, Icon }, i) => (
-                <a
-                  key={i}
-                  href={href}
-                  className="text-gray-700 hover:text-gray-600 hover:scale-105 transition"
-                >
-                  <Icon size={22} />
-                </a>
-              ))}
+      <section className="flex flex-col">
+        <div className="flex flex-col justify-center items-center text-center ">
+          <h1 className="text-3xl md:text-4xl text-black/70 font-extrabold">
+            About Us
+          </h1>
+          <p className="text-gray-500 text-lg mt-2">
+            The mission behind MoodSync and the team supporting your well-being
+          </p>
+          <div className="w-20 h-1 mx-auto mt-4 bg-gradient-to-r from-blue-600 to-pink-500 rounded-full" />
+          <p className="text-gray-700 mx-auto text-center mt-8 mb-12">
+            What started as a final project at the WBS Coding School grew into a
+            mission to support mental health. We believe evidence-based
+            self-care should be accessible to everyone. Our mission is to
+            empower daily growth by combining expert-backed methods with
+            intuitive technology so your mental wellbeing becomes part of your
+            daily routine.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {team.map(({ id, name, role, avatar, contact }) => (
+            <div
+              key={id}
+              className="
+              flex flex-col border border-black/40 lg:border-0 rounded-2xl items-center text-center w-full py-4"
+            >
+              <img
+                src={avatar}
+                alt={`Avatar of ${name}`}
+                className="w-24 h-24 rounded-full border-2 border-white/40 shadow-md mb-2"
+              />
+              <h3 className="font-semibold text-lg ">{name}</h3>
+              <p className="text-sm text-gray-500">{role}</p>
+              <div className="flex gap-4 mt-4">
+                {contact.map(({ href, Icon }, i) => (
+                  <a
+                    key={i}
+                    href={href}
+                    className="text-gray-700 hover:text-gray-600 hover:scale-105 transition"
+                  >
+                    <Icon size={22} />
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </section>
     </PageSlideContainer>
   );

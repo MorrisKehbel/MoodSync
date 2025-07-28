@@ -22,23 +22,23 @@ import {
   DimensionsOfWellBeing,
 } from "./pages/blog";
 
+import { ContactUs } from "./pages/ContactUs";
+
 import { MainLayout } from "./layouts/MainLayout";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const App = () => {
-
   const router = createBrowserRouter(
     createRoutesFromElements(
-
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="how-it-works" element={<HowItWorks />} />
         <Route path="science" element={<Science />} />
         <Route path="about" element={<AboutUs />} />
+        <Route path="contact" element={<ContactUs />} />
 
-        <Route path="our-mission" element={<OurMission />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="activitys" element={<MyJourney />} />
         <Route path="goals" element={<GoalVision />} />
