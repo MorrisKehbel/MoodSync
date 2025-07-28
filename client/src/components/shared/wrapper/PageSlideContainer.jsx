@@ -7,14 +7,14 @@ export const PageSlideContainer = ({ children }) => {
     exit: { opacity: 0, y: -20, transition: { duration: 0.2 } },
   };
   return (
-    <motion.main
+    <motion.div
       variants={pageVariants}
       initial="initial"
       animate="animate"
       exit="exit"
-      className="pt-24 pb-16 px-4 md:px-0 max-w-5xl mx-auto"
+      className="pt-32 lg:pt-36 pb-12 px-4 md:px-8 max-w-5xl mx-auto w-full"
     >
       {children}
-    </motion.main>
+    </motion.div>
   );
 };

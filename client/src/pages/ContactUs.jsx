@@ -22,8 +22,8 @@ export const ContactUs = () => {
 
   return (
     <PageSlideContainer>
-      <section className="flex flex-col p-4">
-        <div className="flex flex-col items-center gap-6 px-8 py-12 mt-8 lg:mt-12 bg-white/70 backdrop-blur-md rounded-2xl shadow-2xl max-w-xl mx-auto w-full">
+      <section className="flex flex-col">
+        <div className="flex flex-col items-center gap-6 px-8 py-12 bg-white/70 backdrop-blur-md rounded-2xl shadow-2xl max-w-xl mx-auto w-full">
           <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 text-center drop-shadow-lg leading-snug">
             Contact Us
           </h1>
@@ -39,7 +39,7 @@ export const ContactUs = () => {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white/90"
+              className="w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-white/90"
             />
             <input
               type="email"
@@ -48,7 +48,7 @@ export const ContactUs = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white/90"
+              className="w-full p-3 rounded-xl border border-gray-300 focus:outline-2 focus:outline-blue-400 bg-white/90"
             />
             <textarea
               name="message"
@@ -61,7 +61,7 @@ export const ContactUs = () => {
             />
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg hover:scale-105 transition"
+              className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg transition cursor-pointer"
             >
               Send Message
             </button>

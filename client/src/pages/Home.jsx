@@ -7,7 +7,7 @@ export const Home = () => {
   return (
     <PageSlideContainer>
       <section className="flex flex-col p-4">
-        <div className="flex flex-col items-center gap-6 px-8 py-12 mt-8 lg:mt-12 bg-white/70 backdrop-blur-md rounded-2xl shadow-2xl max-w-xl">
+        <div className="flex flex-col items-center gap-6 px-8 py-12 mt-8 lg:mt-12 bg-white/70 backdrop-blur-md rounded-2xl shadow-2xl max-w-xl mx-auto">
           <p className="uppercase tracking-widest text-blue-600 font-semibold text-sm">
             Mental Health Tracking App
           </p>

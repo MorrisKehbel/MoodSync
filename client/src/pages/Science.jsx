@@ -38,33 +38,40 @@ const blogItems = [
 export const Science = () => {
   return (
     <PageSlideContainer>
-      <div className="flex flex-col p-4">
-        <h1 className="text-3xl md:text-4xl font-bold mb-16 mt-8 lg:mt-12">
-          Built on Science. Backed by research.
-        </h1>
-        <p className="max-w-lg">
-          MoodSync is built on proven methods from psychology, behavioral
-          science, and neuroscience. Here, we dive deeper into the research
-          behind mental health, unpacking the ideas that guide our tools and
-          help you understand yourself better.
-        </p>
-
-        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-8 mt-16 mx-auto">
+      <section className="flex flex-col">
+        <div className="flex flex-col justify-center items-center text-center">
+          <h1 className="text-3xl md:text-4xl text-black/70 font-extrabold">
+            Built on Science. Backed by research.
+          </h1>
+          <p className="text-gray-500 text-lg mt-2">
+            We use research-backed methods to turn reflection, habit tracking,
+            and mood awareness into real personal growth.
+          </p>
+          <div className="w-20 h-1 mx-auto mt-4 bg-gradient-to-r from-blue-600 to-pink-500 rounded-full" />
+          <p className="text-gray-700 mx-auto text-center mt-8 mb-12">
+            Here, we dive deeper into the research behind mental health,
+            unpacking the ideas that guide our tools and help you understand
+            yourself better. By understanding patterns in mood, lifestyle, and
+            life domains, the app can interpret user input more meaningfully and
+            offer smarter, more personalized support.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-8 mx-auto">
           {blogItems.map(({ to, src, alt, title }) => (
             <Link to={to} key={to} className="group">
               <img
                 src={src}
                 loading="lazy"
-                className="w-full aspect-[3/2] max-w-sm object-cover shadow-md group-hover:shadow-lg rounded-2xl border border-white/60 transition-all group-hover:scale-105 cursor-pointer"
+                className="w-full aspect-[3/2] max-w-sm object-cover shadow-md group-hover:shadow-lg rounded-2xl border border-white/60 transition-all group-hover:scale-105 cursor-pointer duration-300 delay-50"
                 alt={alt}
               />
-              <h2 className="text-center text-sm font-semibold transition-all mt-2 tracking-widest group-hover:text-gray-600 group-hover:scale-102">
+              <h2 className="text-center text-sm font-semibold transition-all mt-2 tracking-widest group-hover:text-gray-600 group-hover:scale-102 duration-300 delay-50">
                 {title}
               </h2>
             </Link>
           ))}
         </div>
-      </div>
+      </section>
     </PageSlideContainer>
   );
 };
