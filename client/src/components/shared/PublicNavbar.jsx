@@ -40,7 +40,7 @@ const authNavItems = [
     label: "Dashboard",
   },
   {
-    to: "/activitys",
+    to: "/my-journey",
     icon: <FaHistory size={20} />,
     label: "My Journey",
   },
