@@ -29,7 +29,7 @@ export const MyJourney = () => {
   };
 
   const handleAddActivities = () => {
-    alert("Redirect to activity entry page (coming soon!)");
+    alert("Redirect to activity entry page (coming soon:))");
   };
 
   return (
