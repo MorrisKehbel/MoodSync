@@ -27,7 +27,7 @@ export const HowItWorks = () => {
   return (
     <PageSlideContainer>
       <section className="flex flex-col">
-        <div className="flex flex-col justify-center items-center text-center">
+        <div className="flex flex-col justify-center mb-12 items-center text-center">
           <h1 className="text-3xl md:text-4xl text-black/70 font-extrabold">
             How It Works
           </h1>
