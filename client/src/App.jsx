@@ -6,15 +6,16 @@ import {
   Navigate,
 } from "react-router";
 
+import { Home, HowItWorks, Science, AboutUs, ResetPasswordPage } from "./pages";
+
 import {
-  Home,
-  HowItWorks,
-  Science,
-  AboutUs,
-  OurMission,
-  ResetPasswordPage,
-} from "./pages";
-import { Dashboard, MyJourney, GoalVision, UserSettings } from "./pages/auth";
+  Dashboard,
+  MyJourney,
+  AddActivities,
+  GoalVision,
+  UserSettings,
+} from "./pages/auth";
+
 import {
   WhyItMatters,
   ResearchMethods,
@@ -39,9 +40,9 @@ const App = () => {
         <Route path="about" element={<AboutUs />} />
         <Route path="contact" element={<ContactUs />} />
 
-        <Route path="our-mission" element={<OurMission />} />
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="activitys" element={<MyJourney />} />
+        <Route path="my-journey" element={<MyJourney />} />
+        <Route path="add-activities" element={<AddActivities />} />
         <Route path="goals" element={<GoalVision />} />
         <Route path="settings" element={<UserSettings />} />
 

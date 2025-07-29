@@ -6,6 +6,7 @@ import express from "express";
 import "./db/index.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
+import userRouter from "./routes/userRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import aiRouter from "./routes/aiRoutes.js";
 
@@ -25,6 +26,7 @@ app.use(
 
 app.use(express.json());
 
+app.use("/user", userRouter);
 app.use("/auth", authRouter);
 app.use("/ai", aiRouter);
 

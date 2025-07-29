@@ -55,3 +55,21 @@ export const resetPasswordSchema = z.object({
     .min(8, "Password must have at least 8 characters")
     .max(128, "Limit password to a maximum of 128 characters"),
 });
+
+export const DailyActivitiesSchema = z.object({
+  note: z.string().max(1000, "Note is too long"),
+  activities: z.array(z.string()),
+  emotion: z.string().min(1, "Please select one emotion."),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
+});
+
+export const SingleEmotionUpdateSchema = z.array(
+  z.object({
+    date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
+    emotion: z.string(),
+  })
+);
