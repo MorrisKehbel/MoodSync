@@ -47,38 +47,7 @@ export const Home = () => {
 
   return (
     <PageSlideContainer>
-      <section className="px-6 pt-8 pb-16 text-center">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl md:text-4xl text-black/70 font-extrabold">
-            Transform Your{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent">
-              Mental Well-being
-            </span>
-          </h1>
-          <p className="text-gray-600 text-lg md:text-xl mt-4 mb-8">
-            Discover emotional patterns, build healthier habits, and get smart,
-            AI-powered insights tailored for you.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <button
-              onClick={() => {
-                setShowAuth(true);
-                setCurrentMode("signup");
-              }}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold text-base flex items-center gap-2 transition-all"
-            >
-              Start Your Journey <FaArrowRight />
-            </button>
-            <Link
-              to="/how-it-works"
-              className="border border-gray-300 px-8 py-3 rounded-full font-medium text-gray-700 flex items-center gap-2 hover:bg-gray-50 transition"
-            >
-              <FaPlay /> See How It Works
-            </Link>
-          </div>
-        </div>
-      </section>
-      <section className="px-6 py-16">
+      <section className="flex flex-col">
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl text-black/70 font-extrabold">
             Everything You Need for Mental Wellness
@@ -111,56 +80,35 @@ export const Home = () => {
           ))}
         </div>
       </section>
-      <section className="px-6 py-16">
-        <div className="text-center mb-12">
+      <section className="px-6 pb-16 pt-16 text-center">
+        <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl md:text-4xl text-black/70 font-extrabold">
-            Simple Steps to Better Mental Health
+            Transform Your{" "}
+            <span className="bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent">
+              Mental Well-being
+            </span>
           </h1>
-          <p className="text-lg text-gray-600 mt-2">
-            Start your journey in just 3 easy steps
+          <p className="text-gray-600 text-lg md:text-xl mt-4 mb-8">
+            Discover emotional patterns, build healthier habits, and get smart,
+            AI-powered insights tailored for you.
           </p>
-          <div className="w-20 h-1 mx-auto mt-4 bg-gradient-to-r from-blue-600 to-pink-500 rounded-full" />
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {[
-            {
-              step: 1,
-              title: "Track Your Mood",
-              desc: "Log your emotions and daily activities effortlessly.",
-            },
-            {
-              step: 2,
-              title: "Get AI Insights",
-              desc: "Receive guidance based on your mood and behavior patterns.",
-            },
-            {
-              step: 3,
-              title: "Build Better Habits",
-              desc: "Apply insights to improve your emotional well-being.",
-            },
-          ].map((item) => (
-            <div
-              key={item.step}
-              className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 text-center"
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <button
+              onClick={() => {
+                setShowAuth(true);
+                setCurrentMode("signup");
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold text-base flex items-center gap-2 transition-all"
             >
-              <div className="bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-full font-bold text-lg mx-auto mb-4">
-                {item.step}
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800">
-                {item.title}
-              </h3>
-              <p className="text-sm text-gray-600 mt-2">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-        <div className="text-center mt-10">
-          <Link
-            to="/how-it-works"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-base font-semibold inline-flex items-center gap-2 transition"
-          >
-            Learn More <FaArrowRight />
-          </Link>
+              Start Your Journey <FaArrowRight />
+            </button>
+            <Link
+              to="/how-it-works"
+              className="border border-gray-300 px-8 py-3 rounded-full font-medium text-gray-700 flex items-center gap-2 hover:bg-gray-50 transition"
+            >
+              <FaPlay /> See How It Works
+            </Link>
+          </div>
         </div>
       </section>
     </PageSlideContainer>
