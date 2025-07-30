@@ -25,7 +25,8 @@ export const Footer = () => {
               </p>
             </div>
             <p className="text-sm text-[var(--color-text)]">
-              We empower you to track habits, sync life spheres & thrive everyday.
+              We empower you to track habits, sync life spheres & thrive
+              everyday.
             </p>
             <section aria-label="Social media" className="flex gap-3 mx-auto">
               <a
@@ -67,7 +68,10 @@ export const Footer = () => {
             <ul className="space-y-2">
               <li>
                 {isAuthenticated ? (
-                  <Link to="/dashboard" className="hover:text-[var(--color-primary)]">
+                  <Link
+                    to="/dashboard"
+                    className="hover:text-[var(--color-primary)]"
+                  >
                     Dashboard
                   </Link>
                 ) : (
@@ -82,15 +86,21 @@ export const Footer = () => {
                   </button>
                 )}
               </li>
-
               <li>
-                <Link to="/how-it-works" className="hover:text-[var(--color-primary)]">
-                  How it works
+                <Link
+                  to="/child-care"
+                  className="hover:text-[var(--color-primary)]"
+                >
+                  Child Care
                 </Link>
               </li>
+
               <li>
-                <Link to="/placeholder" className="hover:text-[var(--color-primary)]">
-                  Placeholder
+                <Link
+                  to="/how-it-works"
+                  className="hover:text-[var(--color-primary)]"
+                >
+                  How it works
                 </Link>
               </li>
             </ul>
@@ -105,12 +115,18 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/science" className="hover:text-[var(--color-primary)]">
+                <Link
+                  to="/science"
+                  className="hover:text-[var(--color-primary)]"
+                >
                   Blog
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="hover:text-[var(--color-primary)]">
+                <Link
+                  to="/contact"
+                  className="hover:text-[var(--color-primary)]"
+                >
                   Contact
                 </Link>
               </li>

@@ -1,5 +1,5 @@
 import { isValidObjectId } from "mongoose";
-import DailyActivities from "../models/DailyActivities.js";
+import DailyActivities from "../models/Activities.js";
 
 export const addDailyActivities = async (req, res) => {
   const {

@@ -6,18 +6,18 @@ import validateSchema from "../middlewares/validateSchema.js";
 import {
   DailyActivitiesSchema,
   SingleEmotionUpdateSchema,
-} from "../schemas/userSchemas.js";
+} from "../schemas/activitiesSchemas.js";
 
 import {
   addDailyActivities,
   getAllDailyActivities,
   getDailyActivitiesById,
   updateDailyActivities,
-} from "../controllers/user.js";
+} from "../controllers/activities.js";
 
-const userRouter = Router();
+const activitiesRouter = Router();
 
-userRouter
+activitiesRouter
   .route("/daily-entry")
   .post(verifyToken, validateSchema(DailyActivitiesSchema), addDailyActivities)
   .get(verifyToken, getAllDailyActivities)
@@ -27,6 +27,8 @@ userRouter
     updateDailyActivities
   );
 
-userRouter.route("/daily-entry/:date").get(verifyToken, getDailyActivitiesById);
+activitiesRouter
+  .route("/daily-entry/:date")
+  .get(verifyToken, getDailyActivitiesById);
 
-export default userRouter;
+export default activitiesRouter;
