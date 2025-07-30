@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import emailjs from "@emailjs/browser";
 import { forgotPassword } from "../../../data/auth";
+import { sendEmail } from "../../../utils/sendEmail";
 
 export const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
   const [email, setEmail] = useState("");
@@ -9,30 +10,6 @@ export const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
   const form = useRef();
 
   if (!isOpen) return null;
-
-  const sendEmail = async () => {
-    try {
-      const result = await emailjs.sendForm(
-        "service_l7ljht9",
-        "template_d953j3a",
-        form.current,
-        "sQwe6SyvduUQRNwRS"
-      );
-
-      return {
-        type: "success",
-        text: "Password reset email sent successfully!",
-      };
-    } catch (error) {
-      console.error("Email sending error:", error);
-      return {
-        type: "error",
-        text: `Failed to send email: ${
-          error.message || error.text || "Please try again."
-        }`,
-      };
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +37,7 @@ export const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
           "MoodSync Team";
         formElement.querySelector('input[name="email"]').value = response.email;
 
-        const emailResult = await sendEmail();
+        const emailResult = await sendEmail(form);
 
         if (emailResult.type === "success") {
           toast.success(

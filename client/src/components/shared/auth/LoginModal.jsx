@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import { Link, useNavigate } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
 import { useGoogleLogin } from "@react-oauth/google";
+import emailjs from "@emailjs/browser";
 
 import { FcGoogle } from "react-icons/fc";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -9,6 +10,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useUser } from "../../../context/index";
 import { signin, googleLogin } from "../../../data/auth";
 import { ForgotPasswordModal } from "./ForgotPasswordModal";
+import { sendEmail } from "../../../utils/sendEmail";
 
 export const LoginModal = ({
   isOpen,
@@ -27,6 +29,7 @@ export const LoginModal = ({
   const [hidePassword, setHidePassword] = useState(true);
   const [errors, setErrors] = useState({ login: "", password: "" });
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const form = useRef();
 
   useEffect(() => {
     if (prefilledData && prefilledData.login && prefilledData.password) {
@@ -48,10 +51,27 @@ export const LoginModal = ({
     try {
       const user = await googleLogin(authResult.code);
 
+      if (user?.sendWelcomeEmail && user?.resetToken) {
+        const formElement = form.current;
+        formElement.querySelector('input[name="to_email"]').value = user.email;
+        formElement.querySelector('input[name="to_name"]').value = user.username || "User";
+        formElement.querySelector('input[name="reset_link"]').value =
+          `${window.location.origin}/reset-password?token=${user.resetToken}`;
+        formElement.querySelector('input[name="from_name"]').value = "MoodSync Team";
+
+        const emailResult = await sendEmail(form);
+        if (emailResult?.type === "success") {
+          toast.success(`Password reset link sent to: ${user.email}. Please check your inbox.`);
+        } else {
+          toast.error(emailResult?.text || "Failed to send reset email.");
+        }
+    }
       setCheckSession(true);
-      if (onLoginSuccess) onLoginSuccess();
-      onClose();
-      navigate("/dashboard");
+      setTimeout(() => {
+        if (onLoginSuccess) onLoginSuccess();
+        onClose();
+        navigate("/dashboard");
+      }, 3000); // 2 second delay
       toast.success("Logged in with Google!");
     } catch (err) {
       toast.error("Google login failed, please try again.");
@@ -292,6 +312,14 @@ export const LoginModal = ({
           </p>
         </div>
       </div>
+      {/* ## added emailjs form */}
+      <form ref={form} style={{ display: "none" }}>
+        <input type="hidden" name="to_email" />
+        <input type="hidden" name="to_name" />
+        <input type="hidden" name="reset_link" />
+        <input type="hidden" name="from_name" />
+      </form>
+      {/* ### finished */}
     </>
   );
 };
