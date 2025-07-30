@@ -9,6 +9,7 @@ import "./db/index.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import rateLimiter from "./middlewares/rateLimiter.js";
 
+import userRouter from "./routes/userRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import aiRouter from "./routes/aiRoutes.js";
 import usersRouter from "./routes/usersRoutes.js";
@@ -31,6 +32,7 @@ app.use(
 
 app.use(express.json());
 
+app.use("/user", userRouter);
 app.use("/auth", authRouter);
 app.use("/ai", aiRouter);
 app.use("/users", usersRouter);
