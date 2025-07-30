@@ -172,55 +172,67 @@ const googleLogin = async (req, res) => {
     const googleRes = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(googleRes.tokens);
 
-    const userRes = await axios.get(
-      "https://www.googleapis.com/oauth2/v3/userinfo",
-      {
-        headers: {
-          Authorization: `Bearer ${googleRes.tokens.access_token}`,
-        },
-      }
-    );
-    // console.log("Google user data:", userRes.data);
+    const userRes = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+      headers: {
+        Authorization: `Bearer ${googleRes.tokens.access_token}`,
+      },
+    });
+
     const { email, name, given_name, family_name, picture, email_verified } = userRes.data;
+
     if (!email_verified) {
       return res.status(401).json({ message: "Google account not verified" });
     }
-    // const { email, name,given_name,family_name, picture } = userRes.data;
+
     let user = await User.findOne({ email });
 
+    let isNewUser = false;
+    let generatedPassword = null;
+    let resetToken = null;
+
     if (!user) {
-      const dummyPassword = await bcrypt.hash("google-oauth", 10);
+      isNewUser = true;
+      
+      generatedPassword = Math.random().toString(36).slice(-10);
+      const hashedPassword = await bcrypt.hash(generatedPassword, 10);
 
       user = await User.create({
         email,
-        // username: `${given_name}${family_name}`,
         username: `${given_name || ""}${family_name || ""}`.toLowerCase() || name.replace(/\s/g, "").toLowerCase(),
-        password: dummyPassword,
+        password: hashedPassword,
         firstname: given_name || "",
         lastname: family_name || "",
-        profilePicture:{
+        profilePicture: {
           url: picture || "",
           public_id: "",
-        }
+        },
       });
+
+      //Generate reset token (valid 24h)
+      resetToken = crypto.randomBytes(32).toString("hex");
+      const hashedResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+      user.resetPasswordToken = hashedResetToken;
+      user.resetPasswordExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
+      await user.save();
     }
 
-    const payload = {
-      userId: user._id,
-      userRole: user.role || "user",
-    };
-
+    const payload = { userId: user._id, userRole: user.role || "user" };
     const token = jwt.sign(payload, secret, tokenOptions);
     res.cookie("token", token, cookieOptions);
+
     return res.status(200).json({
       message: "Logged in successfully",
       user,
+      sendWelcomeEmail: isNewUser,
+      email: user.email,
+      username: user.username,
+      generatedPassword,
+      resetToken,
     });
   } catch (err) {
-    console.error("Google login error:", err)
-    res.status(500).json({
-      message: "Google login failed",
-    });
+    console.error("Google login error:", err);
+    res.status(500).json({ message: "Google login failed" });
   }
 };
 

@@ -63,7 +63,6 @@ export const deleteUser = async (req, res, next) => {
 };
 
 export const uploadProfilePicture = async (req, res, next) => {
-  console.log("Received file:", req.file);
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
@@ -99,7 +98,6 @@ export const uploadProfilePicture = async (req, res, next) => {
     try {
       result = await streamUpload(req.file.buffer);
     } catch (cloudErr) {
-      console.error("Cloudinary upload error:", cloudErr);
       return res.status(500).json({ error: "Failed to upload profile picture to Cloudinary" });
     }
 
