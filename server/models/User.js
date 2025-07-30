@@ -1,5 +1,8 @@
+import mongoose from "mongoose";
 import { Schema, model } from "mongoose";
 
+
+// export const User= mongoose.model("User", userSchema); // Exporting the User model
 const userSchema = new Schema(
   {
     username: {
@@ -23,9 +26,20 @@ const userSchema = new Schema(
       minlength: 8,
       select: false,
     },
+
+    settings: {
+      theme: { type: String, enum: ["light", "dark"], default: "light" },
+      aiTips: { type: Boolean, default: true },
+      notifications: { type: Boolean, default: true },
+    },
+    profilePicture: {
+      url: { type: String },
+      public_id: { type: String },
+    },
+
     role: { type: String, enum: ["user", "admin"], default: "user" },
-    resetPasswordToken: { type: String },
-    resetPasswordExpires: { type: Date },
+    resetPasswordToken: { type: String ,default: "" },
+    resetPasswordExpires: { type: Date, default: ""  },
   },
   {
     timestamps: true,

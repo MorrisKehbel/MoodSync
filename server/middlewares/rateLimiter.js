@@ -7,10 +7,15 @@ const rateLimiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
   ipv6Subnet: 56, // Set to 60 or 64 to be less aggressive, or 52 or 48 to be more aggressive
   // store: ... , // Redis, Memcached, etc. See below.
+  skipFailedRequests: true,
   handler: (req, res) => {
     res
       .status(429)
       .json({ error: "Too many requests, please try again later." });
+  },
+
+   validate: {
+    trustProxy: false, // ← This disables the error you're seeing
   },
 });
 

@@ -66,14 +66,14 @@ export const AboutUs = () => {
     <PageSlideContainer>
       <section className="flex flex-col">
         <div className="flex flex-col justify-center items-center text-center ">
-          <h1 className="text-3xl md:text-4xl text-black/70 font-extrabold">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--color-text)]/70">
             About Us
           </h1>
-          <p className="text-gray-500 text-lg mt-2">
+          <p className="text-[var(--color-muted)] text-lg mt-2">
             The mission behind MoodSync and the team supporting your well-being
           </p>
-          <div className="w-20 h-1 mx-auto mt-4 bg-gradient-to-r from-blue-600 to-pink-500 rounded-full" />
-          <p className="text-gray-700 mx-auto text-center mt-8 mb-12">
+          <div className="w-20 h-1 mx-auto mt-4 bg-gradient-to-r from-[var(--color-primary)] to-pink-500 rounded-full" />
+          <p className="text-[var(--color-text)] mx-auto text-center mt-8 mb-12 max-w-xl">
             What started as a final project at the WBS Coding School grew into a
             mission to support mental health. We believe evidence-based
             self-care should be accessible to everyone. Our mission is to
@@ -87,21 +87,24 @@ export const AboutUs = () => {
             <div
               key={id}
               className="
-              flex flex-col border border-black/40 lg:border-0 rounded-2xl items-center text-center w-full py-4"
+                flex flex-col border border-[var(--color-border)] lg:border-0 rounded-2xl items-center text-center w-full py-4
+              "
             >
               <img
                 src={avatar}
                 alt={`Avatar of ${name}`}
                 className="w-24 h-24 rounded-full border-2 border-white/40 shadow-md mb-2"
               />
-              <h3 className="font-semibold text-lg ">{name}</h3>
-              <p className="text-sm text-gray-500">{role}</p>
+              <h3 className="font-semibold text-lg text-[var(--color-text)]">{name}</h3>
+              <p className="text-sm text-[var(--color-muted)]">{role}</p>
               <div className="flex gap-4 mt-4">
                 {contact.map(({ href, Icon }, i) => (
                   <a
                     key={i}
                     href={href}
-                    className="text-gray-700 hover:text-gray-600 hover:scale-105 transition"
+                    className="text-[var(--color-text)] hover:text-[var(--color-primary)] hover:scale-105 transition"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <Icon size={22} />
                   </a>

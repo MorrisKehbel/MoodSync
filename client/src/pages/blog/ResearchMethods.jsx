@@ -12,7 +12,7 @@ export const ResearchMethods = () => {
           alt="Why it Matters"
         />
 
-        <h1 className="text-4xl leading-snug font-bold text-gray-800 my-6 text-center">
+        <h1 className="text-4xl leading-snug font-bold text-[var(--color-text)] my-6 text-center">
           From Research to Recovery: How Science Shapes Mental Health Support
         </h1>
 

@@ -55,3 +55,20 @@ export const resetPasswordSchema = z.object({
     .min(8, "Password must have at least 8 characters")
     .max(128, "Limit password to a maximum of 128 characters"),
 });
+
+
+//settings
+
+export const usersUpdateSchema = z.object({
+  username: z.string().min(3).max(32).optional(),
+  firstname: z.string().max(32).optional(),
+  lastname: z.string().max(32).optional(),
+  email: z.string().email().optional(),
+  password: z.string().min(8).max(128).optional(),
+  settings: z.object({
+    theme: z.enum(["light", "dark"]).optional(),
+    aiTips: z.boolean().optional(),
+    notifications: z.boolean().optional(),  
+  })
+  .optional(),
+})
