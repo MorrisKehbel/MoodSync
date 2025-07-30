@@ -1,9 +1,15 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { ToastContainer, toast } from "react-toastify";
 import { PageSlideContainer } from "../../components/shared/wrapper/PageSlideContainer";
 
-import { getAllDailyActivities, updateDailyActivities } from "../../data/user";
+import {
+  useAllDailyActivitiesQuery,
+  useAiSummary,
+} from "../../queries/queryHooks";
+
+import { updateDailyActivities } from "../../data/activities";
 import {
   imgHappy,
   imgCalm,
@@ -34,6 +40,7 @@ const getMonthDays = (year, month) => {
 
 export const MyJourney = () => {
   const [userData, setUserData] = useState([]);
+  const [uiData, setAiData] = useState([]);
   const [selectedEmotions, setSelectedEmotions] = useState({});
   const emotionTimers = useRef({});
   const currentMonth = today.getMonth();
@@ -41,17 +48,19 @@ export const MyJourney = () => {
 
   const days = getMonthDays(currentYear, currentMonth);
 
+  const { data: allDailyActivities } = useQuery(useAllDailyActivitiesQuery());
+  const { data: aiSummary } = useQuery(useAiSummary());
+  const queryClient = useQueryClient();
+
   useEffect(() => {
-    const fetchEntry = async () => {
-      try {
-        const data = await getAllDailyActivities();
-        setUserData(data.existingEntries || []);
-      } catch (error) {
-        console.error("Error loading your daily entries.", error);
-      }
-    };
-    fetchEntry();
-  }, []);
+    if (allDailyActivities) {
+      setUserData(allDailyActivities?.existingEntries || []);
+    }
+
+    if (aiSummary) {
+      setAiData(aiSummary?.summary || []);
+    }
+  }, [allDailyActivities, aiSummary]);
 
   const dataByDate = useMemo(() => {
     return Object.fromEntries(
@@ -87,7 +96,7 @@ export const MyJourney = () => {
           if (!data || typeof data !== "object") {
             throw new Error("No valid response from server");
           }
-
+          queryClient.invalidateQueries({ queryKey: ["allDailyActivities"] });
           toast.success(
             data.message || "Your emotions have been saved successfully!"
           );
@@ -124,7 +133,9 @@ export const MyJourney = () => {
         <section className="flex flex-col justify-center items-center text-center">
           <div className="w-full ">
             <textarea
-              placeholder="ai summary / motivation / advice placeholder"
+              placeholder={uiData.length > 0 ? uiData : "Loading summary..."}
+              rows={7}
+              readOnly
               className="w-full min-h-[120px] p-4 text-gray-800 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none mb-6 bg-white/90"
             />
 

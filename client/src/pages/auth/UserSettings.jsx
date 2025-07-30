@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getUser, updateUser, deleteUser, uploadProfilePicture, deleteProfilePicture } from "../../../server/users.js";
+import { getUser, updateUser, deleteUser, uploadProfilePicture, deleteProfilePicture } from "../../data/users.js";
 
 export const UserSettings = () => {
   const [formData, setFormData] = useState({

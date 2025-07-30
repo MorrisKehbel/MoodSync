@@ -6,6 +6,8 @@ import {
   Navigate,
 } from "react-router";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import { Home, HowItWorks, Science, AboutUs, ResetPasswordPage } from "./pages";
 
 import {
@@ -16,19 +18,30 @@ import {
   UserSettings,
 } from "./pages/auth";
 
+import { ChildrenCare } from "./pages/child/ActivitiesChildren";
+
 import {
   WhyItMatters,
   ResearchMethods,
   MoodTracking,
   DimensionsOfWellBeing,
 } from "./pages/blog";
-
+import { PulseLoader } from "react-spinners";
 import { ContactUs } from "./pages/ContactUs";
 
+import { loadAllDailyActivities } from "./queries/queryHooks";
 import { MainLayout } from "./layouts/MainLayout";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+    },
+  },
+});
 
 const App = () => {
   const router = createBrowserRouter(
@@ -42,6 +55,14 @@ const App = () => {
 
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="my-journey" element={<MyJourney />} />
+
+        <Route
+          path="my-journey"
+          loader={loadAllDailyActivities(queryClient)}
+          hydrateFallbackElement={<PulseLoader />}
+          element={<MyJourney />}
+        />
+
         <Route path="add-activities" element={<AddActivities />} />
         <Route path="goals" element={<GoalVision />} />
         <Route path="settings" element={<UserSettings />} />
@@ -54,14 +75,18 @@ const App = () => {
           element={<DimensionsOfWellBeing />}
         />
         <Route path="reset-password" element={<ResetPasswordPage />} />
+
+        <Route path="child-care" element={<ChildrenCare />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     )
   );
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <RouterProvider router={router} />
-    </GoogleOAuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <RouterProvider router={router} />
+      </GoogleOAuthProvider>
+    </QueryClientProvider>
   );
 };
 

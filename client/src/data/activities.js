@@ -1,5 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL;
-const baseURL = `${API_URL}/user`;
+const baseURL = `${API_URL}/activities`;
 
 export const addDailyActivities = async (formData) => {
   try {
@@ -30,7 +30,7 @@ export const addDailyActivities = async (formData) => {
   }
 };
 
-export const getDailyActivitiesById = async (date) => {
+export const getDailyActivitiesById = async (signal, date) => {
   try {
     const res = await fetch(`${baseURL}/daily-entry/${date}`, {
       method: "GET",

@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useSearchParams, Link } from "react-router";
 
-import { addDailyActivities, getDailyActivitiesById } from "../../data/user";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useDailyActivitiesQuery } from "../../queries/queryHooks";
+
+import { addDailyActivities } from "../../data/activities";
 import { useUser } from "../../context";
 import { PageSlideContainer } from "../../components/shared/wrapper/PageSlideContainer";
 import {
@@ -16,7 +19,6 @@ import {
 import {
   FaUsers,
   FaHeart,
-  FaShoppingCart,
   FaBook,
   FaGraduationCap,
   FaAppleAlt,
@@ -46,87 +48,82 @@ const activities = [
   },
   {
     id: 3,
-    name: "Shopping",
-    icon: FaShoppingCart,
-  },
-  {
-    id: 4,
     name: "Meditation",
     icon: GiMeditation,
   },
   {
-    id: 5,
+    id: 4,
     name: "Me-Time",
     icon: GiBathtub,
   },
   {
-    id: 6,
+    id: 5,
     name: "Learning",
     icon: FaGraduationCap,
   },
   {
-    id: 7,
+    id: 6,
     name: "Reading",
     icon: FaBook,
   },
   {
-    id: 8,
+    id: 7,
     name: "Healthy Eating",
     icon: FaAppleAlt,
   },
   {
-    id: 9,
+    id: 8,
     name: "Hydration",
     icon: FaTint,
   },
   {
-    id: 10,
+    id: 9,
     name: "Sleep Early",
     icon: FaMoon,
   },
   {
-    id: 11,
+    id: 10,
     name: "Sport",
     icon: FaDumbbell,
   },
   {
-    id: 12,
+    id: 11,
     name: "Walking",
     icon: FaWalking,
   },
   {
-    id: 13,
+    id: 12,
     name: "Gaming",
     icon: FaGamepad,
   },
   {
-    id: 14,
+    id: 13,
     name: "Watching TV",
     icon: FaTv,
   },
   {
-    id: 15,
+    id: 14,
     name: "Social Media",
     icon: GiSmartphone,
   },
   {
-    id: 16,
+    id: 15,
     name: "Working",
     icon: FaLaptop,
   },
   {
-    id: 17,
+    id: 16,
     name: "Review Finances",
     icon: FaMoneyBillWave,
   },
   {
-    id: 18,
+    id: 17,
     name: "Weekly Planning",
     icon: FaCalendarAlt,
   },
   {
-    id: 19,
-    name: "Other Hobbys",
+    id: 18,
+    name: "Other Hobbies",
     icon: FaStar,
   },
 ];
@@ -159,20 +156,18 @@ export const AddActivities = () => {
   const dateParam = searchParams.get("date");
   const effectiveDate = dateParam || localDate;
 
+  const { data } = useQuery(useDailyActivitiesQuery(effectiveDate));
+
+  const queryClient = useQueryClient();
+
   useEffect(() => {
-    const fetchEntry = async () => {
-      try {
-        const data = await getDailyActivitiesById(effectiveDate);
-        const entry = data?.existingEntry;
-        setValue(entry?.note || "");
-        setSelectedActivities(entry?.activities || []);
-        setSelectedEmotion(entry?.emotion || "");
-      } catch (error) {
-        console.error("Error loading your daily entry.", error);
-      }
-    };
-    fetchEntry();
-  }, [effectiveDate]);
+    if (data) {
+      const entry = data?.existingEntry;
+      setValue(entry?.note || "");
+      setSelectedActivities(entry?.activities || []);
+      setSelectedEmotion(entry?.emotion || "");
+    }
+  }, [data]);
 
   const toggleSelectActivities = (name) => {
     setSelectedActivities((prev) => {
@@ -205,6 +200,10 @@ export const AddActivities = () => {
         activities: selectedActivities,
         emotion: selectedEmotion,
         date: effectiveDate,
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["DailyActivities", effectiveDate],
       });
 
       toast.success(
@@ -248,7 +247,7 @@ export const AddActivities = () => {
             </p>
             <div className="w-20 h-1 mx-auto mt-4 bg-gradient-to-r from-blue-600 to-pink-500 rounded-full mb-12" />
           </div>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))] gap-x-2 gap-y-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3  md:grid-cols-6 xl:grid-cols-9 gap-x-2 gap-y-6">
             {activities.map(({ id, name, icon: Icon }) => {
               const isSelected = selectedActivities.includes(name);
               return (
@@ -271,7 +270,7 @@ export const AddActivities = () => {
               );
             })}
           </div>
-          <div className="bg-gradient-to-r from-white/10 via-white/20 to-white/10 backdrop-blur-md rounded-2xl shadow-sm sm:shadow-md border border-white/60 mt-12 p-8">
+          <div className="bg-gradient-to-r from-white/10 via-white/20 to-white/10 backdrop-blur-md rounded-2xl shadow-sm sm:shadow-md border border-white/60 mt-16 p-8">
             <div className="flex flex-wrap justify-center items-center gap-6">
               {emotions.map(({ id, name, image: Image }) => {
                 const isSelected = selectedEmotion === name;
