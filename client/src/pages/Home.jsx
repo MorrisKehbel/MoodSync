@@ -49,10 +49,10 @@ export const Home = () => {
     <PageSlideContainer>
       <section className="flex flex-col">
         <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl text-black/70 font-extrabold">
+          <h1 className="text-3xl md:text-4xl text-[var(--color-text)] font-extrabold">
             Everything You Need for Mental Wellness
           </h1>
-          <p className="text-lg text-gray-600 mt-2">
+          <p className="text-lg text-[var(--color-text)] mt-2">
             Tools designed to help you track, reflect, and grow.
           </p>
           <div className="w-20 h-1 mx-auto mt-4 bg-gradient-to-r from-blue-600 to-pink-500 rounded-full" />
@@ -82,13 +82,13 @@ export const Home = () => {
       </section>
       <section className="px-6 pb-16 pt-16 text-center">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl md:text-4xl text-black/70 font-extrabold">
+          <h1 className="text-3xl md:text-4xl text-[var(--color-text)] font-extrabold">
             Transform Your{" "}
             <span className="bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent">
               Mental Well-being
             </span>
           </h1>
-          <p className="text-gray-600 text-lg md:text-xl mt-4 mb-8">
+          <p className="text-[var(--color-text)] text-lg md:text-xl mt-4 mb-8 ">
             Discover emotional patterns, build healthier habits, and get smart,
             AI-powered insights tailored for you.
           </p>
