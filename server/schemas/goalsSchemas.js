@@ -24,6 +24,13 @@ export const createGoalSchema = z.object({
     .trim()
     .min(1, "Goal description is required")
     .max(1000, "Goal description must not exceed 1000 characters"),
+  category: z.enum(
+    ["Social", "Physical health", "Finances", "Job satisfaction", "Personal"],
+    {
+      required_error: "Category is required",
+      invalid_type_error: "Invalid category selected",
+    }
+  ),
   status: z.enum(["active", "completed"]).default("active"),
   progress: progressSchema.optional(),
 });
@@ -40,6 +47,15 @@ export const updateGoalSchema = z.object({
     .trim()
     .min(1, "Goal description is required")
     .max(1000, "Goal description must not exceed 1000 characters")
+    .optional(),
+  category: z
+    .enum([
+      "Social",
+      "Physical health",
+      "Finances",
+      "Job satisfaction",
+      "Personal",
+    ])
     .optional(),
   status: z.enum(["active", "completed"]).optional(),
   progress: progressSchema.optional(),

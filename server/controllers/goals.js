@@ -3,7 +3,7 @@ import Goals from "../models/Goals.js";
 
 export const createGoal = async (req, res) => {
   const {
-    sanitizedBody: { title, desc, status, progress },
+    sanitizedBody: { title, desc, category, status, progress },
     userId,
   } = req;
 
@@ -16,6 +16,7 @@ export const createGoal = async (req, res) => {
       userId,
       title,
       desc,
+      category,
       status: status || "active",
       progress,
     });

@@ -21,12 +21,12 @@ const PORT = process.env.PORT || 3000;
 const CLIENT = process.env.CLIENT_URL;
 
 app.set("trust proxy", true);
-app.use(rateLimiter);
+// app.use(rateLimiter); // Temporarily disabled for development
 
 app.use(
   cors({
     origin: CLIENT,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
 );
