@@ -128,8 +128,8 @@ export const MyJourney = () => {
               className="w-full min-h-[120px] p-4 text-gray-800 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none mb-6 bg-white/90"
             />
 
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+            <div className="text-center mb-6 ">
+              <h2 className="text-2xl font-semibold text-[var(--color-text)] mb-2  ">
                 July {currentYear}
               </h2>
               <div className="flex justify-center items-center gap-4 text-2xl">
@@ -138,7 +138,7 @@ export const MyJourney = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 xl:grid-cols-11 gap-3 mb-8 text-center text-sm">
+            <div className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 xl:grid-cols-11 gap-3 mb-8 text-center text-black text-sm">
               {days.map((day) => {
                 const yyyy = day.getFullYear();
                 const mm = String(day.getMonth() + 1).padStart(2, "0");
