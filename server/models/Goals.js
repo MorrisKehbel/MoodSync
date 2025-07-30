@@ -36,6 +36,17 @@ const goalsSchema = new Schema(
       trim: true,
       maxlength: 1000,
     },
+    category: {
+      type: String,
+      enum: [
+        "Social",
+        "Physical health",
+        "Finances",
+        "Job satisfaction",
+        "Personal",
+      ],
+      required: [true, "Category is required"],
+    },
     status: {
       type: String,
       enum: ["active", "completed"],
