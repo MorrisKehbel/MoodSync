@@ -13,6 +13,7 @@ import userRouter from "./routes/userRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import aiRouter from "./routes/aiRoutes.js";
 import usersRouter from "./routes/usersRoutes.js";
+import goalsRouter from "./routes/goalsRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,12 +21,12 @@ const PORT = process.env.PORT || 3000;
 const CLIENT = process.env.CLIENT_URL;
 
 app.set("trust proxy", true);
-app.use(rateLimiter); 
+app.use(rateLimiter);
 
 app.use(
   cors({
     origin: CLIENT,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
@@ -36,6 +37,7 @@ app.use("/user", userRouter);
 app.use("/auth", authRouter);
 app.use("/ai", aiRouter);
 app.use("/users", usersRouter);
+app.use("/goals", goalsRouter);
 
 app.get("/", (_req, res) => {
   res.send("Running");

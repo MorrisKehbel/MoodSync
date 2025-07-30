@@ -14,7 +14,7 @@ import {
   signUp,
   signIn,
   me,
-  signOut, 
+  signOut,
   googleLogin,
   forgotPassword,
   resetPassword,
@@ -31,9 +31,7 @@ authRouter
   .route("/signin")
   .post(rateLimiter, validateSchema(signInSchema), signIn);
 
-authRouter.route("/google-login").post(
-  rateLimiter, googleLogin
-);
+authRouter.route("/google-login").post(rateLimiter, googleLogin);
 
 authRouter.route("/me").get(verifyToken, me);
 
