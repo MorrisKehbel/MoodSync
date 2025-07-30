@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, NavLink, useLocation } from "react-router";
-
+import { Link, NavLink, useLocation, useNavigate } from "react-router";
 import {
   FaHome,
   FaRegHeart,
@@ -56,6 +55,7 @@ export const PublicNavbar = () => {
   const { isAuthenticated, logout, showAuth, setShowAuth } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navItems = isAuthenticated ? authNavItems : publicNavItems;
 
@@ -137,13 +137,23 @@ export const PublicNavbar = () => {
               </ul>
               <div className="hidden sm:flex">
                 {isAuthenticated ? (
-                  <AnimatedButton onClick={() => logout()}>
+                  <AnimatedButton
+                    onClick={() => {
+                      logout();
+                      setShowAuth(true); // open login modal after logout
+                    }}
+                  >
                     Logout
                   </AnimatedButton>
                 ) : (
                   <AnimatedButton
                     onClick={() => {
-                      setShowAuth((prev) => !prev);
+                      if (!showAuth) {
+                        setShowAuth(true); // Show modal
+                      } else {
+                        setShowAuth(false); // Hide modal
+                        navigate("/"); // Redirect to home
+                      }
                     }}
                   >
                     Sync Me In
@@ -204,7 +214,12 @@ export const PublicNavbar = () => {
                     <AnimatedButton
                       onClick={() => {
                         setMenuOpen(false);
-                        setShowAuth((prev) => !prev);
+                        if (!showAuth) {
+                          setShowAuth(true);
+                        } else {
+                          setShowAuth(false);
+                          navigate("/");
+                        }
                       }}
                     >
                       Sync Me In

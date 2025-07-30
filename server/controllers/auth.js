@@ -29,6 +29,10 @@ const signUp = async (req, res, next) => {
     const user = await User.create({
       ...req.sanitizedBody,
       password: hashedPassword,
+      profilePicture: {
+        url: "",
+        public_id: "",
+      },
     });
 
     const payload = { userId: user._id, userRole: user.role || "user" };
@@ -176,16 +180,28 @@ const googleLogin = async (req, res) => {
         },
       }
     );
-    const { email, name,given_name,family_name, picture } = userRes.data;
+    // console.log("Google user data:", userRes.data);
+    const { email, name, given_name, family_name, picture, email_verified } = userRes.data;
+    if (!email_verified) {
+      return res.status(401).json({ message: "Google account not verified" });
+    }
+    // const { email, name,given_name,family_name, picture } = userRes.data;
     let user = await User.findOne({ email });
+
     if (!user) {
       const dummyPassword = await bcrypt.hash("google-oauth", 10);
 
       user = await User.create({
         email,
-        username: `${given_name}${family_name}`,
+        // username: `${given_name}${family_name}`,
+        username: `${given_name || ""}${family_name || ""}`.toLowerCase() || name.replace(/\s/g, "").toLowerCase(),
         password: dummyPassword,
-        picture,
+        firstname: given_name || "",
+        lastname: family_name || "",
+        profilePicture:{
+          url: picture || "",
+          public_id: "",
+        }
       });
     }
 
@@ -207,5 +223,6 @@ const googleLogin = async (req, res) => {
     });
   }
 };
+
 
 export { signUp, signIn, me, signOut, forgotPassword, resetPassword, googleLogin };

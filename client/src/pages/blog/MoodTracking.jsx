@@ -12,7 +12,7 @@ export const MoodTracking = () => {
           alt="Mood Tracking"
         />
 
-        <h1 className="text-4xl leading-snug font-bold text-gray-800 my-6 text-center">
+        <h1 className="text-4xl leading-snug font-bold text-[var(--color-text)] my-6 text-center">
           Mood Tracking: Why Self-Reflection Makes a Difference
         </h1>
 

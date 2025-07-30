@@ -45,7 +45,7 @@ export const ContactUs = () => {
 
   return (
     <PageSlideContainer>
-      <section className="flex flex-col">
+      <section className="flex flex-col  text-black">
         <div className="flex flex-col items-center gap-6 px-8 py-12 bg-white/70 backdrop-blur-md rounded-2xl shadow-2xl max-w-xl mx-auto w-full">
           <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 text-center drop-shadow-lg leading-snug">
             Contact Us
