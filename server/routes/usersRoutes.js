@@ -1,4 +1,10 @@
-import { getUserById, updateUser, deleteUser, uploadProfilePicture, deleteProfilePicture } from "../controllers/users.js";
+import {
+  getUserById,
+  updateUser,
+  deleteUser,
+  uploadProfilePicture,
+  deleteProfilePicture,
+} from "../controllers/users.js";
 import { Router } from "express";
 import verifyToken from "../middlewares/verifyToken.js";
 import multer from "multer";
@@ -14,22 +20,18 @@ const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
 
-usersRouter.route("/")
+usersRouter
+  .route("/")
   .get(verifyToken, getUserById)
-  .put( verifyToken,validateSchema(usersUpdateSchema), updateUser)
-  .delete( verifyToken, deleteUser);
+  .put(verifyToken, validateSchema(usersUpdateSchema), updateUser)
+  .delete(verifyToken, deleteUser);
 
-usersRouter.route("/upload-profile-picture")
-  .put(
-    verifyToken,
-    upload.single("profilePicture"),
-    uploadProfilePicture
-  );
+usersRouter
+  .route("/upload-profile-picture")
+  .put(verifyToken, upload.single("profilePicture"), uploadProfilePicture);
 
-usersRouter.route("/delete-profile-picture")
+usersRouter
+  .route("/delete-profile-picture")
   .delete(verifyToken, deleteProfilePicture);
 
 export default usersRouter;
-
-
-
