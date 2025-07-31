@@ -102,6 +102,7 @@ export const ContactUs = () => {
             <input
               type="text"
               name="name"
+              autoComplete="name"
               placeholder="Your name"
               value={formData.name}
               onChange={handleChange}
@@ -111,6 +112,7 @@ export const ContactUs = () => {
             <input
               type="email"
               name="email"
+              autoComplete="email"
               placeholder="Your email"
               value={formData.email}
               onChange={handleChange}
@@ -120,6 +122,7 @@ export const ContactUs = () => {
             <textarea
               name="message"
               placeholder="Your message"
+              autoComplete="off"
               rows="5"
               value={formData.message}
               onChange={handleChange}

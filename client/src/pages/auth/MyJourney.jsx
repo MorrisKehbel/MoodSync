@@ -151,6 +151,8 @@ export const MyJourney = () => {
           <div className="w-full ">
             {user.settings.aiTips ? (
               <textarea
+                id="ai-summary"
+                name="ai-summary"
                 placeholder={uiData.length > 0 ? uiData : "Loading summary..."}
                 rows={7}
                 readOnly
