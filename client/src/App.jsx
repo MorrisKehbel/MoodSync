@@ -37,6 +37,7 @@ import { PulseLoader } from "react-spinners";
 import { loadAllDailyActivities } from "./queries/queryHooks";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ProtectedRoute } from "./components/shared/wrapper/ProtectedRoutes";
+import { useUser } from "./context";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -44,11 +45,13 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: Infinity,
+      refetchOnWindowFocus: false,
     },
   },
 });
 
 const App = () => {
+  const { user } = useUser();
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<MainLayout />}>
@@ -68,7 +71,7 @@ const App = () => {
         />
         <Route
           path="my-journey"
-          loader={loadAllDailyActivities(queryClient)}
+          loader={loadAllDailyActivities(queryClient, user)}
           hydrateFallbackElement={<PulseLoader />}
           element={
             <ProtectedRoute>

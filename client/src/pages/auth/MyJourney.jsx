@@ -18,6 +18,8 @@ import {
   imgAngry,
 } from "../../assets/emotions/";
 
+import { useUser } from "../../context";
+
 const emotions = [
   { id: 1, name: "Happy", image: imgHappy },
   { id: 2, name: "Calm", image: imgCalm },
@@ -42,6 +44,7 @@ export const MyJourney = () => {
   const [userData, setUserData] = useState([]);
   const [uiData, setAiData] = useState([]);
   const [selectedEmotions, setSelectedEmotions] = useState({});
+  const { user } = useUser();
   const emotionTimers = useRef({});
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
@@ -49,7 +52,21 @@ export const MyJourney = () => {
   const days = getMonthDays(currentYear, currentMonth);
 
   const { data: allDailyActivities } = useQuery(useAllDailyActivitiesQuery());
-  const { data: aiSummary } = useQuery(useAiSummary());
+  const {
+    data: aiSummary,
+    isError,
+    error,
+  } = useQuery({
+    ...useAiSummary(),
+    enabled: user?.settings?.aiTips === true,
+  });
+
+  // useEffect(() => {
+  //   if (isError && error instanceof Error) {
+  //     toast.error(error.message);
+  //   }
+  // }, [isError, error]);
+
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -132,12 +149,14 @@ export const MyJourney = () => {
       <PageSlideContainer>
         <section className="flex flex-col justify-center items-center text-center">
           <div className="w-full ">
-            <textarea
-              placeholder={uiData.length > 0 ? uiData : "Loading summary..."}
-              rows={7}
-              readOnly
-              className="w-full min-h-[120px] p-4 text-gray-800 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none mb-6 bg-white/90"
-            />
+            {user.settings.aiTips ? (
+              <textarea
+                placeholder={uiData.length > 0 ? uiData : "Loading summary..."}
+                rows={7}
+                readOnly
+                className="w-full min-h-[120px] p-4 text-gray-800 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none mb-6 bg-white/90"
+              />
+            ) : null}
 
             <div className="text-center mb-6 ">
               <h2 className="text-2xl font-semibold text-[var(--color-text)] mb-2  ">

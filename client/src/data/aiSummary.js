@@ -1,7 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL;
 const baseURL = `${API_URL}/ai`;
 
-export const fetchSummary = async () => {
+export const fetchSummary = async (signal) => {
   try {
     const res = await fetch(`${baseURL}/summary`, {
       method: "GET",
@@ -9,6 +9,7 @@ export const fetchSummary = async () => {
       headers: {
         "Content-Type": "application/json",
       },
+      signal,
     });
 
     if (res.status === 404) {
@@ -29,7 +30,7 @@ export const fetchSummary = async () => {
   }
 };
 
-const generateSummary = async () => {
+const generateSummary = async (signal) => {
   try {
     const res = await fetch(`${baseURL}/summary`, {
       method: "POST",
@@ -37,6 +38,7 @@ const generateSummary = async () => {
       headers: {
         "Content-Type": "application/json",
       },
+      signal,
     });
 
     if (!res.ok) {
