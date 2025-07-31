@@ -5,11 +5,16 @@ import {
   RouterProvider,
   Navigate,
 } from "react-router";
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { Home, HowItWorks, Science, AboutUs, ResetPasswordPage } from "./pages";
-
+import {
+  Home,
+  HowItWorks,
+  Science,
+  AboutUs,
+  ResetPasswordPage,
+  ContactUs,
+} from "./pages";
 import {
   Dashboard,
   MyJourney,
@@ -17,21 +22,21 @@ import {
   GoalVision,
   UserSettings,
 } from "./pages/auth";
-
 import { ChildrenCare } from "./pages/child/ActivitiesChildren";
-
 import {
   WhyItMatters,
   ResearchMethods,
   MoodTracking,
   DimensionsOfWellBeing,
 } from "./pages/blog";
+
+import { MainLayout } from "./layouts/MainLayout";
+
 import { PulseLoader } from "react-spinners";
-import { ContactUs } from "./pages/ContactUs";
 
 import { loadAllDailyActivities } from "./queries/queryHooks";
-import { MainLayout } from "./layouts/MainLayout";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { ProtectedRoute } from "./components/shared/wrapper/ProtectedRoutes";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -53,19 +58,48 @@ const App = () => {
         <Route path="about" element={<AboutUs />} />
         <Route path="contact" element={<ContactUs />} />
 
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="my-journey" element={<MyJourney />} />
-
+        <Route
+          path="dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="my-journey"
           loader={loadAllDailyActivities(queryClient)}
           hydrateFallbackElement={<PulseLoader />}
-          element={<MyJourney />}
+          element={
+            <ProtectedRoute>
+              <MyJourney />
+            </ProtectedRoute>
+          }
         />
-
-        <Route path="add-activities" element={<AddActivities />} />
-        <Route path="goals" element={<GoalVision />} />
-        <Route path="settings" element={<UserSettings />} />
+        <Route
+          path="add-activities"
+          element={
+            <ProtectedRoute>
+              <AddActivities />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="goals"
+          element={
+            <ProtectedRoute>
+              <GoalVision />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="settings"
+          element={
+            <ProtectedRoute>
+              <UserSettings />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path="blog/why-it-matters" element={<WhyItMatters />} />
         <Route path="blog/research-methods" element={<ResearchMethods />} />
@@ -74,6 +108,7 @@ const App = () => {
           path="blog/dimensions-of-wellbeing"
           element={<DimensionsOfWellBeing />}
         />
+
         <Route path="reset-password" element={<ResetPasswordPage />} />
 
         <Route path="child-care" element={<ChildrenCare />} />

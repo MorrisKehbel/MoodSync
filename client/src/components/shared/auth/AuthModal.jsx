@@ -9,7 +9,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
   const [loginData, setLoginData] = useState({ login: "", password: "" });
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
 
-  const { currentMode, setCurrentMode } = useUser();
+  const { currentMode, setCurrentMode, setShowAuth } = useUser();
 
   const switchMode = (newMode) => {
     if (isAnimating || currentMode === newMode) return;
@@ -41,6 +41,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
 
     setTimeout(() => {
       setIsAnimating(false);
+      setShowAuth(false);
       onClose();
     }, 250);
   };
