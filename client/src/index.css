@@ -1,11 +1,6 @@
 @import "tailwindcss";
-@tailwind components;
-@tailwind utilities;
 
-/* html {
-  overflow-y: scroll;
-  scroll-behavior: smooth;
-} */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 @keyframes modalFlipOut {
   0% {
@@ -33,15 +28,8 @@
   animation: modalFlipIn 0.25s ease-in-out forwards;
 }
 
-/* index.css or globals.css */
-/* :root {
-  --color-bg: #ffffff;
-  --color-text: #111111;
-  --color-primary: #2563eb; 
-}  */
-
-body.dark {
-  --color-bg: #111827;
-  --color-text: white ;
-  --color-primary: #3b82f6; /* Tailwind's blue-500 */
+html[data-theme="dark"] body {
+  --color-text: white;
+  --color-primary: #3b82f6;
+  --color-text-muted: rgba(255, 255, 255, 0.8);
 }

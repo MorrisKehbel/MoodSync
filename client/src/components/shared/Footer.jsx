@@ -13,15 +13,15 @@ export const Footer = () => {
   const { isAuthenticated, setCurrentMode, setShowAuth } = useUser();
 
   return (
-    <footer className="w-full bg-[var(--color-bg)] text-[var(--color-text)]">
+    <footer className="w-full text-[var(--color-text)]">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:text-left">
           <div className="space-y-6 col-span-1 sm:col-span-2 flex flex-col justify-center mx-auto">
             <div className="flex text-2xl font-bold justify-center mx-auto items-center">
-              <FaHeartbeat className="w-6 h-6 mr-1 text-[var(--color-primary)]" />
-              <p>
+              <FaHeartbeat className="w-6 h-6 mr-1 text-blue-600 dark:text-blue-500" />
+              <p className="dark:text-white">
                 Mood
-                <span className="text-[var(--color-primary)]">Sync</span>
+                <span className="text-blue-600 dark:text-blue-500">Sync</span>
               </p>
             </div>
             <p className="text-sm text-[var(--color-text)]">
@@ -32,7 +32,7 @@ export const Footer = () => {
               <a
                 href="#"
                 aria-label="Twitter"
-                className="rounded-xl bg-gray-100/20 p-3 backdrop-blur transition hover:bg-gray-100/60 text-[var(--color-text)] hover:text-[var(--color-primary)]"
+                className="rounded-xl bg-gray-100/20 p-3 backdrop-blur transition hover:bg-gray-100/60 text-[var(--color-text)]"
               >
                 <FaTwitter className="h-4 w-4" />
               </a>
@@ -40,7 +40,7 @@ export const Footer = () => {
               <a
                 href="#"
                 aria-label="Instagram"
-                className="rounded-xl bg-gray-100/20 p-3 backdrop-blur transition hover:bg-gray-100/60 text-[var(--color-text)] hover:text-[var(--color-primary)]"
+                className="rounded-xl bg-gray-100/20 p-3 backdrop-blur transition hover:bg-gray-100/60 text-[var(--color-text)]"
               >
                 <FaInstagram className="h-4 w-4" />
               </a>
@@ -48,7 +48,7 @@ export const Footer = () => {
               <a
                 href="#"
                 aria-label="LinkedIn"
-                className="rounded-xl bg-gray-100/20 p-3 backdrop-blur transition hover:bg-gray-100/60 text-[var(--color-text)] hover:text-[var(--color-primary)]"
+                className="rounded-xl bg-gray-100/20 p-3 backdrop-blur transition hover:bg-gray-100/60 text-[var(--color-text)]"
               >
                 <FaLinkedin className="h-4 w-4" />
               </a>
@@ -56,14 +56,14 @@ export const Footer = () => {
               <a
                 href="#"
                 aria-label="Github"
-                className="rounded-xl bg-gray-100/20 p-3 backdrop-blur transition hover:bg-gray-100/60 text-[var(--color-text)] hover:text-[var(--color-primary)]"
+                className="rounded-xl bg-gray-100/20 p-3 backdrop-blur transition hover:bg-gray-100/60 text-[var(--color-text)]"
               >
                 <FaGithub className="h-4 w-4" />
               </a>
             </section>
           </div>
 
-          <div className="py-4 px-8 bg-gradient-to-r from-white/10 via-white/20 to-white/10 backdrop-blur-md shadow-sm sm:shadow-md rounded-2xl border border-white/60 space-y-4 text-[var(--color-text)] text-center lg:text-left">
+          <div className="py-4 px-8 bg-gradient-to-r from-white/10 dark:from-white/5 via-white/20 dark:via-white/8 to-white/10 dark:to-white/5 backdrop-blur-md shadow-sm sm:shadow-md rounded-2xl border border-white/60 dark:border-white/10 space-y-4 text-[var(--color-text)] text-center lg:text-left">
             <h3 className="font-semibold text-lg">Services</h3>
             <ul className="space-y-2">
               <li>
@@ -106,7 +106,7 @@ export const Footer = () => {
             </ul>
           </div>
 
-          <div className="py-4 px-8 bg-gradient-to-r from-white/10 via-white/20 to-white/10 backdrop-blur-md shadow-sm sm:shadow-md rounded-2xl border border-white/60 space-y-4 text-[var(--color-text)] text-center lg:text-left">
+          <div className="py-4 px-8 bg-gradient-to-r from-white/10 dark:from-white/5 via-white/20 dark:via-white/8 to-white/10 dark:to-white/5 backdrop-blur-md shadow-sm sm:shadow-md rounded-2xl border border-white/60 dark:border-white/10 space-y-4 text-[var(--color-text)] text-center lg:text-left">
             <h3 className="font-semibold text-lg">Company</h3>
             <ul className="space-y-2">
               <li>

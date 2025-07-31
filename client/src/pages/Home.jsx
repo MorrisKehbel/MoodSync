@@ -52,7 +52,7 @@ export const Home = () => {
           <h1 className="text-3xl md:text-4xl text-[var(--color-text)] font-extrabold">
             Everything You Need for Mental Wellness
           </h1>
-          <p className="text-lg text-[var(--color-text)] mt-2">
+          <p className="text-lg text-[var(--color-text-muted)] mt-2">
             Tools designed to help you track, reflect, and grow.
           </p>
           <div className="w-20 h-1 mx-auto mt-4 bg-gradient-to-r from-blue-600 to-pink-500 rounded-full" />
@@ -67,7 +67,7 @@ export const Home = () => {
               <img
                 src={feature.img}
                 alt={feature.title}
-                className="w-20 h-20 rounded-xl object-cover mb-4"
+                className="w-20 h-20 rounded-xl object-cover mb-4 select-none"
               />
               <feature.icon className="text-blue-600 text-2xl mb-2" />
               <h3 className="text-lg font-semibold text-gray-800">
@@ -82,13 +82,13 @@ export const Home = () => {
       </section>
       <section className="px-6 pb-16 pt-16 text-center">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl md:text-4xl text-[var(--color-text)] font-extrabold">
+          <h1 className="text-2xl md:text-3xl text-[var(--color-text)] font-extrabold">
             Transform Your{" "}
             <span className="bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent">
               Mental Well-being
             </span>
           </h1>
-          <p className="text-[var(--color-text)] text-lg md:text-xl mt-4 mb-8 ">
+          <p className="text-[var(--color-text-muted)] text-lg mt-4 mb-8 ">
             Discover emotional patterns, build healthier habits, and get smart,
             AI-powered insights tailored for you.
           </p>
@@ -98,13 +98,13 @@ export const Home = () => {
                 setShowAuth(true);
                 setCurrentMode("signup");
               }}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold text-base flex items-center gap-2 transition-all"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold text-base flex items-center gap-2 transition-all cursor-pointer"
             >
               Start Your Journey <FaArrowRight />
             </button>
             <Link
               to="/how-it-works"
-              className="border border-gray-300 px-8 py-3 rounded-full font-medium text-gray-700 flex items-center gap-2 hover:bg-gray-50 transition"
+              className="border border-gray-300 px-8 py-3 rounded-full font-medium text-[var(--color-text)] flex items-center gap-2 bg-white/20 hover:bg-white/60 transition"
             >
               <FaPlay /> See How It Works
             </Link>

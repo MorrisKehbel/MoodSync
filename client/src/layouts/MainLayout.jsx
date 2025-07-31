@@ -8,12 +8,10 @@ import {
   ErrorFallback,
 } from "../components/shared/index";
 
-import '../index.css'; // Import your global styles
-
 export const MainLayout = () => {
   const location = useLocation();
   return (
-    <div className="flex flex-col min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] transition-colors duration-300">
+    <div className="flex flex-col min-h-screen">
       <ScrollToTop />
       <PublicNavbar />
 
@@ -27,6 +25,6 @@ export const MainLayout = () => {
       </main>
 
       <Footer />
-      </div>
+    </div>
   );
 };

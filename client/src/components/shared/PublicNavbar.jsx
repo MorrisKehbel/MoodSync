@@ -77,7 +77,7 @@ export const PublicNavbar = () => {
         aria-label="Main navigation"
         className="sticky top-12 left-0 w-full z-25 lg:z-50 flex justify-center items-center"
       >
-        <div className="flex justify-center items-center gap-8 sm:gap-16 lg:gap-4 px-8 sm:px-4 py-3 bg-gradient-to-r from-white/20 via-white/40 to-white/20 backdrop-blur-md shadow-xl rounded-2xl border border-white/60">
+        <div className="flex justify-center items-center gap-8 sm:gap-16 lg:gap-4 px-8 sm:px-4 py-3 bg-gradient-to-r from-white/20 dark:from-black/20 via-white/40 dark:via-black/40 to-white/20 dark:to-black/20 backdrop-blur-md shadow-xl rounded-2xl border border-white/60 dark:border-white/10">
           <div className="flex flex-col gap-6">
             <div className="flex space-x-6 sm:space-x-8">
               <button
@@ -88,12 +88,13 @@ export const PublicNavbar = () => {
               </button>
               <Link to="/" className="flex items-center">
                 <FaHeartbeat
-                  className="hidden lg:flex text-blue-600 mr-2"
+                  className="hidden lg:flex text-blue-600 mr-2 dark:text-blue-500"
                   size="20"
                 />
 
-                <span className="text-2xl font-bold ">
-                  Mood<span className="text-blue-600">Sync</span>
+                <span className="text-2xl font-bold dark:text-white">
+                  Mood
+                  <span className="text-blue-600 dark:text-blue-500">Sync</span>
                 </span>
               </Link>
               <ul className="hidden lg:flex gap-2 items-center">
@@ -105,7 +106,7 @@ export const PublicNavbar = () => {
                         `flex items-center gap-2 px-5 py-2 rounded-full group ${
                           isActive
                             ? "bg-blue-600 text-white"
-                            : "bg-gray-100/20 hover:bg-gray-100/60"
+                            : "bg-gray-100/20 hover:bg-gray-100/60 dark:bg-gray-700/20 dark:hover:bg-gray-700/60"
                         }`
                       }
                     >
@@ -115,7 +116,7 @@ export const PublicNavbar = () => {
                             className={
                               isActive
                                 ? "text-white"
-                                : "group-hover:text-blue-500 "
+                                : "group-hover:text-blue-600 dark:text-white"
                             }
                           >
                             {icon}
@@ -124,7 +125,7 @@ export const PublicNavbar = () => {
                             className={
                               isActive
                                 ? "text-white"
-                                : "group-hover:text-gray-700"
+                                : "group-hover:text-gray-700 dark:text-white dark:group-hover:text-gray-200"
                             }
                           >
                             {label}
@@ -171,7 +172,7 @@ export const PublicNavbar = () => {
                         `flex items-center gap-2 py-2 px-4 rounded-full group ${
                           isActive
                             ? "bg-blue-600 text-white"
-                            : "bg-gray-100/20 hover:bg-gray-100/60"
+                            : "bg-white/20 dark:bg-gray-400/20 hover:bg-gray-100/60 text-[var(--color-text)]"
                         }`
                       }
                     >

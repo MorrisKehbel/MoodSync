@@ -3,8 +3,8 @@ import { imgWhyItMatters } from "../../assets/blog";
 
 export const WhyItMatters = () => {
   return (
-    <div className="w-full pt-24 px-4 md:px-10">
-      <div className="max-w-4xl flex flex-col justify-center items-center mx-auto p-8 rounded-2xl bg-white/40 border border-white/60 shadow-sm">
+    <div className="w-full pt-24 px-4 md:px-10 text-[var(--color-text)]">
+      <div className="max-w-4xl flex flex-col justify-center items-center mx-auto p-8 rounded-2xl bg-white/40 dark:bg-white/20 border border-white/60 shadow-sm">
         <img
           src={imgWhyItMatters}
           loading="lazy"
@@ -12,7 +12,7 @@ export const WhyItMatters = () => {
           alt="Why it Matters"
         />
 
-        <h1 className="text-4xl leading-snug font-bold text-[var(--color-text)] my-6 text-center">
+        <h1 className="text-4xl leading-snug font-bold my-6 text-center">
           Mental Health: Why It Matters
         </h1>
 
@@ -65,7 +65,7 @@ export const WhyItMatters = () => {
           <span className="font-medium">stigma</span>.
         </p>
 
-        <p className="text-sm leading-relaxed italic text-gray-700 border-t pt-6">
+        <p className="text-sm leading-relaxed italic text-[var(--color-text-muted)] border-t pt-6">
           All of this underscores why mental health deserves attention and
           support, it truly matters for everyone. By centering its mission on
           the fundamental importance of mental well-being,{" "}
