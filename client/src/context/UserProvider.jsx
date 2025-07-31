@@ -24,6 +24,7 @@ export const UserProvider = ({ children }) => {
         const data = await me();
 
         setUser(data);
+        console.log("User data:", data);
         setIsAuthenticated(true);
       } catch (error) {
         if (error instanceof TypeError && error.message === "Failed to fetch") {
@@ -52,6 +53,20 @@ export const UserProvider = ({ children }) => {
 
     checkSession && getUser();
   }, [checkSession]);
+
+  const handleDarkMode = (isDark) => {
+    if (isDark) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  };
+
+  useEffect(() => {
+    if (user?.settings.theme) {
+      handleDarkMode(user.settings.theme === "dark");
+    }
+  }, [user]);
 
   const value = {
     isAuthenticated,
