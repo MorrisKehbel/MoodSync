@@ -141,7 +141,7 @@ export const PublicNavbar = () => {
                   <AnimatedButton
                     onClick={() => {
                       logout();
-                      setShowAuth(true); // open login modal after logout
+                      navigate("/");
                     }}
                   >
                     Logout
@@ -207,6 +207,7 @@ export const PublicNavbar = () => {
                       onClick={() => {
                         setMenuOpen(false);
                         logout();
+                        navigate("/");
                       }}
                     >
                       Logout
