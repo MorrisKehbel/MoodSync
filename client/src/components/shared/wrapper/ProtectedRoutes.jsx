@@ -13,7 +13,11 @@ export const ProtectedRoute = ({ children }) => {
   }, [checkSession, isAuthenticated, showAuth]);
 
   if (checkSession) {
-    return <PulseLoader />;
+    return (
+      <div className="flex items-center justify-center w-full">
+        <PulseLoader color="#ffffff" />
+      </div>
+    );
   }
 
   if (!isAuthenticated) {

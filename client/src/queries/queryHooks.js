@@ -13,15 +13,20 @@ export const useDailyActivitiesQuery = (date) => ({
 export const useAllDailyActivitiesQuery = () => ({
   queryKey: ["allDailyActivities"],
   queryFn: ({ signal }) => getAllDailyActivities(signal),
+  retry: false,
 });
 
 export const useAiSummary = () => ({
   queryKey: ["aiSummary"],
   queryFn: ({ signal }) => fetchSummary(signal),
+  retry: false,
 });
 
-export const loadAllDailyActivities = (queryClient) => async () => {
+export const loadAllDailyActivities = (queryClient, user) => async () => {
   queryClient.prefetchQuery(useAllDailyActivitiesQuery());
-  queryClient.prefetchQuery(useAiSummary());
+  if (user?.settings?.aiTips === true) {
+    queryClient.prefetchQuery(useAiSummary());
+  }
+
   return null;
 };

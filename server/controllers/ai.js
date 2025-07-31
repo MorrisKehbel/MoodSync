@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import DailyActivities from "../models/Activities.js";
+import User from "../models/User.js";
 import AISummary from "../models/Ai.js";
 import { buildAIPrompt, ACTIVITY_CATEGORIES } from "../utils/openAiUtils.js";
 
@@ -31,6 +32,13 @@ export const generateAISummary = async (req, res) => {
   const isoDate = threeDaysAgo.toISOString().split("T")[0];
 
   try {
+    const user = await User.findById(userId);
+    if (user.settings.aiTips === false) {
+      return res.status(403).json({
+        error: "Data processing not allowed due to privacy settings.",
+      });
+    }
+
     const entries = await DailyActivities.find({
       userId,
       date: { $gte: isoDate },
