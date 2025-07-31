@@ -66,14 +66,14 @@ export const AboutUs = () => {
     <PageSlideContainer>
       <section className="flex flex-col">
         <div className="flex flex-col justify-center items-center text-center ">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--color-text)]/70">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--color-text)]">
             About Us
           </h1>
-          <p className="text-[var(--color-muted)] text-lg mt-2">
+          <p className="text-lg mt-2 text-[var(--color-text)] max-w-3xl">
             The mission behind MoodSync and the team supporting your well-being
           </p>
-          <div className="w-20 h-1 mx-auto mt-4 bg-gradient-to-r from-[var(--color-primary)] to-pink-500 rounded-full" />
-          <p className="text-[var(--color-text)] mx-auto text-center mt-8 mb-12 max-w-xl">
+          <div className="w-20 h-1 mx-auto mt-4 bg-gradient-to-r from-blue-600 to-pink-500 rounded-full" />
+          <p className="mx-auto text-center mt-8 mb-12 max-w-4xl text-[var(--color-text-muted)]">
             What started as a final project at the WBS Coding School grew into a
             mission to support mental health. We believe evidence-based
             self-care should be accessible to everyone. Our mission is to
@@ -95,14 +95,16 @@ export const AboutUs = () => {
                 alt={`Avatar of ${name}`}
                 className="w-24 h-24 rounded-full border-2 border-white/40 shadow-md mb-2"
               />
-              <h3 className="font-semibold text-lg text-[var(--color-text)]">{name}</h3>
-              <p className="text-sm text-[var(--color-muted)]">{role}</p>
+              <h3 className="font-semibold text-lg text-[var(--color-text)]">
+                {name}
+              </h3>
+              <p className="text-sm text-[var(--color-text-muted)]">{role}</p>
               <div className="flex gap-4 mt-4">
                 {contact.map(({ href, Icon }, i) => (
                   <a
                     key={i}
                     href={href}
-                    className="text-[var(--color-text)] hover:text-[var(--color-primary)] hover:scale-105 transition"
+                    className="text-[var(--color-text)] hover:scale-105 transition"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

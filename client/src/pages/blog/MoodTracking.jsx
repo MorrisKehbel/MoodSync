@@ -3,8 +3,8 @@ import { imgMoodTracking } from "../../assets/blog";
 
 export const MoodTracking = () => {
   return (
-    <div className="w-full pt-24 px-4 md:px-10">
-      <div className="max-w-4xl flex flex-col justify-center items-center mx-auto p-8 rounded-2xl bg-white/40 border border-white/60 shadow-sm">
+    <div className="w-full pt-24 px-4 md:px-10 text-[var(--color-text)]">
+      <div className="max-w-4xl flex flex-col justify-center items-center mx-auto p-8 rounded-2xl bg-white/40 dark:bg-white/20 border border-white/60 shadow-sm">
         <img
           src={imgMoodTracking}
           loading="lazy"
@@ -12,7 +12,7 @@ export const MoodTracking = () => {
           alt="Mood Tracking"
         />
 
-        <h1 className="text-4xl leading-snug font-bold text-[var(--color-text)] my-6 text-center">
+        <h1 className="text-4xl leading-snug font-bold my-6 text-center">
           Mood Tracking: Why Self-Reflection Makes a Difference
         </h1>
 
@@ -55,7 +55,7 @@ export const MoodTracking = () => {
           change over time.
         </p>
 
-        <p className="text-sm leading-relaxed italic text-gray-700 border-t pt-6">
+        <p className="text-sm leading-relaxed italic text-[var(--color-text-muted)] border-t pt-6">
           At <span className="font-medium">MoodSync</span>, we make mood
           tracking simple and powerful. Our app helps users reflect, notice
           trends, and receive personalized guidance. By turning self-reflection

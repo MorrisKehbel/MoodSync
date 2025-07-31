@@ -43,7 +43,7 @@ export const Science = () => {
           <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--color-text)]">
             Built on Science. Backed by research.
           </h1>
-          <p className="text-lg mt-2 text-[var(--color-muted)] max-w-3xl">
+          <p className="text-lg mt-2 text-[var(--color-text)] max-w-3xl">
             We use research-backed methods to turn reflection, habit tracking,
             and mood awareness into real personal growth.
           </p>
@@ -68,13 +68,14 @@ export const Science = () => {
                   group-hover:shadow-lg rounded-2xl border 
                   border-white/60 dark:border-black/60 
                   transition-all group-hover:scale-105 cursor-pointer 
-                  duration-300 delay-50
+                  duration-300 delay-50 select-none
                 "
               />
-              <h2 className="text-center text-sm font-semibold mt-2 tracking-widest 
+              <h2
+                className="text-center text-sm font-semibold mt-2 tracking-widest 
                 transition-all group-hover:text-gray-600 dark:group-hover:text-gray-400 
-                group-hover:scale-[1.02] duration-300 delay-50
-              ">
+                group-hover:scale-[1.02] duration-300 delay-50 text-[var(--color-text)]"
+              >
                 {title}
               </h2>
             </Link>

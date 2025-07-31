@@ -45,9 +45,9 @@ export const ContactUs = () => {
 
   return (
     <PageSlideContainer>
-      <section className="flex flex-col  text-black">
-        <div className="flex flex-col items-center gap-6 px-8 py-12 bg-white/70 backdrop-blur-md rounded-2xl shadow-2xl max-w-xl mx-auto w-full">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 text-center drop-shadow-lg leading-snug">
+      <section className="flex flex-col">
+        <div className="flex flex-col items-center gap-6 px-4 py-8  md:p-8 bg-white border border-white/60 shadow-sm backdrop-blur-md rounded-2xl max-w-xl mx-auto w-full">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-center drop-shadow-lg leading-snug">
             Contact Us
           </h1>
           <p className="text-gray-700 text-center text-base max-w-md">
@@ -106,7 +106,7 @@ export const ContactUs = () => {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-white/90"
+              className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
             />
             <input
               type="email"
@@ -115,7 +115,7 @@ export const ContactUs = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full p-3 rounded-xl border border-gray-300 focus:outline-2 focus:outline-blue-400 bg-white/90"
+              className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
             />
             <textarea
               name="message"
@@ -124,7 +124,7 @@ export const ContactUs = () => {
               value={formData.message}
               onChange={handleChange}
               required
-              className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white/90"
+              className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
             />
             <button
               type="submit"

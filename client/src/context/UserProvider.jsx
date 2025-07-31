@@ -24,7 +24,6 @@ export const UserProvider = ({ children }) => {
         const data = await me();
 
         setUser(data);
-        console.log("User data:", data);
         setIsAuthenticated(true);
       } catch (error) {
         if (error instanceof TypeError && error.message === "Failed to fetch") {
@@ -56,9 +55,9 @@ export const UserProvider = ({ children }) => {
 
   const handleDarkMode = (isDark) => {
     if (isDark) {
-      document.body.classList.add("dark");
+      document.documentElement.setAttribute("data-theme", "dark");
     } else {
-      document.body.classList.remove("dark");
+      document.documentElement.removeAttribute("data-theme");
     }
   };
 
