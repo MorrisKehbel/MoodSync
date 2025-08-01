@@ -47,7 +47,7 @@ export const generateAISummary = async (req, res) => {
     if (!entries.length) {
       return res
         .status(404)
-        .json({ error: "No entries found for the last 3 days." });
+        .json({ error: "No activity entries found for the last 3 days." });
     }
 
     const prompt = buildAIPrompt(entries);

@@ -44,7 +44,7 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: Infinity,
+      staleTime: 30 * 60 * 1000,
       refetchOnWindowFocus: false,
     },
   },
@@ -72,7 +72,11 @@ const App = () => {
         <Route
           path="my-journey"
           loader={loadAllDailyActivities(queryClient, user)}
-          hydrateFallbackElement={<PulseLoader />}
+          hydrateFallbackElement={
+            <div className="flex w-full items-center justify-center">
+              <PulseLoader />
+            </div>
+          }
           element={
             <ProtectedRoute>
               <MyJourney />
