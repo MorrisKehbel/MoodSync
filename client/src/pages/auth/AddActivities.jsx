@@ -146,9 +146,9 @@ export const AddActivities = () => {
   const localDate = today.toISOString().split("T")[0];
   const dateParam = searchParams.get("date");
   const effectiveDate = dateParam || localDate;
+  const isFuture = dateParam > localDate;
 
   const { data } = useQuery(useDailyActivitiesQuery(effectiveDate));
-
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -196,6 +196,7 @@ export const AddActivities = () => {
       queryClient.invalidateQueries({
         queryKey: ["DailyActivities", effectiveDate],
       });
+      queryClient.invalidateQueries({ queryKey: ["allDailyActivities"] });
 
       toast.success(
         data.message ||
@@ -238,14 +239,14 @@ export const AddActivities = () => {
             </p>
             <div className="w-20 h-1 mx-auto mt-4 bg-gradient-to-r from-blue-600 to-pink-500 rounded-full mb-12" />
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 xl:grid-cols-9 gap-x-2 gap-y-6">
+          <div className="grid max-[320px]:grid-cols-2 grid-cols-3 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-9 gap-x-2 gap-y-6">
             {activities.map(({ id, name, icon: Icon }) => {
               const isSelected = selectedActivities.includes(name);
               return (
                 <div
                   key={id}
                   onClick={() => toggleSelectActivities(name)}
-                  className="flex flex-col  items-center cursor-pointer"
+                  className="flex flex-col items-center cursor-pointer"
                 >
                   <div
                     className={`w-16 h-16 rounded-full flex justify-center items-center select-none transition-all hover:scale-105 duration-300 ${
@@ -295,19 +296,22 @@ export const AddActivities = () => {
                 rows={4}
                 className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
               />
-              <div className="flex flex-col sm:flex-row items-center gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row justify-center w-full sm:items-center gap-4 mt-8">
                 <button
                   type="submit"
-                  className="px-4 py-2 mt-8 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-500 transition-colors"
+                  disabled={isFuture}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-500 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
                 >
-                  {value || selectedActivities.length > 0 || selectedEmotion
+                  {isFuture
+                    ? "You are from the future"
+                    : value || selectedActivities.length > 0 || selectedEmotion
                     ? "Update your day"
                     : "Save your day"}
                 </button>
                 <Link to="/my-journey">
                   <button
                     type="button"
-                    className="px-4 py-2 mt-8 bg-gray-600 text-white rounded-lg cursor-pointer hover:bg-gray-500 transition-colors"
+                    className="px-6 py-2 w-full bg-gray-500 text-white rounded-lg cursor-pointer hover:bg-gray-400 transition-colors"
                   >
                     Return
                   </button>
