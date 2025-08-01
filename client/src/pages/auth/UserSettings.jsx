@@ -148,6 +148,7 @@ export const UserSettings = () => {
                   ? "bg-red-100 border border-red-300 text-red-700"
                   : "bg-green-100 border border-green-300 text-green-700"
               }`}
+              aria-live="polite"
             >
               {loading && (
                 <>
@@ -213,8 +214,8 @@ export const UserSettings = () => {
             </div>
           )}
 
-          <div className="flex justify-between items-start ml-13">
-            <div className="w-full max-w-md">
+          <div className="flex flex-col sm:flex-row justify-center items-center lg:items-stretch gap-8">
+            <div className="w-full max-w-md lg:mb-0 mb-8 ">
               {["username", "firstname", "lastname", "email"].map((field) => (
                 <div key={field} className="mt-4">
                   <label className="block font-semibold text-lg">
@@ -249,9 +250,8 @@ export const UserSettings = () => {
                 onChange={handleChange}
                 className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
               />
-            </div>
-
-            <div className="ml-8 flex flex-col items-center mr-13">
+            </div>          
+            <div className="ml-8 flex flex-col items-center  lg:ml-8">
               <div className="w-39 h-39 bg-gray-100 border-gray-300 border-2 rounded-full overflow-hidden mb-2 flex items-center justify-center">
                 {previewImage || isValidImageUrl(user?.profilePicture?.url) ? (
                   <img
@@ -264,7 +264,7 @@ export const UserSettings = () => {
                 )}
               </div>
 
-              <div className="flex items-center space-x-4 mt-4">
+              <div className="flex flex-wrap items-center space-x-4 mt-4">
                 <label className="cursor-pointer bg-gray-200 text-black px-3 py-1 rounded-full text-sm hover:bg-blue-500 hover:text-white transition flex items-center gap-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -400,7 +400,7 @@ export const UserSettings = () => {
             </div>
           </div>
 
-          <div className="mt-9 flex gap-7 items-center justify-center">
+          <div className="mt-9 flex flex-col sm:flex-row gap-7 items-center justify-center">
             <button
               className="bg-gray-400 text-white px-11 hover:bg-gray-500 transition py-2 rounded-xl cursor-pointer"
               disabled
@@ -420,3 +420,6 @@ export const UserSettings = () => {
     </PageSlideContainer>
   );
 };
+
+
+ 
