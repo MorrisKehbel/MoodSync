@@ -14,6 +14,7 @@ import authRouter from "./routes/authRoutes.js";
 import aiRouter from "./routes/aiRoutes.js";
 import usersRouter from "./routes/usersRoutes.js";
 import goalsRouter from "./routes/goalsRoutes.js";
+import dailyTasksRouter from "./routes/dailyTasksRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -37,6 +38,7 @@ app.use("/auth", authRouter);
 app.use("/ai", aiRouter);
 app.use("/users", usersRouter);
 app.use("/goals", goalsRouter);
+app.use("/daily-tasks", dailyTasksRouter);
 
 app.get("/", (_req, res) => {
   res.send("Running");
