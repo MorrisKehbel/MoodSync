@@ -12,11 +12,6 @@ export const fetchSummary = async (signal) => {
       signal,
     });
 
-    if (res.status === 404) {
-      await generateSummary();
-      return;
-    }
-
     if (!res.ok) {
       const errorData = await res.json();
       throw new Error(errorData.error || "Unknown error");
@@ -30,9 +25,9 @@ export const fetchSummary = async (signal) => {
   }
 };
 
-const generateSummary = async (signal) => {
+export const generateAi = async (endpoint, signal) => {
   try {
-    const res = await fetch(`${baseURL}/summary`, {
+    const res = await fetch(`${baseURL}/${endpoint}`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -40,6 +35,10 @@ const generateSummary = async (signal) => {
       },
       signal,
     });
+
+    if (res.status === 204) {
+      return null;
+    }
 
     if (!res.ok) {
       const errorData = await res.json();

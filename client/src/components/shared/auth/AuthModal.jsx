@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router";
 import { LoginModal } from "./LoginModal";
 import { SignupModal } from "./SignupModal";
 import { useUser } from "../../../context";
@@ -8,8 +9,26 @@ export const AuthModal = ({ isOpen, onClose }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [loginData, setLoginData] = useState({ login: "", password: "" });
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
+  const {
+    currentMode,
+    setCurrentMode,
+    setShowAuth,
+    isAuthenticated,
+    checkSession,
+  } = useUser();
+  let navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
 
-  const { currentMode, setCurrentMode, setShowAuth } = useUser();
+  const protectedRoutes = [
+    "/dashboard",
+    "/goals",
+    "/settings",
+    "/my-journey",
+    "/add-activities",
+  ];
+
+  const isProtectedRoute = protectedRoutes.includes(currentPath);
 
   const switchMode = (newMode) => {
     if (isAnimating || currentMode === newMode) return;
@@ -35,13 +54,17 @@ export const AuthModal = ({ isOpen, onClose }) => {
   const handleClose = () => {
     setShowWelcomeMessage(false);
     setLoginData({ login: "", password: "" });
-    setCurrentMode("login");
-
     setIsAnimating(true);
 
     setTimeout(() => {
       setIsAnimating(false);
+      setCurrentMode("login");
       setShowAuth(false);
+
+      if (!isAuthenticated && !checkSession && isProtectedRoute) {
+        navigate("/");
+      }
+
       onClose();
     }, 250);
   };
