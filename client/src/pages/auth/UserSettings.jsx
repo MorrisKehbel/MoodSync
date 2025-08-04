@@ -250,8 +250,8 @@ export const UserSettings = () => {
                 onChange={handleChange}
                 className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
               />
-            </div>          
-            <div className="ml-8 flex flex-col items-center  lg:ml-8">
+            </div>
+            <div className="flex flex-col items-center lg:ml-8">
               <div className="w-39 h-39 bg-gray-100 border-gray-300 border-2 rounded-full overflow-hidden mb-2 flex items-center justify-center">
                 {previewImage || isValidImageUrl(user?.profilePicture?.url) ? (
                   <img
@@ -420,6 +420,3 @@ export const UserSettings = () => {
     </PageSlideContainer>
   );
 };
-
-
- 

@@ -9,10 +9,29 @@ const aiSummarySchema = new Schema(
     },
     summary: {
       type: String,
-      required: true,
     },
+    summaryUpdatedAt: {
+      type: Date,
+    },
+
+    activityInsight: {
+      type: String,
+    },
+    activityInsightUpdatedAt: {
+      type: Date,
+    },
+
+    goalInsight: {
+      type: String,
+    },
+    goalInsightUpdatedAt: {
+      type: Date,
+    },
+
     score: {
       type: Number,
+      min: 0,
+      max: 100,
       required: true,
     },
   },

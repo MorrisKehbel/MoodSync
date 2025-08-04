@@ -52,7 +52,7 @@ export const ContactUs = () => {
           </h1>
           <p className="text-gray-700 text-center text-base max-w-md">
             We'd love to hear from you! Whether you have a question, feedback,
-            or just want to say hello — send us a message.
+            or if you just want to say hello, send us a message.
           </p>
           {submitStatus === "success" && (
             <div className="w-full p-4 bg-green-100 border border-green-400 text-green-700 rounded-xl">

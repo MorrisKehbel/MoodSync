@@ -246,13 +246,13 @@ export const AddActivities = () => {
                 <div
                   key={id}
                   onClick={() => toggleSelectActivities(name)}
-                  className="flex flex-col items-center cursor-pointer"
+                  className="flex flex-col items-center cursor-pointer group"
                 >
                   <div
-                    className={`w-16 h-16 rounded-full flex justify-center items-center select-none transition-all hover:scale-105 duration-300 ${
+                    className={`w-16 h-16 rounded-full flex justify-center items-center select-none transition-all group-hover:scale-105 duration-300 ${
                       isSelected
-                        ? "bg-gradient-to-r from-blue-600/80 via-blue-600/90 to-blue-600/80 backdrop-blur-md shadow-sm sm:shadow-md border border-white/60 text-gray-100 outline-2 outline-white/80 hover:bg-blue-600"
-                        : "bg-gradient-to-r from-white/80 via-white/90 to-white/80 backdrop-blur-md shadow-sm sm:shadow-md border border-white/60 text-gray-600 outline-0 hover:bg-gray-50/60"
+                        ? "bg-gradient-to-r from-blue-600/80 via-blue-600/90 to-blue-600/80 shadow-sm sm:shadow-md border border-white/60 text-gray-100 outline-2 outline-white/80 group-hover:bg-blue-600"
+                        : "bg-white shadow-sm sm:shadow-md border border-white/60 text-gray-600 outline-0 group-hover:bg-gray-50/80"
                     }`}
                   >
                     <Icon size="32" />
@@ -264,7 +264,7 @@ export const AddActivities = () => {
               );
             })}
           </div>
-          <div className="bg-gradient-to-r from-white/90 via-white to-white/90 rounded-2xl shadow-sm sm:shadow-md border border-white/60 mt-16 p-8">
+          <div className="bg-white rounded-2xl shadow-sm sm:shadow-md border border-white/60 mt-16 p-8">
             <div className="flex flex-wrap justify-center items-center gap-6">
               {emotions.map(({ id, name, image: Image }) => {
                 const isSelected = selectedEmotion === name;

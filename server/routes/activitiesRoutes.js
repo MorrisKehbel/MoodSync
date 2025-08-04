@@ -19,9 +19,15 @@ const activitiesRouter = Router();
 
 activitiesRouter
   .route("/daily-entry")
-  .post(verifyToken, validateSchema(DailyActivitiesSchema), addDailyActivities)
+  .post(
+    rateLimiter,
+    verifyToken,
+    validateSchema(DailyActivitiesSchema),
+    addDailyActivities
+  )
   .get(verifyToken, getAllDailyActivities)
   .put(
+    rateLimiter,
     verifyToken,
     validateSchema(SingleEmotionUpdateSchema),
     updateDailyActivities
