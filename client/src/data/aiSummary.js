@@ -52,3 +52,27 @@ export const generateAi = async (endpoint, signal) => {
     throw error;
   }
 };
+
+export const generateTaskSuggestions = async (signal) => {
+  try {
+    const res = await fetch(`${baseURL}/task-suggestions`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      signal,
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || "Unknown error");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
