@@ -132,6 +132,44 @@ Write a short, conversational and supportive summary (5-6 sentences max) that:
 - Notes where balance is improving or missing
 - 2 bullet-point suggestions for new activities, based on missing high-weight categories.
 `,
+
+  dailyTaskSuggestions: ({ weightsText, categorySummary, formattedEntries }) =>
+    `
+Task:
+Based on the user's recent activities, emotions, and current tasks, suggest 4-6 short, actionable daily tasks that would help improve their well-being and life balance. Focus on areas that are underrepresented in their recent activities.
+
+Input:
+You will receive:
+- A list of categories with weights (representing their importance for a balanced life).
+- Raw daily entries, including emotion, activities, and an optional note.
+- Current daily tasks entries.
+
+Categories and weights:
+${weightsText}
+
+Category Score Summary:
+${categorySummary}
+
+User Journal Entries:
+${formattedEntries}
+
+Output:
+Provide EXACTLY 4-6 short, actionable task suggestions. Each task should:
+- Be 2-5 words maximum (like "Call a friend", "Take a walk", "Drink water")
+- Target an underrepresented wellbeing category
+- Be achievable in 15-60 minutes
+- Be personalized based on the user's recent mood and activities
+
+Format your response as a simple list, one task per line, like this:
+- Call mom
+- Take a walk
+- Meditate 10 minutes
+- Plan healthy meal
+- Read a book
+- Stretch
+
+Do not include any explanations, just the short task list.
+`,
 };
 
 export const resolveWeightedCategory = (rawCategory) => {

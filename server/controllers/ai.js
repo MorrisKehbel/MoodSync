@@ -286,6 +286,80 @@ export const generateGoalsInsight = async (req, res) => {
   }
 };
 
+export const generateDailyTaskSuggestions = async (req, res) => {
+  const { userId } = req;
+
+  const isAllowed = await checkAIEnabled(req, res);
+  if (!isAllowed) return;
+
+  try {
+    const today = new Date().toISOString().split("T")[0];
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+    const activityEntries = await DailyActivities.find({
+      userId,
+      updatedAt: { $gte: threeDaysAgo },
+    }).lean();
+
+    const taskEntries = await DailyTask.find({
+      userId,
+      date: today,
+    }).lean();
+
+    if (activityEntries.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "No recent activity entries found for suggestions." });
+    }
+
+    const prompt = buildAIPrompt(
+      { activities: activityEntries, tasks: taskEntries },
+      "dailyTaskSuggestions"
+    );
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `
+        You are a helpful and psychologically informed AI assistant that suggests personalized daily tasks to improve user well-being.
+        Use scientific frameworks (e.g. PERMA, WHO-5) and research-based reasoning to suggest tasks that will help balance their life activities.
+        Be practical, empathetic, and focus on achievable tasks that fit into a daily routine.
+      `,
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.7,
+      user: userId?.toString(),
+    });
+
+    const suggestions = completion.choices[0]?.message?.content;
+
+    if (!suggestions) {
+      return res.status(500).json({ error: "No response from OpenAI." });
+    }
+
+    const taskSuggestions = suggestions
+      .split("\n")
+      .filter((line) => line.trim().startsWith("-"))
+      .map((line) => line.replace(/^-\s*/, "").trim())
+      .filter((task) => task.length > 0);
+
+    return res.status(200).json({
+      suggestions: taskSuggestions,
+      generatedAt: new Date(),
+    });
+  } catch (error) {
+    console.error("AI task suggestions generation failed:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+      details: error.message,
+    });
+  }
+};
+
 export const generateDailyInsight = async (req, res) => {
   const { userId } = req;
 

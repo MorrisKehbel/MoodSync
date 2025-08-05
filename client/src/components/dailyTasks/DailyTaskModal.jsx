@@ -1,19 +1,37 @@
 import { useState, useEffect } from "react";
+import { generateTaskSuggestions } from "../../data/aiSummary";
 
 const DailyTaskModal = ({ isOpen, onClose, onSubmit }) => {
   const [taskTitle, setTaskTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      fetchSuggestions();
     }
     return () => {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  const fetchSuggestions = async () => {
+    try {
+      setIsLoadingSuggestions(true);
+      const response = await generateTaskSuggestions();
+      setSuggestions(response.suggestions || []);
+    } catch (error) {
+      console.error("Error fetching AI suggestions:", error);
+    } finally {
+      setIsLoadingSuggestions(false);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setTaskTitle(suggestion);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,13 +49,16 @@ const DailyTaskModal = ({ isOpen, onClose, onSubmit }) => {
   const handleClose = () => {
     if (!isSubmitting) {
       setTaskTitle("");
+      setSuggestions([]);
       onClose();
     }
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 shadow-xl">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-800">
             Add Daily Task
@@ -62,6 +83,49 @@ const DailyTaskModal = ({ isOpen, onClose, onSubmit }) => {
             </svg>
           </button>
         </div>
+        {(suggestions.length > 0 || isLoadingSuggestions) && (
+          <div className="mb-4">
+            <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center space-x-2">
+              <svg
+                className="w-4 h-4 text-blue-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                />
+              </svg>
+              <span>Suggested tasks</span>
+            </h4>
+
+            {isLoadingSuggestions ? (
+              <div className="flex flex-wrap gap-2">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div
+                    key={i}
+                    className="animate-pulse bg-gray-200 rounded-full px-3 py-1 h-8 w-20"
+                  ></div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {suggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    className="bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full border border-blue-200 transition-colors"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
