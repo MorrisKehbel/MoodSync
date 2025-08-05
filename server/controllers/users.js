@@ -1,7 +1,13 @@
 import bcrypt from "bcrypt";
-import  User  from "../models/User.js"; 
-import { v2 as cloudinary } from 'cloudinary';
+import User from "../models/User.js";
+import { v2 as cloudinary } from "cloudinary";
 import streamifier from "streamifier";
+
+import DailyActivities from "../models/Activities.js";
+import AISummary from "../models/Ai.js";
+import DailyTask from "../models/DailyTasks.js";
+import Goals from "../models/Goals.js";
+import { log } from "console";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -12,9 +18,9 @@ cloudinary.config({
 export const getUserById = async (req, res, next) => {
   try {
     const user = await User.findById(req.userId).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found"});
-    res.json({message: "User retrieved successfully",user});
-  } catch(err) {
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ message: "User retrieved successfully", user });
+  } catch (err) {
     next(err);
   }
 };
@@ -22,15 +28,14 @@ export const getUserById = async (req, res, next) => {
 export const updateUser = async (req, res, next) => {
   try {
     const updates = req.sanitizedBody;
-    if(updates.password) {
+    if (updates.password) {
       updates.password = await bcrypt.hash(updates.password, 10);
     }
     const updatedUser = await User.findByIdAndUpdate(req.userId, updates, {
       new: true,
     }).select("-password");
 
-    if(!updateUser)
-      return res.status(404).json({ message: "User not found" });
+    if (!updateUser) return res.status(404).json({ message: "User not found" });
 
     res.json({ message: "User updated successfully", user: updatedUser });
   } catch (err) {
@@ -40,7 +45,6 @@ export const updateUser = async (req, res, next) => {
 
 export const deleteUser = async (req, res, next) => {
   try {
-
     const user = await User.findById(req.userId);
 
     if (!user) {
@@ -52,7 +56,13 @@ export const deleteUser = async (req, res, next) => {
       await cloudinary.uploader.destroy(user.profilePicture.public_id);
     }
 
-    // Delete the user from DB
+    await Promise.all([
+      DailyActivities.deleteMany({ userId: req.userId }),
+      DailyTask.deleteMany({ userId: req.userId }),
+      Goals.deleteMany({ userId: req.userId }),
+      AISummary.deleteMany({ userId: req.userId }),
+    ]);
+
     await User.findByIdAndDelete(req.userId);
 
     res.clearCookie("token");
@@ -73,7 +83,7 @@ export const uploadProfilePicture = async (req, res, next) => {
     }
 
     const username = user.username || "default";
-    
+
     const streamUpload = (buffer) => {
       return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -82,7 +92,7 @@ export const uploadProfilePicture = async (req, res, next) => {
             overwrite: true,
             folder: "profiles",
           },
-           (error, result) => {
+          (error, result) => {
             if (error) {
               reject(error);
             } else {
@@ -98,7 +108,9 @@ export const uploadProfilePicture = async (req, res, next) => {
     try {
       result = await streamUpload(req.file.buffer);
     } catch (cloudErr) {
-      return res.status(500).json({ error: "Failed to upload profile picture to Cloudinary" });
+      return res
+        .status(500)
+        .json({ error: "Failed to upload profile picture to Cloudinary" });
     }
 
     user.profilePicture = {
@@ -117,35 +129,36 @@ export const uploadProfilePicture = async (req, res, next) => {
   }
 };
 
-
 export const deleteProfilePicture = async (req, res) => {
   try {
     const userId = req.userId;
 
     // Fetch user
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     const publicId = user.profilePicture?.public_id;
 
     if (!publicId) {
-      return res.status(400).json({ message: 'No profile picture to delete' });
+      return res.status(400).json({ message: "No profile picture to delete" });
     }
 
     // Delete image from Cloudinary
     const result = await cloudinary.uploader.destroy(publicId);
 
-    if (result.result !== 'ok') {
-      return res.status(500).json({ message: 'Failed to delete image from Cloudinary' });
+    if (result.result !== "ok") {
+      return res
+        .status(500)
+        .json({ message: "Failed to delete image from Cloudinary" });
     }
 
     // Clear profilePicture field
-    user.profilePicture = {}  ;
+    user.profilePicture = {};
     await user.save();
 
-    res.json({ message: 'Profile picture deleted successfully' });
+    res.json({ message: "Profile picture deleted successfully" });
   } catch (error) {
     console.error("Error deleting profile picture:", error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };

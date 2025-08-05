@@ -177,23 +177,25 @@ export const MyJourney = () => {
       />
       <PageSlideContainer>
         <section className="flex flex-col justify-center items-center text-center">
-          <div className="w-full ">
+          <div className="w-full">
             {user.settings.aiTips ? (
-              <div className="relative max-w-3xl mb-12 mx-auto rounded-xl px-6 pt-6 pb-2 overflow-hidden bg-white/40 dark:bg-white/10 backdrop-blur-md border border-white/60 dark:border-white/20 shadow-xl">
+              <div className="relative max-w-3xl mb-12 mx-auto px-2 pt-4 pb-2 rounded-xl overflow-hidden bg-white/40 dark:bg-white/10 backdrop-blur-md border border-white/60 dark:border-white/20 shadow-xl">
                 <div className="absolute inset-0 bg-blue-200/10 dark:bg-blue-400/10 blur-2xl animate-pulse z-0" />
 
-                <div className="relative custom-scroll z-10 max-h-[300px] overflow-y-auto pr-2 text-gray-800 dark:text-white/80 text-sm leading-relaxed whitespace-pre-line text-left">
+                <div className="relative custom-scroll px-4 pb-2 z-10 max-h-[300px] overflow-y-auto text-gray-800 dark:text-white/80 text-sm leading-relaxed whitespace-pre-line text-left">
                   {isError
                     ? error.message
                     : uiData.length > 0
                     ? uiData
                     : "Loading summary..."}
                 </div>
+
                 <HoverTooltip
                   text="AI Summary"
-                  tooltip="Refreshed daily, based on your mood & activity log."
+                  tooltip="Refreshed daily, based on your most recent mood & activity logs."
                   className="text-center bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent font-medium"
                 />
+
                 <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-blue-600 to-pink-500 z-20 w-full" />
               </div>
             ) : null}
@@ -202,7 +204,8 @@ export const MyJourney = () => {
               <div className="relative flex justify-center items-center mb-6 bg-gradient-to-r from-white/10 via-white/20  to-white/10  backdrop-blur-md shadow-sm rounded-full border border-white/60 dark:border-white/10 py-2 px-6">
                 <button
                   onClick={() => setMonthOffset((prev) => prev - 1)}
-                  className="absolute left-3 rounded-full bg-gradient-to-r from-white/80 via-white/90  to-white/80 shadow-sm border border-white/60 w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition cursor-pointer"
+                  onMouseDown={(e) => e.preventDefault()}
+                  className="absolute left-2 rounded-full bg-gradient-to-r from-white/80 via-white/90  to-white/80 shadow-sm border border-white/60 w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-blue-100 hover:text-blue-600 focus:outline-4 focus:outline-blue-500 transition cursor-pointer"
                   aria-label="Previous month"
                 >
                   <FaRegArrowAltCircleLeft size="36" />
@@ -215,15 +218,16 @@ export const MyJourney = () => {
                 </span>
                 <button
                   onClick={() => setMonthOffset((prev) => prev + 1)}
-                  className="absolute right-3 rounded-full bg-gradient-to-r from-white/80 via-white/90  to-white/80 shadow-sm  border border-white/60 w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition cursor-pointer"
+                  onMouseDown={(e) => e.preventDefault()}
+                  className="absolute right-2 rounded-full bg-gradient-to-r from-white/80 via-white/90  to-white/80 shadow-sm  border border-white/60 w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-blue-100 hover:text-blue-600 focus:outline-4 focus:outline-blue-500 transition cursor-pointer"
                   aria-label="Next month"
                 >
                   <FaRegArrowAltCircleRight size="36" />
                 </button>
               </div>
             </div>
-            <div className="bg-gradient-to-t from-white/40 dark:from-white/20 to-transparent p-4 rounded-2xl">
-              <div className="grid max-[320px]:grid-cols-3 grid-cols-4 sm:grid-cols-6 md:grid-cols-8 xl:grid-cols-11 gap-3 mb-8 text-center text-black text-sm">
+            <div className="w-full bg-gradient-to-t from-white/40 dark:from-white/20 to-transparent p-4 rounded-2xl">
+              <div className="w-full grid max-[320px]:grid-cols-3 grid-cols-4 sm:grid-cols-6 md:grid-cols-8 xl:grid-cols-11 gap-3 mb-8 text-center text-black text-sm">
                 {days.map((day) => {
                   const yyyy = day.getFullYear();
                   const mm = String(day.getMonth() + 1).padStart(2, "0");
@@ -244,7 +248,7 @@ export const MyJourney = () => {
                     <div
                       key={dateStr}
                       className={`relative w-full h-[100px] rounded-xl overflow-hidden ${
-                        isFuture ? "pointer-events-none" : ""
+                        isFuture && "pointer-events-none"
                       }`}
                     >
                       {!isFuture ? (
@@ -268,14 +272,16 @@ export const MyJourney = () => {
                         </div>
                       ) : null}
                       <Link
-                        className="w-full"
                         to={`/add-activities?date=${dateStr}`}
+                        tabIndex={isFuture ? -1 : undefined}
+                        aria-hidden={isFuture ? "true" : undefined}
+                        className="w-full group"
                       >
                         <div
-                          className={`absolute top-0 left-0 right-0 z-10 p-3 rounded-xl transition cursor-pointer ${
+                          className={`absolute top-0 left-0 right-0 z-10 p-3 rounded-xl transition cursor-pointer group-focus:outline-4 group-focus:outline-blue-500 ${
                             isToday
-                              ? "bg-blue-600 text-white hover:bg-blue-500"
-                              : "bg-white hover:bg-gray-50 dark:hover:bg-blue-100"
+                              ? "bg-blue-600 text-white  hover:bg-blue-500"
+                              : "bg-white  hover:bg-gray-50 dark:hover:bg-blue-100"
                           }`}
                         >
                           <span className="block font-medium text-center">
@@ -292,10 +298,11 @@ export const MyJourney = () => {
                   );
                 })}
               </div>
-              <Link to="/add-activities">
-                <button className=" bg-blue-600 hover:bg-blue-500 text-white text-lg font-semibold py-2 px-6 rounded-xl sm:rounded-full shadow-md transition cursor-pointer w-full sm:w-auto">
-                  Add your today's activities
-                </button>
+              <Link
+                to="/add-activities"
+                className="bg-blue-600 hover:bg-blue-500 text-white text-lg font-semibold py-2 px-6 rounded-xl sm:rounded-full shadow-md transition cursor-pointer w-full"
+              >
+                Add your today's activities
               </Link>
             </div>
           </div>

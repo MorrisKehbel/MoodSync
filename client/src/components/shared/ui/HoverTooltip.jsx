@@ -11,7 +11,7 @@ export const HoverTooltip = ({
 
   return (
     <div className="relative group inline-block select-none w-full">
-      <p className={`${className}`}>{text}</p>
+      <p className={`w-full ${className}`}>{text}</p>
 
       <div
         className={`absolute left-1/2 -translate-x-1/2 ${positionClasses[position]} 

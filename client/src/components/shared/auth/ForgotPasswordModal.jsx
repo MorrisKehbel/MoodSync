@@ -79,7 +79,7 @@ export const ForgotPasswordModal = ({ isOpen, onClose, onBackToLogin }) => {
         style={{ zIndex: 100 }}
       />
       <div className="z-50 flex items-center justify-center p-4 backdrop-blur-lg">
-        <div className="relative w-full max-w-md p-8 bg-white/90 rounded-2xl shadow-lg">
+        <div className="relative w-full max-w-md p-8 bg-white/90 dark:bg-white rounded-2xl shadow-lg">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 text-black/70 hover:text-black text-2xl leading-none cursor-pointer"
