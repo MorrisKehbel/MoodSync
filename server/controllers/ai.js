@@ -169,15 +169,10 @@ export const getAISummary = async (req, res) => {
   const { userId } = req;
 
   try {
-    let summary = await AISummary.findOne({ userId });
+    const summary = await AISummary.findOne({ userId });
 
-    const now = new Date();
-    const threeDaysAgo = new Date(now);
-    threeDaysAgo.setDate(now.getDate() - 3);
-
-    if (!summary || new Date(summary.updatedAt) < threeDaysAgo) {
-      req.userId = userId;
-      return await generateAISummary(req, res);
+    if (!summary) {
+      return res.status(404).json({ error: "No AI Summary found." });
     }
 
     return res.status(200).json(summary);
@@ -444,7 +439,9 @@ export const generateDailyInsight = async (req, res) => {
     let taskEntries = [];
 
     if (!latestSummary || !latestSummary?.activityInsightUpdatedAt) {
-      activityEntries = await DailyActivities.find({ userId }).lean();
+      activityEntries = await DailyActivities.find({ userId })
+        .sort({ date: -1 })
+        .lean();
       taskEntries = await DailyTask.find({ userId }).lean();
     } else {
       const activityDate = new Date(latestActivity.updatedAt);
@@ -452,48 +449,61 @@ export const generateDailyInsight = async (req, res) => {
 
       const diffInDays = (activityDate - summaryDate) / (1000 * 60 * 60 * 24);
 
-      if (diffInDays >= 0.99) {
-        activityEntries = await DailyActivities.find({
+      if (diffInDays < 0.99) {
+        return res.status(200).json({
+          activityInsight: latestSummary?.activityInsight || null,
+          activityInsightUpdatedAt:
+            latestSummary?.activityInsightUpdatedAt || null,
+          reused: true,
+        });
+      }
+
+      activityEntries = await DailyActivities.find({
+        userId,
+        updatedAt: { $gt: summaryDate },
+      })
+        .sort({ date: -1 })
+        .lean();
+
+      taskEntries = await DailyTask.find({
+        userId,
+        updatedAt: { $gt: summaryDate },
+      }).lean();
+
+      if (activityEntries.length < 3) {
+        const twoWeeksAgo = new Date();
+        twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
+        const fallbackActivities = await DailyActivities.find({
           userId,
-          updatedAt: { $gt: summaryDate },
-        }).lean();
+          date: { $gte: twoWeeksAgo },
+        })
+          .sort({ date: -1 })
+          .lean();
 
-        taskEntries = await DailyTask.find({
-          userId,
-          updatedAt: { $gt: summaryDate },
-        }).lean();
+        const existingIds = activityEntries.map((entry) =>
+          entry._id.toString()
+        );
 
-        if (activityEntries.length < 3) {
-          const twoWeeksAgo = new Date();
-          twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+        const fallbackToAdd = fallbackActivities.filter(
+          (entry) => !existingIds.includes(entry._id.toString())
+        );
 
-          const fallbackActivities = await DailyActivities.find({
-            userId,
-            date: { $gte: twoWeeksAgo },
-          })
-            .sort({ date: -1 })
-            .lean();
-
-          const fallbackToAdd = fallbackActivities.filter(
-            (entry) =>
-              !activityEntries.some(
-                (existing) => existing._id.toString() === entry._id.toString()
-              )
-          );
-
-          const needed = 3 - activityEntries.length;
-          activityEntries = [
-            ...activityEntries,
-            ...fallbackToAdd.slice(0, needed),
-          ];
-        }
+        const needed = 3 - activityEntries.length;
+        activityEntries = [
+          ...activityEntries,
+          ...fallbackToAdd.slice(0, needed),
+        ];
       }
     }
 
     if (activityEntries.length === 0) {
-      return res
-        .status(204)
-        .json({ message: "No new activities to summarize." });
+      return res.status(200).json({
+        activityInsight: latestSummary?.activityInsight || null,
+        activityInsightUpdatedAt:
+          latestSummary?.activityInsightUpdatedAt || null,
+        reused: true,
+      });
     }
 
     const prompt = buildAIPrompt(

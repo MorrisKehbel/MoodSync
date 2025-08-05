@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   updateUser,
   deleteUser,
@@ -11,6 +11,13 @@ import { ConfirmModal } from "../../components/shared/ui/ConfirmModal.jsx";
 
 export const UserSettings = () => {
   const { user, setUser } = useUser();
+  const [formData, setFormData] = useState({
+    username: "",
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+  });
   const [previewImage, setPreviewImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState(null);
@@ -21,11 +28,23 @@ export const UserSettings = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUser((prev) => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        username: user.username || "",
+        firstname: user.firstname || "",
+        lastname: user.lastname || "",
+        email: user.email || "",
+        password: "",
+      });
+    }
+  }, [user]);
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -87,17 +106,29 @@ export const UserSettings = () => {
     }
   };
 
+  const handleCancel = () => {
+    if (user) {
+      setFormData({
+        username: user.username || "",
+        firstname: user.firstname || "",
+        lastname: user.lastname || "",
+        email: user.email || "",
+        password: "",
+      });
+    }
+  };
+
   const handleSave = async () => {
     setLoading(true);
     setErrors(null);
     setSuccessMsg(null);
 
     const payload = {
-      username: user.username,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      email: user.email,
-      ...(user.password ? { password: user.password } : {}),
+      username: formData.username,
+      firstname: formData.firstname,
+      lastname: formData.lastname,
+      email: formData.email,
+      ...(formData.password ? { password: formData.password } : {}),
       settings: {
         theme: user.settings.theme,
         aiTips: user.settings.aiTips,
@@ -131,8 +162,6 @@ export const UserSettings = () => {
   const isValidImageUrl = (url) => {
     return typeof url === "string" && url.match(/\.(jpeg|jpg|gif|png|webp)$/i);
   };
-
-  console.log(user.profilePicture);
 
   return (
     <PageSlideContainer>
@@ -235,7 +264,7 @@ export const UserSettings = () => {
                   </label>
                   <input
                     name={field}
-                    value={user[field]}
+                    value={formData[field]}
                     onChange={handleChange}
                     className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
                   />
@@ -248,7 +277,7 @@ export const UserSettings = () => {
               <input
                 name="password"
                 type="password"
-                value={user.password}
+                value={formData.password}
                 placeholder="Enter your new password"
                 onChange={handleChange}
                 className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
@@ -420,12 +449,11 @@ export const UserSettings = () => {
           <div className="mt-12 flex flex-col sm:flex-row gap-7 items-center justify-center">
             <button
               className="w-full sm:w-auto bg-gray-400 text-white px-4 hover:bg-gray-300 transition py-3 sm:py-2 rounded-lg cursor-pointer"
-              disabled
+              onClick={handleCancel}
             >
               Cancel
             </button>
             <button
-              // onClick={handleSave}
               onClick={() => setIsOpen(true)}
               className="w-full sm:w-auto bg-blue-600 text-white px-4 py-3 sm:py-2 rounded-lg hover:bg-blue-500 transition cursor-pointer"
             >
