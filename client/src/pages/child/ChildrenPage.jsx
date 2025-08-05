@@ -22,10 +22,18 @@ export const HealingStories = () => {
           Healing stories for children
         </h1>
         <p className="text-center text-gray-700 mb-8 max-w-xl mx-auto">
-          This collection of stories are created to support children and
+          This collection of stories is created to support children and
           parents and help to develop emotional intelligence.
+
+          Fairy tale therapy for children has a wonderful effect! 
+          We offer you a collection of stories for your children 
+          to make everyday life more comfortable and enjoyable.
+
+          To start fairy tale therapy, simply click on an emotion, and 
+          you will receive a collection of therapeutic stories that will 
+          help your child process and navigate that emotion.
           <br />
-          Click on the button when your child feels:
+          Click when your child feels:
         </p>
 
         <div className="bg-white/60 backdrop-blur-md p-8 rounded-2xl shadow-md grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
