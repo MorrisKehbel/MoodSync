@@ -249,7 +249,14 @@ export const AddActivities = () => {
                   className="flex flex-col items-center cursor-pointer group"
                 >
                   <div
-                    className={`w-16 h-16 rounded-full flex justify-center items-center select-none transition-all group-hover:scale-105 duration-300 ${
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        toggleSelectActivities(name);
+                      }
+                    }}
+                    className={`w-16 h-16 rounded-full flex justify-center items-center select-none transition-all focus:outline-4 focus:outline-blue-500 group-hover:scale-105 duration-300 ${
                       isSelected
                         ? "bg-gradient-to-r from-blue-600/80 via-blue-600/90 to-blue-600/80 shadow-sm sm:shadow-md border border-white/60 text-gray-100 outline-2 outline-white/80 group-hover:bg-blue-600"
                         : "bg-white shadow-sm sm:shadow-md border border-white/60 text-gray-600 outline-0 group-hover:bg-gray-50/80"
@@ -271,8 +278,15 @@ export const AddActivities = () => {
                 return (
                   <div
                     key={id}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        toggleSelectEmotion(name);
+                      }
+                    }}
                     onClick={() => toggleSelectEmotion(name)}
-                    className={`w-full max-w-[70px] aspect-square bg-cover bg-center select-none cursor-pointer hover:opacity-100 transition-all duration-300 ${
+                    className={`w-full max-w-[70px] aspect-square bg-cover bg-center select-none cursor-pointer hover:opacity-100 transition-all duration-300 rounded-full focus:outline-4 focus:outline-blue-500 ${
                       isSelected
                         ? "opacity-100 outline-3 outline-blue-600/80 scale-110 rounded-full"
                         : "opacity-70"
@@ -296,26 +310,24 @@ export const AddActivities = () => {
                 rows={4}
                 className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
               />
-              <div className="flex flex-col sm:flex-row justify-center w-full sm:items-center gap-4 mt-8">
+              <div className="flex flex-col sm:flex-row justify-center w-full text-center sm:items-center gap-4 mt-8">
+                <Link
+                  to="/my-journey"
+                  className="px-6 py-3 sm:py-2 w-full sm:w-auto bg-gray-400 text-white rounded-lg cursor-pointer hover:bg-gray-300 transition-colors"
+                >
+                  Return
+                </Link>
                 <button
                   type="submit"
                   disabled={isFuture}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-500 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+                  className="px-6 py-3 sm:py-2 w-full sm:w-auto bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-500 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
                 >
                   {isFuture
                     ? "You are from the future"
-                    : value || selectedActivities.length > 0 || selectedEmotion
+                    : data?.existingEntry
                     ? "Update your day"
                     : "Save your day"}
                 </button>
-                <Link to="/my-journey">
-                  <button
-                    type="button"
-                    className="px-6 py-2 w-full bg-gray-500 text-white rounded-lg cursor-pointer hover:bg-gray-400 transition-colors"
-                  >
-                    Return
-                  </button>
-                </Link>
               </div>
             </form>
           </div>

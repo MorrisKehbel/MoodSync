@@ -394,10 +394,36 @@ export const generateDailyInsight = async (req, res) => {
           userId,
           updatedAt: { $gt: summaryDate },
         }).lean();
+
         taskEntries = await DailyTask.find({
           userId,
           updatedAt: { $gt: summaryDate },
         }).lean();
+
+        if (activityEntries.length < 3) {
+          const twoWeeksAgo = new Date();
+          twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
+          const fallbackActivities = await DailyActivities.find({
+            userId,
+            date: { $gte: twoWeeksAgo },
+          })
+            .sort({ date: -1 })
+            .lean();
+
+          const fallbackToAdd = fallbackActivities.filter(
+            (entry) =>
+              !activityEntries.some(
+                (existing) => existing._id.toString() === entry._id.toString()
+              )
+          );
+
+          const needed = 3 - activityEntries.length;
+          activityEntries = [
+            ...activityEntries,
+            ...fallbackToAdd.slice(0, needed),
+          ];
+        }
       }
     }
 
