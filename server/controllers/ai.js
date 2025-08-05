@@ -360,6 +360,69 @@ export const generateDailyTaskSuggestions = async (req, res) => {
   }
 };
 
+export const generateDailyMotivation = async (req, res) => {
+  const { userId } = req;
+
+  const isAllowed = await checkAIEnabled(req, res);
+  if (!isAllowed) return;
+
+  try {
+    const today = new Date().toISOString().split("T")[0];
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+    const activityEntries = await DailyActivities.find({
+      userId,
+      updatedAt: { $gte: threeDaysAgo },
+    }).lean();
+    const goalsEntries = await Goals.find({ userId }).lean();
+    const taskEntries = await DailyTask.find({
+      userId,
+      date: today,
+      completed: false,
+    }).lean();
+
+    const prompt = buildAIPrompt(
+      { activities: activityEntries, goals: goalsEntries, tasks: taskEntries },
+      "dailyMotivation"
+    );
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `
+        You are an empathetic and encouraging AI motivational coach. Generate a very short, personalized daily motivation message (maximum 6-8 words) based on the user's recent activities, goals, and pending tasks.
+        Be positive, inspiring, and specific to their situation. Focus on their strengths and encourage progress towards their goals.
+        Keep it extremely concise and uplifting, like "Keep building those healthy habits!" or "Your progress is inspiring today!"
+      `,
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.8,
+      user: userId?.toString(),
+    });
+
+    const motivation = completion.choices[0]?.message?.content;
+
+    if (!motivation) {
+      return res.status(500).json({ error: "No response from OpenAI." });
+    }
+
+    return res.status(200).json({
+      motivation: motivation.trim(),
+      generatedAt: new Date(),
+    });
+  } catch (error) {
+    console.error("AI motivation generation failed:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+      details: error.message,
+    });
+  }
+};
+
 export const generateDailyInsight = async (req, res) => {
   const { userId } = req;
 
