@@ -170,6 +170,43 @@ Format your response as a simple list, one task per line, like this:
 
 Do not include any explanations, just the short task list.
 `,
+
+  dailyMotivation: ({ weightsText, categorySummary, formattedEntries }) =>
+    `
+Task:
+Generate a very short, encouraging daily motivation message based on the user's recent activities, goals, and pending tasks. Keep it to maximum 6-8 words.
+
+Input:
+You will receive:
+- A list of categories with weights (representing their importance for a balanced life).
+- Raw daily entries, including emotion, activities, and an optional note.
+- Current goals entries.
+- Today's incomplete tasks.
+
+Categories and weights:
+${weightsText}
+
+Category Score Summary:
+${categorySummary}
+
+User Data:
+${formattedEntries}
+
+Output:
+Write a very short motivation message (6-8 words maximum) that:
+- Acknowledges their recent efforts or progress
+- Encourages them towards their goals or pending tasks
+- Is positive and uplifting
+- Feels personal and specific to their situation
+
+Examples:
+"Keep building those healthy habits!"
+"Your progress is inspiring today!"
+"Great momentum with your goals!"
+"Today's tasks await your energy!"
+
+Do not include explanations. Just return the short motivational phrase.
+`,
 };
 
 export const resolveWeightedCategory = (rawCategory) => {
