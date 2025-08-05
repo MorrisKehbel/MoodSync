@@ -3,7 +3,7 @@ import {
   getDailyActivitiesById,
 } from "../data/activities";
 
-import { fetchSummary } from "../data/aiSummary";
+import { fetchSummary, generateAi } from "../data/aiSummary";
 
 export const useDailyActivitiesQuery = (date) => ({
   queryKey: ["DailyActivities", date],
@@ -22,10 +22,16 @@ export const useAiSummary = () => ({
   retry: false,
 });
 
+export const useDailyInsight = () => ({
+  queryKey: ["dailyInsight"],
+  queryFn: ({ signal }) => generateAi("dailyinsight", signal),
+  retry: false,
+});
+
 export const loadAllDailyActivities = (queryClient, user) => async () => {
   queryClient.prefetchQuery(useAllDailyActivitiesQuery());
   if (user?.settings?.aiTips === true) {
-    queryClient.prefetchQuery(useAiSummary());
+    queryClient.prefetchQuery(useDailyInsight());
   }
 
   return null;

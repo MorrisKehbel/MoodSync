@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Link } from "react-router";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { ToastContainer, toast } from "react-toastify";
@@ -12,11 +12,11 @@ import {
 
 import {
   useAllDailyActivitiesQuery,
-  useAiSummary,
+  useDailyInsight,
 } from "../../queries/queryHooks";
 
 import { updateDailyActivities } from "../../data/activities";
-import { generateAi } from "../../data/aiSummary";
+
 import {
   imgHappy,
   imgCalm,
@@ -48,22 +48,10 @@ const getMonthDays = (year, month) => {
 };
 
 export const MyJourney = () => {
-  const [userData, setUserData] = useState([]);
-  const [uiData, setAiData] = useState("");
-  const [selectedEmotions, setSelectedEmotions] = useState({});
   const { user } = useUser();
-  const emotionTimers = useRef({});
-
+  const [selectedEmotions, setSelectedEmotions] = useState({});
   const [monthOffset, setMonthOffset] = useState(0);
-
-  const targetDate = new Date(
-    today.getFullYear(),
-    today.getMonth() + monthOffset
-  );
-  const currentMonth = targetDate.getMonth();
-  const currentYear = targetDate.getFullYear();
-
-  const days = getMonthDays(currentYear, currentMonth);
+  const emotionTimers = useRef({});
 
   const { data: allDailyActivities } = useQuery(useAllDailyActivitiesQuery());
   const {
@@ -71,41 +59,22 @@ export const MyJourney = () => {
     isError,
     error,
   } = useQuery({
-    ...useAiSummary(),
+    ...useDailyInsight(),
     enabled: user?.settings?.aiTips === true,
   });
 
-  // useEffect(() => {
-  //   if (isError && error instanceof Error) {
-  //     toast.error(error.message);
-  //   }
-  // }, [isError, error]);
-
-  const handleGenerateSummary = async () => {
-    const newSummary = await generateAi("dailyinsight");
-    queryClient.setQueryData(["aiSummary"], (prev) => ({
-      ...prev,
-      ...newSummary,
-    }));
-  };
-
-  useEffect(() => {
-    if (user?.settings?.aiTips === true) {
-      handleGenerateSummary();
-    }
-  }, [user]);
-
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (allDailyActivities) {
-      setUserData(allDailyActivities?.existingEntries || []);
-    }
+  const targetDate = new Date(
+    today.getFullYear(),
+    today.getMonth() + monthOffset
+  );
+  const currentMonth = targetDate.getMonth();
+  const currentYear = targetDate.getFullYear();
+  const days = getMonthDays(currentYear, currentMonth);
 
-    if (aiSummary) {
-      setAiData(aiSummary?.activityInsight || []);
-    }
-  }, [allDailyActivities, aiSummary]);
+  const userData = allDailyActivities?.existingEntries || [];
+  const uiData = aiSummary?.activityInsight || "";
 
   const dataByDate = useMemo(() => {
     return Object.fromEntries(
@@ -185,7 +154,7 @@ export const MyJourney = () => {
                 <div className="relative custom-scroll px-4 pb-2 z-10 max-h-[300px] overflow-y-auto text-gray-800 dark:text-white/80 text-sm leading-relaxed whitespace-pre-line text-left">
                   {isError
                     ? error.message
-                    : uiData.length > 0
+                    : uiData?.length
                     ? uiData
                     : "Loading summary..."}
                 </div>
@@ -204,8 +173,8 @@ export const MyJourney = () => {
               <div className="relative flex justify-center items-center mb-6 bg-gradient-to-r from-white/10 via-white/20  to-white/10  backdrop-blur-md shadow-sm rounded-full border border-white/60 dark:border-white/10 py-2 px-6">
                 <button
                   onClick={() => setMonthOffset((prev) => prev - 1)}
-                  onMouseDown={(e) => e.preventDefault()}
-                  className="absolute left-2 rounded-full bg-gradient-to-r from-white/80 via-white/90  to-white/80 shadow-sm border border-white/60 w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-blue-100 hover:text-blue-600 focus:outline-4 focus:outline-blue-500 transition cursor-pointer"
+                  type="button"
+                  className="absolute left-2 rounded-full bg-gradient-to-r from-white/80 via-white/90  to-white/80 shadow-sm border border-white/60 w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-blue-100 hover:text-blue-600 focus-visible:outline-4 focus:outline-blue-500 transition cursor-pointer"
                   aria-label="Previous month"
                 >
                   <FaRegArrowAltCircleLeft size="36" />
@@ -218,8 +187,8 @@ export const MyJourney = () => {
                 </span>
                 <button
                   onClick={() => setMonthOffset((prev) => prev + 1)}
-                  onMouseDown={(e) => e.preventDefault()}
-                  className="absolute right-2 rounded-full bg-gradient-to-r from-white/80 via-white/90  to-white/80 shadow-sm  border border-white/60 w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-blue-100 hover:text-blue-600 focus:outline-4 focus:outline-blue-500 transition cursor-pointer"
+                  type="button"
+                  className="absolute right-2 rounded-full bg-gradient-to-r from-white/80 via-white/90  to-white/80 shadow-sm  border border-white/60 w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-blue-100 hover:text-blue-600 focus-visible:outline-4 focus:outline-blue-500 transition cursor-pointer"
                   aria-label="Next month"
                 >
                   <FaRegArrowAltCircleRight size="36" />
