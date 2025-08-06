@@ -1,25 +1,28 @@
 import { useState, useEffect } from "react";
-import { dailyTasksAPI } from "../../data/dailyTasks";
-import { generateAi } from "../../data/aiSummary";
+import { generateAi, generatePersonalizedReminder } from "../../data/aiSummary";
 import insightImage from "../../assets/homePage/insight.png";
 
 const Motivation = () => {
-  const [todaysReminder, setTodaysReminder] = useState([]);
+  const [personalizedReminder, setPersonalizedReminder] = useState("");
   const [dailyMotivation, setDailyMotivation] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isGeneratingMotivation, setIsGeneratingMotivation] = useState(false);
-  const today = new Date().toISOString().split("T")[0];
+  const [isGeneratingReminder, setIsGeneratingReminder] = useState(false);
 
-  const fetchTodaysReminder = async () => {
+  const fetchPersonalizedReminder = async () => {
     try {
-      const response = await dailyTasksAPI.getTasks(today);
-      const incompleteTasks = (response.tasks || []).filter(
-        (task) => !task.completed
-      );
-      setTodaysReminder(incompleteTasks.slice(0, 3));
+      setIsGeneratingReminder(true);
+      const response = await generatePersonalizedReminder();
+      if (response && response.reminder) {
+        setPersonalizedReminder(response.reminder);
+      } else {
+        setPersonalizedReminder("Great! All tasks completed for today.");
+      }
     } catch (error) {
-      console.error("Error fetching today's reminders:", error);
-      setTodaysReminder([]);
+      console.error("Error generating personalized reminder:", error);
+      setPersonalizedReminder("Keep making progress on your wellness journey!");
+    } finally {
+      setIsGeneratingReminder(false);
     }
   };
 
@@ -43,7 +46,10 @@ const Motivation = () => {
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      await Promise.all([fetchTodaysReminder(), generateDailyMotivation()]);
+      await Promise.all([
+        fetchPersonalizedReminder(),
+        generateDailyMotivation(),
+      ]);
       setIsLoading(false);
     };
 
@@ -97,17 +103,36 @@ const Motivation = () => {
         </div>
 
         <div className="space-y-2">
-          {todaysReminder.length === 0 ? (
-            <p className="text-gray-500 text-sm ml-11">
-              Great! All tasks completed for today.
-            </p>
+          {isGeneratingReminder ? (
+            <div className="flex items-center text-sm text-gray-600 ml-11">
+              <svg
+                className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-500"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Generating reminder...
+            </div>
           ) : (
-            todaysReminder.map((task) => (
-              <div key={task._id} className="flex items-center ml-11">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 flex-shrink-0"></div>
-                <span className="text-sm text-gray-700">{task.title}</span>
-              </div>
-            ))
+            <div className="flex items-start ml-11">
+              <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                {personalizedReminder}
+              </p>
+            </div>
           )}
         </div>
       </div>
