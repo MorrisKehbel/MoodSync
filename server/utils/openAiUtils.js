@@ -171,6 +171,46 @@ Format your response as a simple list, one task per line, like this:
 Do not include any explanations, just the short task list.
 `,
 
+  personalizedReminder: ({ weightsText, categorySummary, formattedEntries }) =>
+    `
+Task:
+Generate a very short, action-oriented reminder that nudges the user to take action based on their incomplete tasks, recent activities, and goals.
+
+Input:
+You will receive:
+- A list of categories with weights (representing their importance for a balanced life).
+- Raw daily entries, including emotion, activities, and an optional note.
+- Current goals entries.
+- Today's incomplete tasks.
+
+Categories and weights:
+${weightsText}
+
+Category Score Summary:
+${categorySummary}
+
+User Data:
+${formattedEntries}
+
+Output:
+Write a very short action reminder (maximum 6-8 words) that:
+- Does NOT mention specific task names
+- Gently reminds the user to DO something
+- Uses action-oriented language
+- Is a gentle nudge, not motivation
+- Focuses on taking steps or actions
+
+Examples:
+"Time to tackle your wellness tasks"
+"Don't forget your self-care activities"
+"Ready to check off some goals?"
+"Your tasks are waiting for you"
+"Time for your daily wellness steps"
+"Remember to tend to yourself today"
+
+Do not include explanations. Just return the short action reminder.
+`,
+
   dailyMotivation: ({ weightsText, categorySummary, formattedEntries }) =>
     `
 Task:
