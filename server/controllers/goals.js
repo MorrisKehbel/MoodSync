@@ -3,6 +3,7 @@ import Goals from "../models/Goals.js";
 import User from "../models/User.js";
 import { openAiImageGen } from "../utils/openAiImageGen.js";
 import { uploadGoalImageFromUrl } from "../utils/uploadGoalImageFromUrl.js";
+import { v2 as cloudinary } from "cloudinary";
 
 export const createGoal = async (req, res) => {
   const {
@@ -263,7 +264,7 @@ export const deleteGoal = async (req, res) => {
     }
 
     const publicId = `goals/goal_${goalId}`;
-    const result = await cloudinary.v2.uploader.destroy(publicId);
+    const result = await cloudinary.uploader.destroy(publicId);
 
     if (result.result !== "ok" && result.result !== "not found") {
       return res.status(500).json({
