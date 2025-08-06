@@ -6,6 +6,10 @@ import {
   getCategoryStyles,
 } from "./goalUtils";
 
+import { useUser } from "../../context";
+
+import { PulseLoader } from "react-spinners";
+
 export const GoalCard = ({
   goal,
   onStatusUpdate,
@@ -24,6 +28,8 @@ export const GoalCard = ({
     }
     onUpdate(goal._id, editForm);
   };
+
+  const { user } = useUser();
 
   if (isEditing) {
     return (
@@ -192,16 +198,26 @@ export const GoalCard = ({
           </button>
         </div>
       </div>
+
       <div className="mb-2 sm:mb-3 rounded-lg overflow-hidden">
-        <img
-          src={getCategoryImage(goal.category)}
-          alt={`${goal.category} goal`}
-          className="w-full h-24 sm:h-32 object-cover"
-          onError={(e) => {
-            e.target.src =
-              "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop&auto=format";
-          }}
-        />
+        {goal.loading ? (
+          <div className="w-full h-24 sm:h-32 bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">
+            <PulseLoader size={12} color="#999" />
+          </div>
+        ) : (
+          <img
+            src={
+              user?.settings?.aiTips === true
+                ? goal.imageUrl || getCategoryImage(goal.category)
+                : getCategoryImage(goal.category)
+            }
+            alt={`${goal.category} goal`}
+            className="w-full h-24 sm:h-32 object-cover"
+            onError={(e) => {
+              e.target.src = getCategoryImage("Job satisfaction");
+            }}
+          />
+        )}
       </div>
       <h4 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
         {goal.title}
