@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   updateUser,
   deleteUser,
@@ -15,8 +15,14 @@ export const UserSettings = () => {
     username: "",
     firstname: "",
     lastname: "",
-    email: "",
     password: "",
+    email: "",
+    settings: {
+      theme: "light",
+      aiTips: true,
+      notifications: true,
+    },
+    profilePicture: "",
   });
   const [previewImage, setPreviewImage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -34,18 +40,32 @@ export const UserSettings = () => {
     }));
   };
 
+  const initialUserRef = useRef(null);
+
   useEffect(() => {
-    if (user) {
-      setFormData({
+    if (user && !initialUserRef.current) {
+      initialUserRef.current = {
         username: user.username || "",
         firstname: user.firstname || "",
         lastname: user.lastname || "",
         email: user.email || "",
         password: "",
+        settings: {
+          theme: user.settings?.theme ?? "light",
+          aiTips: user.settings?.aiTips ?? true,
+          notifications: user.settings?.notifications ?? true,
+        },
+        profilePicture: user.profilePicture || "",
+      };
+
+      setFormData({
+        ...initialUserRef.current,
+        password: "",
       });
+
+      setPreviewImage(user.profilePicture?.url || null);
     }
   }, [user]);
-
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -107,15 +127,37 @@ export const UserSettings = () => {
   };
 
   const handleCancel = () => {
-    if (user) {
-      setFormData({
-        username: user.username || "",
-        firstname: user.firstname || "",
-        lastname: user.lastname || "",
-        email: user.email || "",
-        password: "",
-      });
-    }
+    const initial = initialUserRef.current;
+    if (!initial) return;
+
+    setFormData({
+      ...initial,
+      password: "",
+    });
+
+    setUser((prev) => ({
+      ...prev,
+      settings: {
+        ...prev.settings,
+        ...initial.settings,
+      },
+    }));
+  };
+
+  const hasChanges = () => {
+    const initial = initialUserRef.current;
+    if (!initial) return false;
+
+    return (
+      formData.username !== initial.username ||
+      formData.firstname !== initial.firstname ||
+      formData.lastname !== initial.lastname ||
+      formData.email !== initial.email ||
+      formData.password.trim() !== "" ||
+      formData.settings.theme !== initial.settings.theme ||
+      formData.settings.aiTips !== initial.settings.aiTips ||
+      formData.settings.notifications !== initial.settings.notifications
+    );
   };
 
   const handleSave = async () => {
@@ -130,9 +172,9 @@ export const UserSettings = () => {
       email: formData.email,
       ...(formData.password ? { password: formData.password } : {}),
       settings: {
-        theme: user.settings.theme,
-        aiTips: user.settings.aiTips,
-        notifications: user.settings.notifications,
+        theme: formData.settings.theme,
+        aiTips: formData.settings.aiTips,
+        notifications: formData.settings.notifications,
       },
     };
 
@@ -148,6 +190,10 @@ export const UserSettings = () => {
           notifications: updatedUser.settings?.notifications ?? true,
         },
       }));
+      initialUserRef.current = {
+        ...formData,
+        password: "",
+      };
       setSuccessMsg("Settings updated successfully");
       setTimeout(() => {
         setSuccessMsg(null);
@@ -248,35 +294,52 @@ export const UserSettings = () => {
 
           <div className="flex flex-col sm:flex-row justify-center items-center lg:items-stretch gap-8">
             <div className="w-full max-w-md lg:mb-0 mb-8 ">
-              {["username", "firstname", "lastname", "email"].map((field) => (
-                <div key={field} className="mt-4">
-                  <label className="block font-semibold text-lg">
-                    {field === "firstname"
-                      ? "First Name"
-                      : field === "lastname"
-                      ? "Last Name"
-                      : field === "username"
-                      ? "Username"
-                      : field === "email"
-                      ? "Email"
-                      : field}
-                    :
-                  </label>
-                  <input
-                    name={field}
-                    value={formData[field]}
-                    onChange={handleChange}
-                    className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
-                  />
-                </div>
-              ))}
+              {["username", "firstname", "lastname", "email"].map((field) => {
+                const labels = {
+                  username: "Username",
+                  firstname: "First Name",
+                  lastname: "Last Name",
+                  email: "Email",
+                };
+                const autocompleteMap = {
+                  username: "username",
+                  firstname: "given-name",
+                  lastname: "family-name",
+                  email: "email",
+                };
 
-              <label className="block font-semibold mt-4 text-lg">
+                return (
+                  <div key={field} className="mt-4">
+                    <label
+                      htmlFor={field}
+                      className="block font-semibold text-lg"
+                    >
+                      {labels[field]}:
+                    </label>
+                    <input
+                      id={field}
+                      name={field}
+                      type={field === "email" ? "email" : "text"}
+                      autoComplete={autocompleteMap[field]}
+                      value={formData[field]}
+                      onChange={handleChange}
+                      className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
+                    />
+                  </div>
+                );
+              })}
+
+              <label
+                htmlFor="password"
+                className="block font-semibold mt-4 text-lg"
+              >
                 Password:
               </label>
               <input
+                id="password"
                 name="password"
                 type="password"
+                autoComplete="new-password"
                 value={formData.password}
                 placeholder="Enter your new password"
                 onChange={handleChange}
@@ -418,6 +481,13 @@ export const UserSettings = () => {
                           [name]: newValue,
                         },
                       }));
+                      setFormData((prev) => ({
+                        ...prev,
+                        settings: {
+                          ...prev.settings,
+                          [name]: newValue,
+                        },
+                      }));
                     }}
                     className="flex items-center justify-between gap-x-6 w-full max-w-sm sm:max-w-xs cursor-pointer mx-auto"
                   >
@@ -448,14 +518,16 @@ export const UserSettings = () => {
           />
           <div className="mt-12 flex flex-col sm:flex-row gap-7 items-center justify-center">
             <button
-              className="w-full sm:w-auto bg-gray-400 text-white px-4 hover:bg-gray-300 transition py-3 sm:py-2 rounded-lg cursor-pointer"
+              className="w-full sm:w-auto bg-gray-400 text-white px-4 hover:bg-gray-300 transition py-3 sm:py-2 rounded-lg cursor-pointer disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
               onClick={handleCancel}
+              disabled={!hasChanges()}
             >
               Cancel
             </button>
             <button
               onClick={() => setIsOpen(true)}
-              className="w-full sm:w-auto bg-blue-600 text-white px-4 py-3 sm:py-2 rounded-lg hover:bg-blue-500 transition cursor-pointer"
+              disabled={!hasChanges()}
+              className="w-full sm:w-auto bg-blue-600 text-white px-4 py-3 sm:py-2 rounded-lg hover:bg-blue-500 transition cursor-pointer disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
             >
               Save Changes
             </button>
