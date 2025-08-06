@@ -129,6 +129,26 @@ export const MyJourney = () => {
       };
     });
   };
+
+  const date = new Date(aiSummary?.activityInsightUpdatedAt);
+
+  const now = new Date();
+  const nextUpdate = new Date(date.getTime() + 24 * 60 * 60 * 1000);
+  const diffMs = nextUpdate - now;
+
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+  let nextUpdateText = "";
+
+  if (diffMs <= 0) {
+    nextUpdateText = "Update available now";
+  } else if (diffHours === 0) {
+    nextUpdateText = `Next update in ${diffMinutes} min`;
+  } else {
+    nextUpdateText = `Next update in ${diffHours}h ${diffMinutes}min`;
+  }
+
   return (
     <>
       <ToastContainer
@@ -161,7 +181,10 @@ export const MyJourney = () => {
 
                 <HoverTooltip
                   text="AI Summary"
-                  tooltip="Refreshed daily, based on your most recent mood & activity logs."
+                  tooltip={[
+                    "Refreshed daily, based on your most recent mood & activity logs.",
+                    `${nextUpdateText}`,
+                  ]}
                   className="text-center bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent font-medium"
                 />
 
@@ -196,7 +219,7 @@ export const MyJourney = () => {
               </div>
             </div>
             <div className="w-full bg-gradient-to-t from-white/40 dark:from-white/20 to-transparent p-4 rounded-2xl">
-              <div className="w-full grid max-[320px]:grid-cols-3 grid-cols-4 sm:grid-cols-6 md:grid-cols-8 xl:grid-cols-11 gap-3 mb-8 text-center text-black text-sm">
+              <div className="w-full grid max-[320px]:grid-cols-3 grid-cols-4 sm:grid-cols-6 md:grid-cols-8 xl:grid-cols-11 gap-3 mb-6 text-center text-black text-sm">
                 {days.map((day) => {
                   const yyyy = day.getFullYear();
                   const mm = String(day.getMonth() + 1).padStart(2, "0");
@@ -269,7 +292,7 @@ export const MyJourney = () => {
               </div>
               <Link
                 to="/add-activities"
-                className="bg-blue-600 hover:bg-blue-500 text-white text-lg font-semibold py-2 px-6 rounded-xl sm:rounded-full shadow-md transition cursor-pointer w-full"
+                className="bg-blue-600 hover:bg-blue-500 text-white text-lg font-semibold py-3 sm:py-2 px-4 rounded-xl sm:rounded-full shadow-md transition cursor-pointer w-full"
               >
                 Add your today's activities
               </Link>

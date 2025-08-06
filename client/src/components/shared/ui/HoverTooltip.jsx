@@ -19,7 +19,12 @@ export const HoverTooltip = ({
                     opacity-0 group-hover:opacity-100 transition-opacity duration-200 
                     pointer-events-none whitespace-nowrap z-50`}
       >
-        {tooltip}
+        {tooltip.map((line, index) => (
+          <span key={index}>
+            {line}
+            <br />
+          </span>
+        ))}
       </div>
     </div>
   );
