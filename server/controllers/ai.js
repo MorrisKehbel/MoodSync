@@ -418,6 +418,78 @@ export const generateDailyMotivation = async (req, res) => {
   }
 };
 
+export const generatePersonalizedReminder = async (req, res) => {
+  const { userId } = req;
+
+  const isAllowed = await checkAIEnabled(req, res);
+  if (!isAllowed) return;
+
+  try {
+    const today = new Date().toISOString().split("T")[0];
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+    const incompleteTasks = await DailyTask.find({
+      userId,
+      date: today,
+      completed: false,
+    }).lean();
+
+    const activityEntries = await DailyActivities.find({
+      userId,
+      updatedAt: { $gte: threeDaysAgo },
+    }).lean();
+
+    const goalsEntries = await Goals.find({ userId }).lean();
+
+    if (incompleteTasks.length === 0) {
+      return res.status(200).json({
+        reminder: "Great! All tasks completed for today.",
+        generatedAt: new Date(),
+      });
+    }
+
+    const prompt = buildAIPrompt(
+      {
+        activities: activityEntries,
+        goals: goalsEntries,
+        tasks: incompleteTasks,
+      },
+      "personalizedReminder"
+    );
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `You are an AI assistant that creates gentle, action-oriented reminders for users to help them with their wellness journey. Keep responses very short and focused on encouraging action.`,
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.8,
+      user: userId?.toString(),
+    });
+
+    const reminder = completion.choices[0]?.message?.content;
+
+    if (!reminder) {
+      return res.status(500).json({ error: "No response from OpenAI." });
+    }
+
+    return res.status(200).json({
+      reminder: reminder.trim(),
+      generatedAt: new Date(),
+    });
+  } catch (error) {
+    console.error("AI personalized reminder generation failed:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+      details: error.message,
+    });
+  }
+};
+
 export const generateDailyInsight = async (req, res) => {
   const { userId } = req;
 

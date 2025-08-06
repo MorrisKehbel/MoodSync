@@ -7,6 +7,7 @@ import {
   generateGoalsInsight,
   generateDailyTaskSuggestions,
   generateDailyMotivation,
+  generatePersonalizedReminder,
   getAISummary,
 } from "../controllers/ai.js";
 
@@ -26,5 +27,7 @@ aiRouter
   .post(verifyToken, generateDailyTaskSuggestions);
 
 aiRouter.route("/motivation").post(verifyToken, generateDailyMotivation);
+
+aiRouter.route("/reminder").post(verifyToken, generatePersonalizedReminder);
 
 export default aiRouter;
