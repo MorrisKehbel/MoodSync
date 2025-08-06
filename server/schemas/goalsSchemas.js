@@ -33,6 +33,7 @@ export const createGoalSchema = z.object({
   ),
   status: z.enum(["active", "completed"]).default("active"),
   progress: progressSchema.optional(),
+  imageUrl: z.string().optional(),
 });
 
 export const updateGoalSchema = z.object({

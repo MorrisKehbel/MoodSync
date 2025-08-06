@@ -57,6 +57,9 @@ const goalsSchema = new Schema(
       type: progressSchema,
       required: false,
     },
+    imageUrl: {
+      type: String,
+    },
   },
   {
     timestamps: true,

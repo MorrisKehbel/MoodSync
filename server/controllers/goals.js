@@ -1,5 +1,8 @@
 import { isValidObjectId } from "mongoose";
 import Goals from "../models/Goals.js";
+import User from "../models/User.js";
+import { openAiImageGen } from "../utils/openAiImageGen.js";
+import { uploadGoalImageFromUrl } from "../utils/uploadGoalImageFromUrl.js";
 
 export const createGoal = async (req, res) => {
   const {
@@ -10,8 +13,10 @@ export const createGoal = async (req, res) => {
   if (!isValidObjectId(userId)) {
     return res.status(400).json({ error: "Invalid user ID" });
   }
-
   try {
+    const user = await User.findById(userId);
+    let tempImageUrl = null;
+
     const newGoal = await Goals.create({
       userId,
       title,
@@ -19,7 +24,55 @@ export const createGoal = async (req, res) => {
       category,
       status: status || "active",
       progress,
+      imageUrl: null,
     });
+
+    if (user?.settings?.aiTips !== false) {
+      const CATEGORY_COLORS = {
+        Social: "soft purple, peach, light pink",
+        "Physical health": "gold, warm beige, muted green",
+        Finances: "soft green, aqua blue, mint",
+        "Job satisfaction": "light blue, lavender, warm pink",
+        Personal: "light blue, soft yellow, peach, neutral tones",
+        default: "light blue, peach, soft green",
+      };
+
+      const getCategoryColors = (category) => {
+        return CATEGORY_COLORS[category] || CATEGORY_COLORS.default;
+      };
+
+      const colors = getCategoryColors(category);
+
+      const prompt = `
+Create a symbolic digital illustration with the following visual requirements:
+
+- Style: clean, flat vector style with soft gradients, pastel colors (e.g. ${colors}), minimalistic design, soft shadows
+- Composition: centered or isometric layout, balanced and calm
+- No text, no logos, no realistic faces or photo elements
+- Focus: motivational, optimistic mood
+
+Represent this personal goal visually:
+
+Title: "${title || "Personal growth"}"
+Description: "${desc || "A general goal to improve oneself."}"
+
+Use simple symbolic elements (e.g. nature, abstract objects, characters with no facial detail) to convey the goal meaningfully and visually. The image should feel like part of a consistent visual series.
+`;
+
+      try {
+        tempImageUrl = await openAiImageGen({ prompt });
+
+        const result = await uploadGoalImageFromUrl({
+          imageUrl: tempImageUrl,
+          goalId: newGoal._id,
+        });
+
+        newGoal.imageUrl = result.secure_url;
+        await newGoal.save();
+      } catch (err) {
+        console.warn("Image generation or upload failed:", err.message);
+      }
+    }
 
     return res.status(201).json({
       message: "Goal created successfully",
@@ -203,11 +256,22 @@ export const deleteGoal = async (req, res) => {
   }
 
   try {
-    const goal = await Goals.findOneAndDelete({ _id: goalId, userId });
+    const goal = await Goals.findOne({ _id: goalId, userId });
 
     if (!goal) {
       return res.status(404).json({ error: "Goal not found" });
     }
+
+    const publicId = `goals/goal_${goalId}`;
+    const result = await cloudinary.v2.uploader.destroy(publicId);
+
+    if (result.result !== "ok" && result.result !== "not found") {
+      return res.status(500).json({
+        message: "Failed to delete image from Cloudinary",
+      });
+    }
+
+    await Goals.deleteOne({ _id: goalId, userId });
 
     return res.status(200).json({
       message: "Goal deleted successfully",

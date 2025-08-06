@@ -1,3 +1,11 @@
+import {
+  imgFinance,
+  imgOther,
+  imgPersonal,
+  imgPhysical,
+  imgSocial,
+} from "../../assets/goals";
+
 export const categories = [
   { name: "Social", color: "purple" },
   { name: "Physical health", color: "orange" },
@@ -8,16 +16,11 @@ export const categories = [
 
 export const getCategoryImage = (categoryName) => {
   const images = {
-    Social:
-      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=300&h=200&fit=crop&auto=format",
-    "Physical health":
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop&auto=format",
-    Finances:
-      "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=200&fit=crop&auto=format",
-    "Job satisfaction":
-      "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=300&h=200&fit=crop&auto=format",
-    Personal:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop&auto=format",
+    Social: imgSocial,
+    "Physical health": imgPhysical,
+    Finances: imgFinance,
+    "Job satisfaction": imgOther,
+    Personal: imgPersonal,
   };
   return images[categoryName] || images["Personal"];
 };
