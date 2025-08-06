@@ -1,4 +1,4 @@
-import { useState, useEffect,useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -54,18 +54,23 @@ export const LoginModal = ({
       if (user?.sendWelcomeEmail && user?.resetToken) {
         const formElement = form.current;
         formElement.querySelector('input[name="to_email"]').value = user.email;
-        formElement.querySelector('input[name="to_name"]').value = user.username || "User";
-        formElement.querySelector('input[name="reset_link"]').value =
-          `${window.location.origin}/reset-password?token=${user.resetToken}`;
-        formElement.querySelector('input[name="from_name"]').value = "MoodSync Team";
+        formElement.querySelector('input[name="to_name"]').value =
+          user.username || "User";
+        formElement.querySelector(
+          'input[name="reset_link"]'
+        ).value = `${window.location.origin}/reset-password?token=${user.resetToken}`;
+        formElement.querySelector('input[name="from_name"]').value =
+          "MoodSync Team";
 
         const emailResult = await sendEmail(form);
         if (emailResult?.type === "success") {
-          toast.success(`Password reset link sent to: ${user.email}. Please check your inbox.`);
+          toast.success(
+            `Password reset link sent to: ${user.email}. Please check your inbox.`
+          );
         } else {
           toast.error(emailResult?.text || "Failed to send reset email.");
         }
-    }
+      }
       setCheckSession(true);
       setTimeout(() => {
         if (onLoginSuccess) onLoginSuccess();
@@ -155,7 +160,7 @@ export const LoginModal = ({
         style={{ zIndex: 100 }}
       />
       <div className="z-50 flex items-center justify-center p-4 backdrop-blur-lg">
-        <div className="relative w-full max-w-md p-8 max-h-[90dvh] overflow-y-auto bg-white/90 border border-white rounded-2xl shadow-lg">
+        <div className="relative w-full max-w-md p-8 max-h-[90dvh] overflow-y-auto bg-white/90 dark:bg-white border border-white rounded-2xl shadow-lg">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 text-black/70 hover:text-black text-2xl leading-none cursor-pointer"
@@ -305,7 +310,7 @@ export const LoginModal = ({
             Don't have an account?
             <button
               onClick={onSwitchToSignup}
-              className="underline ml-1 bg-transparent border-none cursor-pointer text-inherit"
+              className="underline ml-2 bg-transparent border-none cursor-pointer font-semibold text-blue-600 hover:text-blue-500"
             >
               Sign Up
             </button>

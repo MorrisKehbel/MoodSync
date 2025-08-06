@@ -12,9 +12,32 @@ export const fetchSummary = async (signal) => {
       signal,
     });
 
-    if (res.status === 404) {
-      await generateSummary();
-      return;
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || "Unknown error");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const generateAi = async (endpoint, signal) => {
+  try {
+    const res = await fetch(`${baseURL}/${endpoint}`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      signal,
+    });
+
+    if (res.status === 204) {
+      return null;
     }
 
     if (!res.ok) {
@@ -30,9 +53,37 @@ export const fetchSummary = async (signal) => {
   }
 };
 
-const generateSummary = async (signal) => {
+export const generatePersonalizedReminder = async (signal) => {
   try {
-    const res = await fetch(`${baseURL}/summary`, {
+    const res = await fetch(`${baseURL}/reminder`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      signal,
+    });
+
+    if (res.status === 204) {
+      return null;
+    }
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || "Unknown error");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const generateTaskSuggestions = async (signal) => {
+  try {
+    const res = await fetch(`${baseURL}/task-suggestions`, {
       method: "POST",
       credentials: "include",
       headers: {

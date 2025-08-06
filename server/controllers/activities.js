@@ -10,6 +10,17 @@ export const addDailyActivities = async (req, res) => {
   if (!isValidObjectId(userId)) {
     return res.status(400).json({ error: "Invalid ID" });
   }
+  const today = new Date();
+  const bufferDate = new Date(today);
+  bufferDate.setDate(today.getDate() + 1);
+  const inputDate = new Date(date);
+  const isFuture = inputDate > bufferDate;
+
+  if (isFuture) {
+    return res.status(400).json({
+      error: "Date is in the future.",
+    });
+  }
 
   try {
     const existingEntry = await DailyActivities.findOne({ userId, date });

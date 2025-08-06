@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   updateUser,
   deleteUser,
@@ -7,22 +7,65 @@ import {
 } from "../../data/users.js";
 import { useUser } from "../../context/index.js";
 import { PageSlideContainer } from "../../components/shared/wrapper/PageSlideContainer";
+import { ConfirmModal } from "../../components/shared/ui/ConfirmModal.jsx";
 
 export const UserSettings = () => {
   const { user, setUser } = useUser();
+  const [formData, setFormData] = useState({
+    username: "",
+    firstname: "",
+    lastname: "",
+    password: "",
+    email: "",
+    settings: {
+      theme: "light",
+      aiTips: true,
+      notifications: true,
+    },
+    profilePicture: "",
+  });
   const [previewImage, setPreviewImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
 
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUser((prev) => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
+  const initialUserRef = useRef(null);
+
+  useEffect(() => {
+    if (user && !initialUserRef.current) {
+      initialUserRef.current = {
+        username: user.username || "",
+        firstname: user.firstname || "",
+        lastname: user.lastname || "",
+        email: user.email || "",
+        password: "",
+        settings: {
+          theme: user.settings?.theme ?? "light",
+          aiTips: user.settings?.aiTips ?? true,
+          notifications: user.settings?.notifications ?? true,
+        },
+        profilePicture: user.profilePicture || "",
+      };
+
+      setFormData({
+        ...initialUserRef.current,
+        password: "",
+      });
+
+      setPreviewImage(user.profilePicture?.url || null);
+    }
+  }, [user]);
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -75,15 +118,46 @@ export const UserSettings = () => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete your account?"))
-      return;
     try {
       await deleteUser();
-      alert("Account deleted successfully");
-      window.location.href = "/dashboard";
+      window.location.href = "/";
     } catch (err) {
       setErrors(err.message);
     }
+  };
+
+  const handleCancel = () => {
+    const initial = initialUserRef.current;
+    if (!initial) return;
+
+    setFormData({
+      ...initial,
+      password: "",
+    });
+
+    setUser((prev) => ({
+      ...prev,
+      settings: {
+        ...prev.settings,
+        ...initial.settings,
+      },
+    }));
+  };
+
+  const hasChanges = () => {
+    const initial = initialUserRef.current;
+    if (!initial) return false;
+
+    return (
+      formData.username !== initial.username ||
+      formData.firstname !== initial.firstname ||
+      formData.lastname !== initial.lastname ||
+      formData.email !== initial.email ||
+      formData.password.trim() !== "" ||
+      formData.settings.theme !== initial.settings.theme ||
+      formData.settings.aiTips !== initial.settings.aiTips ||
+      formData.settings.notifications !== initial.settings.notifications
+    );
   };
 
   const handleSave = async () => {
@@ -92,15 +166,15 @@ export const UserSettings = () => {
     setSuccessMsg(null);
 
     const payload = {
-      username: user.username,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      email: user.email,
-      ...(user.password ? { password: user.password } : {}),
+      username: formData.username,
+      firstname: formData.firstname,
+      lastname: formData.lastname,
+      email: formData.email,
+      ...(formData.password ? { password: formData.password } : {}),
       settings: {
-        theme: user.settings.theme,
-        aiTips: user.settings.aiTips,
-        notifications: user.settings.notifications,
+        theme: formData.settings.theme,
+        aiTips: formData.settings.aiTips,
+        notifications: formData.settings.notifications,
       },
     };
 
@@ -116,6 +190,10 @@ export const UserSettings = () => {
           notifications: updatedUser.settings?.notifications ?? true,
         },
       }));
+      initialUserRef.current = {
+        ...formData,
+        password: "",
+      };
       setSuccessMsg("Settings updated successfully");
       setTimeout(() => {
         setSuccessMsg(null);
@@ -216,42 +294,59 @@ export const UserSettings = () => {
 
           <div className="flex flex-col sm:flex-row justify-center items-center lg:items-stretch gap-8">
             <div className="w-full max-w-md lg:mb-0 mb-8 ">
-              {["username", "firstname", "lastname", "email"].map((field) => (
-                <div key={field} className="mt-4">
-                  <label className="block font-semibold text-lg">
-                    {field === "firstname"
-                      ? "First Name"
-                      : field === "lastname"
-                      ? "Last Name"
-                      : field === "username"
-                      ? "Username"
-                      : field === "email"
-                      ? "Email"
-                      : field}
-                    :
-                  </label>
-                  <input
-                    name={field}
-                    value={user[field]}
-                    onChange={handleChange}
-                    className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
-                  />
-                </div>
-              ))}
+              {["username", "firstname", "lastname", "email"].map((field) => {
+                const labels = {
+                  username: "Username",
+                  firstname: "First Name",
+                  lastname: "Last Name",
+                  email: "Email",
+                };
+                const autocompleteMap = {
+                  username: "username",
+                  firstname: "given-name",
+                  lastname: "family-name",
+                  email: "email",
+                };
 
-              <label className="block font-semibold mt-4 text-lg">
+                return (
+                  <div key={field} className="mt-4">
+                    <label
+                      htmlFor={field}
+                      className="block font-semibold text-lg"
+                    >
+                      {labels[field]}:
+                    </label>
+                    <input
+                      id={field}
+                      name={field}
+                      type={field === "email" ? "email" : "text"}
+                      autoComplete={autocompleteMap[field]}
+                      value={formData[field]}
+                      onChange={handleChange}
+                      className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
+                    />
+                  </div>
+                );
+              })}
+
+              <label
+                htmlFor="password"
+                className="block font-semibold mt-4 text-lg"
+              >
                 Password:
               </label>
               <input
+                id="password"
                 name="password"
                 type="password"
-                value={user.password}
+                autoComplete="new-password"
+                value={formData.password}
                 placeholder="Enter your new password"
                 onChange={handleChange}
                 className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
               />
-            </div>          
-            <div className="ml-8 flex flex-col items-center  lg:ml-8">
+            </div>
+            <div className="w-full sm:w-auto flex flex-col items-center lg:ml-8">
               <div className="w-39 h-39 bg-gray-100 border-gray-300 border-2 rounded-full overflow-hidden mb-2 flex items-center justify-center">
                 {previewImage || isValidImageUrl(user?.profilePicture?.url) ? (
                   <img
@@ -264,8 +359,8 @@ export const UserSettings = () => {
                 )}
               </div>
 
-              <div className="flex flex-wrap items-center space-x-4 mt-4">
-                <label className="cursor-pointer bg-gray-200 text-black px-3 py-1 rounded-full text-sm hover:bg-blue-500 hover:text-white transition flex items-center gap-1">
+              <div className="flex flex-wrap items-center justify-center mt-4 gap-2">
+                <label className="cursor-pointer bg-gray-200 text-black px-3 py-1 rounded-full text-sm hover:bg-blue-500 hover:text-white transition flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-4 w-4"
@@ -289,11 +384,11 @@ export const UserSettings = () => {
                   />
                 </label>
 
-                {(previewImage || user.profilePicture) && (
+                {user.profilePicture?.url && (
                   <button
                     type="button"
                     onClick={handleDeleteProfilePicture}
-                    className="bg-red-600 text-white px-3 py-1 rounded-full text-sm hover:bg-red-700 transition flex items-center gap-1"
+                    className="bg-red-600 text-white px-3 py-1 rounded-full text-sm hover:bg-red-700 transition flex items-center cursor-pointer"
                     disabled={loading}
                     title="Remove profile picture"
                   >
@@ -315,8 +410,16 @@ export const UserSettings = () => {
                   </button>
                 )}
               </div>
+              <ConfirmModal
+                isOpen={isDeleteOpen}
+                onClose={() => setIsDeleteOpen(false)}
+                onConfirm={handleDelete}
+                title="Delete Account?"
+                message="Are you sure you really want to delete your account?"
+                color="red"
+              />
               <p
-                onClick={handleDelete}
+                onClick={() => setIsDeleteOpen(true)}
                 className="mt-4 inline-flex items-center justify-center gap-2 px-5 py-2.5 
                     bg-gradient-to-r from-red-600 to-pink-600 text-white font-bold 
                     rounded-full shadow-md transition-all duration-300 
@@ -340,7 +443,7 @@ export const UserSettings = () => {
                 Delete Account
               </p>
 
-              <div className="mt-12 space-y-4 text-lg">
+              <div className="w-full mt-12 space-y-4 text-lg">
                 {[
                   {
                     label: "Dark Mode",
@@ -378,8 +481,15 @@ export const UserSettings = () => {
                           [name]: newValue,
                         },
                       }));
+                      setFormData((prev) => ({
+                        ...prev,
+                        settings: {
+                          ...prev.settings,
+                          [name]: newValue,
+                        },
+                      }));
                     }}
-                    className="flex items-center justify-between gap-x-6 w-full max-w-xs cursor-pointer"
+                    className="flex items-center justify-between gap-x-6 w-full max-w-sm sm:max-w-xs cursor-pointer mx-auto"
                   >
                     <span className="font-semibold">{label}:</span>
                     <div className="relative inline-block w-11 h-6">
@@ -399,18 +509,25 @@ export const UserSettings = () => {
               </div>
             </div>
           </div>
-
-          <div className="mt-9 flex flex-col sm:flex-row gap-7 items-center justify-center">
+          <ConfirmModal
+            isOpen={isOpen}
+            onClose={() => setIsOpen(false)}
+            onConfirm={handleSave}
+            title="Keep These Changes?"
+            message="Are you sure you want to save your changes?"
+          />
+          <div className="mt-12 flex flex-col sm:flex-row gap-7 items-center justify-center">
             <button
-              className="bg-gray-400 text-white px-11 hover:bg-gray-500 transition py-2 rounded-xl cursor-pointer"
-              disabled
+              className="w-full sm:w-auto bg-gray-400 text-white px-4 hover:bg-gray-300 transition py-3 sm:py-2 rounded-lg cursor-pointer disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+              onClick={handleCancel}
+              disabled={!hasChanges()}
             >
               Cancel
             </button>
-
             <button
-              onClick={handleSave}
-              className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-500 transition cursor-pointer"
+              onClick={() => setIsOpen(true)}
+              disabled={!hasChanges()}
+              className="w-full sm:w-auto bg-blue-600 text-white px-4 py-3 sm:py-2 rounded-lg hover:bg-blue-500 transition cursor-pointer disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
             >
               Save Changes
             </button>
@@ -420,6 +537,3 @@ export const UserSettings = () => {
     </PageSlideContainer>
   );
 };
-
-
- 

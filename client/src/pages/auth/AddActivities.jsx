@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useSearchParams, Link } from "react-router";
 
@@ -6,7 +6,6 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useDailyActivitiesQuery } from "../../queries/queryHooks";
 
 import { addDailyActivities } from "../../data/activities";
-import { useUser } from "../../context";
 import { PageSlideContainer } from "../../components/shared/wrapper/PageSlideContainer";
 import {
   imgHappy,
@@ -146,19 +145,10 @@ export const AddActivities = () => {
   const localDate = today.toISOString().split("T")[0];
   const dateParam = searchParams.get("date");
   const effectiveDate = dateParam || localDate;
-  const isFuture = dateParam > localDate;
 
   const { data } = useQuery(useDailyActivitiesQuery(effectiveDate));
-  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (data) {
-      const entry = data?.existingEntry;
-      setValue(entry?.note || "");
-      setSelectedActivities(entry?.activities || []);
-      setSelectedEmotion(entry?.emotion || "");
-    }
-  }, [data]);
+  const queryClient = useQueryClient();
 
   const toggleSelectActivities = (name) => {
     setSelectedActivities((prev) => {
@@ -170,24 +160,49 @@ export const AddActivities = () => {
     });
   };
 
-  const toggleSelectEmotion = (name) =>
-    setSelectedEmotion((prev) => (prev === name ? "" : name));
+  const initialEntryRef = useRef({});
+
+  useEffect(() => {
+    const entry = data?.existingEntry;
+    initialEntryRef.current = entry || {
+      note: "",
+      activities: [],
+      emotion: "",
+    };
+    setValue(entry?.note || "");
+    setSelectedActivities(entry?.activities || []);
+    setSelectedEmotion(entry?.emotion || "");
+  }, [data]);
+
+  const trimmedNote = value.trim();
+
+  const hasChanges = () => {
+    const { note, activities, emotion } = initialEntryRef.current;
+    return (
+      trimmedNote !== (note || "").trim() ||
+      selectedEmotion !== (emotion || "") ||
+      selectedActivities.sort().join(",") !==
+        (activities || []).sort().join(",")
+    );
+  };
+
+  const isFuture = dateParam > localDate;
+  const hasEntry = !!data?.existingEntry;
+  const isModified = hasChanges();
+
+  const renderButtonLabel = () => {
+    if (isFuture) return "Time traveler detected!";
+    if (!hasEntry && isModified) return "Save your day";
+    if (hasEntry && isModified) return "Update your day";
+    return "No changes";
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !value.trim() &&
-      selectedActivities.length === 0 &&
-      selectedEmotion.length === 0
-    ) {
-      toast.error("Please add your activities, emotion, or a note.");
-      return;
-    }
-
     try {
       const data = await addDailyActivities({
-        note: value,
+        note: trimmedNote,
         activities: selectedActivities,
         emotion: selectedEmotion,
         date: effectiveDate,
@@ -246,17 +261,18 @@ export const AddActivities = () => {
                 <div
                   key={id}
                   onClick={() => toggleSelectActivities(name)}
-                  className="flex flex-col items-center cursor-pointer"
+                  className="flex flex-col items-center cursor-pointer group"
                 >
-                  <div
-                    className={`w-16 h-16 rounded-full flex justify-center items-center select-none transition-all hover:scale-105 duration-300 ${
+                  <button
+                    type="button"
+                    className={`w-16 h-16 rounded-full flex justify-center items-center select-none transition-all focus-visible:outline-4 group-hover:scale-105 duration-300 cursor-pointer ${
                       isSelected
-                        ? "bg-gradient-to-r from-blue-600/80 via-blue-600/90 to-blue-600/80 backdrop-blur-md shadow-sm sm:shadow-md border border-white/60 text-gray-100 outline-2 outline-white/80 hover:bg-blue-600"
-                        : "bg-gradient-to-r from-white/80 via-white/90 to-white/80 backdrop-blur-md shadow-sm sm:shadow-md border border-white/60 text-gray-600 outline-0 hover:bg-gray-50/60"
+                        ? "bg-gradient-to-r from-blue-600/80 via-blue-600/90 to-blue-600/80 shadow-sm sm:shadow-md border border-white/60 text-gray-100 group-hover:bg-blue-600 outline-white"
+                        : "bg-white shadow-sm sm:shadow-md border-8 border-white hover:border-gray-50 text-gray-600 group-hover:bg-gray-50 outline-blue-500"
                     }`}
                   >
                     <Icon size="32" />
-                  </div>
+                  </button>
                   <h3 className="font-semibold text-md text-center text-[var(--color-text-muted)] mt-2">
                     {name}
                   </h3>
@@ -264,21 +280,22 @@ export const AddActivities = () => {
               );
             })}
           </div>
-          <div className="bg-gradient-to-r from-white/90 via-white to-white/90 rounded-2xl shadow-sm sm:shadow-md border border-white/60 mt-16 p-8">
+          <div className="bg-white rounded-2xl shadow-sm sm:shadow-md border border-white/60 mt-16 p-8">
             <div className="flex flex-wrap justify-center items-center gap-6">
               {emotions.map(({ id, name, image: Image }) => {
                 const isSelected = selectedEmotion === name;
                 return (
-                  <div
+                  <button
                     key={id}
-                    onClick={() => toggleSelectEmotion(name)}
-                    className={`w-full max-w-[70px] aspect-square bg-cover bg-center select-none cursor-pointer hover:opacity-100 transition-all duration-300 ${
+                    onClick={() => setSelectedEmotion(name)}
+                    type="button"
+                    className={`w-full max-w-[70px] aspect-square bg-cover bg-center select-none cursor-pointer hover:opacity-100 transition-all duration-300 rounded-full focus-visible:outline-4 focus:outline-blue-500 ${
                       isSelected
                         ? "opacity-100 outline-3 outline-blue-600/80 scale-110 rounded-full"
                         : "opacity-70"
                     }`}
                     style={{ backgroundImage: `url(${Image})` }}
-                  ></div>
+                  ></button>
                 );
               })}
             </div>
@@ -296,26 +313,20 @@ export const AddActivities = () => {
                 rows={4}
                 className="mt-2 w-full p-3 rounded-xl border border-gray-300 transition-all focus:outline-2 focus:outline-blue-400 bg-gray-50"
               />
-              <div className="flex flex-col sm:flex-row justify-center w-full sm:items-center gap-4 mt-8">
+              <div className="flex flex-col sm:flex-row justify-center w-full text-center sm:items-center gap-4 mt-8">
+                <Link
+                  to="/my-journey"
+                  className="px-6 py-3 sm:py-2 w-full sm:w-auto bg-gray-400 text-white rounded-lg cursor-pointer hover:bg-gray-300 transition-colors"
+                >
+                  Return
+                </Link>
                 <button
                   type="submit"
-                  disabled={isFuture}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-500 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+                  disabled={isFuture || !isModified}
+                  className="px-6 py-3 sm:py-2 w-full sm:w-auto bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-500 transition-colors disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed"
                 >
-                  {isFuture
-                    ? "You are from the future"
-                    : value || selectedActivities.length > 0 || selectedEmotion
-                    ? "Update your day"
-                    : "Save your day"}
+                  {renderButtonLabel()}
                 </button>
-                <Link to="/my-journey">
-                  <button
-                    type="button"
-                    className="px-6 py-2 w-full bg-gray-500 text-white rounded-lg cursor-pointer hover:bg-gray-400 transition-colors"
-                  >
-                    Return
-                  </button>
-                </Link>
               </div>
             </form>
           </div>

@@ -119,7 +119,7 @@ export const SignupModal = ({
         style={{ zIndex: 100 }}
       />
       <div className="z-50 flex items-center justify-center p-4 backdrop-blur-lg">
-        <div className="relative w-full max-w-md p-8 max-h-[90dvh] overflow-y-auto bg-white/90 border border-white rounded-2xl shadow-lg">
+        <div className="relative w-full max-w-md p-8 max-h-[90dvh] overflow-y-auto bg-white/90 dark:bg-white border border-white rounded-2xl shadow-lg">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 text-black/70 hover:text-black text-2xl leading-none cursor-pointer"
@@ -270,7 +270,7 @@ export const SignupModal = ({
             Already have an account?
             <button
               onClick={onSwitchToLogin}
-              className="underline ml-1 bg-transparent border-none cursor-pointer text-inherit"
+              className="underline ml-2 bg-transparent border-none cursor-pointer font-semibold text-blue-600 hover:text-blue-500"
             >
               Sign In
             </button>
