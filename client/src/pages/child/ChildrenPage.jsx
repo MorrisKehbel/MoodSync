@@ -7,7 +7,7 @@ const moods = [
   { id: "scared", label: "SCARED", icon: <FaMeh className="text-4xl" /> },
 ];
 
-export const HealingStories = () => {
+export const ChildrenCare = () => {
   const [selectedMood, setSelectedMood] = useState(null);
 
   const handleClick = (moodId) => {
