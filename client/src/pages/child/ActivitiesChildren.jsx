@@ -16,7 +16,8 @@ export const ChildrenCare = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 py-10 px-4">
+    <div className="w-full py-10 px-4">
+
       <div className="max-w-7xl mx-auto px-6 mt-8"      >
         <h1 className="text-3xl font-bold text-center mb-4">
           Healing stories for children
