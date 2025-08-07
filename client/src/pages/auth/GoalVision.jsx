@@ -38,7 +38,7 @@ export const GoalVision = () => {
         />
 
         <div>
-          <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">
+          <h3 className="text-xl sm:text-2xl font-semibold text-[var(--color-text)] mb-4 ml-4 mt-12 sm:mb-6">
             Your Goals
           </h3>
 

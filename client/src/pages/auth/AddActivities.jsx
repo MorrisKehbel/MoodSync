@@ -327,7 +327,7 @@ export const AddActivities = () => {
                 <button
                   type="submit"
                   disabled={isFuture || !isModified}
-                  className="px-6 py-3 sm:py-2 w-full sm:w-auto bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-500 transition-colors disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed"
+                  className="px-6 py-3 sm:py-2 w-full sm:w-auto bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-500 transition-colors disabled:opacity-30 disabled:cursor-default"
                 >
                   {renderButtonLabel()}
                 </button>
