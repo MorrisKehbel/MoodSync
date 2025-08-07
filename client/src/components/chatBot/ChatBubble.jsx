@@ -1,4 +1,3 @@
-import Markdown from "react-markdown";
 import { useUser } from "../../context";
 
 const ChatBubble = ({ message }) => {
@@ -24,7 +23,7 @@ const ChatBubble = ({ message }) => {
             : "bg-blue-600 text-white rounded-bl-none"
         }`}
       >
-        <Markdown>{parts[0].text}</Markdown>
+        <div className="whitespace-pre-wrap  break-words">{parts[0].text}</div>
       </div>
       {isUser && (
         <div className="ml-2 self-end flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-sm select-none">
