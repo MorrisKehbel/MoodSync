@@ -158,7 +158,6 @@ export const useGoals = () => {
       );
       setEditingGoal(null);
       setEditGoalForm({ title: "", desc: "", category: "" });
-      alert("Goal updated successfully!");
     } catch (error) {
       console.error("Error updating goal:", error);
       alert(`Failed to update goal: ${error.message}`);

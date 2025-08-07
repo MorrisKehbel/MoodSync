@@ -342,7 +342,19 @@ export const UserSettings = () => {
               </div>
 
               <div className="flex flex-wrap items-center justify-center mt-4 gap-2">
-                <label className="cursor-pointer bg-gray-200 text-black px-3 py-1 rounded-full text-sm hover:bg-blue-500 hover:text-white transition flex items-center">
+                <label
+                  tabIndex={0}
+                  role="button"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.currentTarget
+                        .querySelector('input[type="file"]')
+                        ?.click();
+                    }
+                  }}
+                  className="cursor-pointer bg-gray-200 text-black px-3 py-1 rounded-full text-sm hover:bg-blue-500 hover:text-white transition flex items-center"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-4 w-4"
@@ -410,7 +422,7 @@ export const UserSettings = () => {
                 message="Are you sure you really want to delete your account?"
                 color="red"
               />
-              <p
+              <button
                 onClick={() => setIsDeleteOpen(true)}
                 className="mt-4 inline-flex items-center justify-center gap-2 px-5 py-2.5 
                     bg-gradient-to-r from-red-600 to-pink-600 text-white font-bold 
@@ -433,7 +445,7 @@ export const UserSettings = () => {
                   />
                 </svg>
                 Delete Account
-              </p>
+              </button>
 
               <div className="w-full mt-12 space-y-4 text-lg">
                 {[
@@ -514,7 +526,7 @@ export const UserSettings = () => {
               disabled={!hasChanges()}
               className="w-full sm:w-auto bg-blue-600 text-white px-4 py-3 sm:py-2 rounded-lg hover:bg-blue-500 transition cursor-pointer disabled:opacity-30 disabled:cursor-default"
             >
-              Save Changes
+              {!hasChanges() ? "No Changes" : "Save Changes"}
             </button>
           </div>
         </div>

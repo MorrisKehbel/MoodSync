@@ -1,12 +1,9 @@
-import { useState } from "react";
 import {
   categories,
   getCategoryImage,
   getCategoryDisplayStyles,
   getCategoryStyles,
 } from "./goalUtils";
-
-import { useUser } from "../../context";
 
 import { PulseLoader } from "react-spinners";
 
@@ -28,8 +25,6 @@ export const GoalCard = ({
     }
     onUpdate(goal._id, editForm);
   };
-
-  const { user } = useUser();
 
   if (isEditing) {
     return (
@@ -94,7 +89,7 @@ export const GoalCard = ({
                         category: category.name,
                       })
                     }
-                    className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${getCategoryStyles(
+                    className={`px-3 py-1 text-xs font-medium rounded-full transition-all cursor-pointer ${getCategoryStyles(
                       category.name,
                       editForm.category === category.name
                     )}`}
@@ -129,13 +124,13 @@ export const GoalCard = ({
                 !editForm.desc.trim() ||
                 !editForm.category
               }
-              className="flex-1 py-2 px-3 rounded-lg text-sm font-medium bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white transition-colors"
+              className="flex-1 py-2 px-3 rounded-lg text-sm font-medium bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white transition-colors cursor-pointer"
             >
               Save
             </button>
             <button
               onClick={onCancelEdit}
-              className="flex-1 py-2 px-3 rounded-lg text-sm font-medium bg-gray-300 hover:bg-gray-400 text-gray-700 transition-colors"
+              className="flex-1 py-2 px-3 rounded-lg text-sm font-medium bg-gray-300 hover:bg-gray-400 text-gray-700 transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -186,7 +181,7 @@ export const GoalCard = ({
           <button
             onClick={() => onDelete(goal._id)}
             disabled={goal.loading}
-            className="text-gray-400 hover:text-red-500 p-1 transition-colors disabled:opacity-30"
+            className="text-gray-400 hover:text-red-500 p-1 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default"
             title="Delete goal"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -244,19 +239,19 @@ export const GoalCard = ({
               goal.status === "active" ? "completed" : "active"
             )
           }
-          className={`flex-1 py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors disabled:opacity-30 ${
+          className={`flex-1 py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default ${
             goal.status === "completed"
               ? "bg-yellow-500 hover:bg-yellow-600 text-white"
               : "bg-green-600 hover:bg-green-700 text-white"
           }`}
         >
-          {goal.status === "completed" ? "Reactivate" : "Finished"}
+          {goal.status === "completed" ? "Reactivate" : "Complete Goal"}
         </button>
 
         <button
           onClick={() => onStartEdit(goal)}
           disabled={goal.loading}
-          className="flex-1 py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors disabled:opacity-30"
+          className="flex-1 py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default"
         >
           Update
         </button>
