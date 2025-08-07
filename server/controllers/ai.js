@@ -640,3 +640,92 @@ export const generateDailyInsight = async (req, res) => {
     });
   }
 };
+
+export const generateAiChat = async (req, res) => {
+  const {
+    sanitizedBody: { messages },
+    userId,
+  } = req;
+
+  const isAllowed = await checkAIEnabled(req, res);
+  if (!isAllowed) return;
+
+  res.writeHead(200, {
+    Connection: "keep-alive",
+    "Cache-Control": "no-cache",
+    "Content-Type": "text/event-stream",
+  });
+
+  try {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const twoWeeksAgoDate = new Date(now);
+    twoWeeksAgoDate.setDate(now.getDate() - 14);
+    const twoWeeksAgoStr = twoWeeksAgoDate.toISOString().slice(0, 10);
+
+    const user = await User.findById(userId).select("username firstname -_id");
+
+    const ActivitiesData = await DailyActivities.find({
+      userId: userId,
+      date: { $gte: twoWeeksAgoStr },
+    })
+      .sort({ date: -1 })
+      .select("note activities emotion -_id")
+      .lean();
+
+    const GoalsData = await Goals.find({
+      userId,
+    })
+      .select("title description -_id")
+      .lean();
+
+    const userPrompt = `
+The user has provided the following information:
+
+Name of the user: ${user?.firstname || user?.username || "Unknown"}
+
+Recent Activities (last 14 days): ${JSON.stringify(ActivitiesData, null, 2)}
+
+Current Goals: ${JSON.stringify(GoalsData, null, 2)}
+
+Latest message:
+${messages[messages.length - 1]?.content || "No message"}
+
+Please analyze the user's current state and respond directly to their message in a helpful way.
+`;
+
+    const stream = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [
+        {
+          role: "system",
+          content: `
+    You are a helpful and psychologically informed AI assistant.
+    You analyze a user's emotional well-being and life balance based on their recent activity logs and goals.
+    Use psychological frameworks and research-based reasoning.
+    Focus on offering a meaningful takeaway or one simple, realistic suggestion the user could consider. Avoid summarizing all activities or repeating data unless it's directly relevant.
+    Respond directly to the user's latest message in a natural, human-like way, as if continuing a friendly conversation.
+    Be empathetic, concise, and solution-focused.
+    If balance is lacking, suggest realistic, specific improvements.
+    Keep your language motivating and accessible.
+          `,
+        },
+        { role: "user", content: userPrompt },
+      ],
+      stream: true,
+    });
+
+    for await (const chunk of stream) {
+      const content = chunk.choices[0]?.delta?.content;
+      if (content) {
+        res.write(`data: ${JSON.stringify({ text: content })}\n\n`);
+      }
+    }
+
+    res.write("data: [DONE]\n\n");
+    res.end();
+  } catch (err) {
+    console.error(err);
+    res.status(500).end();
+  }
+};
