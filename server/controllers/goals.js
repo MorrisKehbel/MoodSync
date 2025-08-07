@@ -66,6 +66,7 @@ Use simple symbolic elements (e.g. nature, abstract objects, characters with no 
         const result = await uploadGoalImageFromUrl({
           imageUrl: tempImageUrl,
           goalId: newGoal._id,
+          userId,
         });
 
         newGoal.imageUrl = result.secure_url;
@@ -263,7 +264,7 @@ export const deleteGoal = async (req, res) => {
       return res.status(404).json({ error: "Goal not found" });
     }
 
-    const publicId = `goals/goal_${goalId}`;
+    const publicId = `goals/${userId}/goal_${goalId}`;
     const result = await cloudinary.uploader.destroy(publicId);
 
     if (result.result !== "ok" && result.result !== "not found") {

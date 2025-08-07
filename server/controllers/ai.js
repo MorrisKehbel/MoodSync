@@ -521,8 +521,9 @@ export const generateDailyInsight = async (req, res) => {
 
       const diffInDays = (activityDate - summaryDate) / (1000 * 60 * 60 * 24);
 
-      if (diffInDays < 0.99) {
+      if (diffInDays < 1) {
         return res.status(200).json({
+          message: "There are no new activities to summarize.",
           activityInsight: latestSummary?.activityInsight || null,
           activityInsightUpdatedAt:
             latestSummary?.activityInsightUpdatedAt || null,
@@ -571,6 +572,7 @@ export const generateDailyInsight = async (req, res) => {
 
     if (activityEntries.length === 0) {
       return res.status(200).json({
+        message: "There are no new activities to summarize.",
         activityInsight: latestSummary?.activityInsight || null,
         activityInsightUpdatedAt:
           latestSummary?.activityInsightUpdatedAt || null,

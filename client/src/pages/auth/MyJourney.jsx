@@ -58,6 +58,8 @@ export const MyJourney = () => {
     data: aiSummary,
     isError,
     error,
+    isLoading,
+    isFetching,
   } = useQuery({
     ...useDailyInsight(),
     enabled: user?.settings?.aiTips === true,
@@ -142,12 +144,14 @@ export const MyJourney = () => {
   let nextUpdateText = "";
 
   if (diffMs <= 0) {
-    nextUpdateText = "Update available now";
+    nextUpdateText = aiSummary?.message || "Update available now";
   } else if (diffHours === 0) {
     nextUpdateText = `Next update in ${diffMinutes} min`;
   } else {
     nextUpdateText = `Next update in ${diffHours}h ${diffMinutes}min`;
   }
+
+  console.log(allDailyActivities);
 
   return (
     <>
@@ -174,16 +178,18 @@ export const MyJourney = () => {
                 <div className="relative custom-scroll px-4 pb-2 z-10 max-h-[300px] overflow-y-auto text-gray-800 dark:text-white/80 text-sm leading-relaxed whitespace-pre-line text-left">
                   {isError
                     ? error.message
+                    : isLoading || isFetching
+                    ? "Loading summary..."
                     : uiData?.length
                     ? uiData
-                    : "Loading summary..."}
+                    : "No summary available."}
                 </div>
 
                 <HoverTooltip
                   text="AI Summary"
                   tooltip={[
                     "Refreshed daily, based on your most recent mood & activity logs.",
-                    `${nextUpdateText}`,
+                    nextUpdateText,
                   ]}
                   className="text-center bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent font-medium"
                 />

@@ -185,7 +185,8 @@ export const GoalCard = ({
           </span>
           <button
             onClick={() => onDelete(goal._id)}
-            className="text-gray-400 hover:text-red-500 p-1 transition-colors"
+            disabled={goal.loading}
+            className="text-gray-400 hover:text-red-500 p-1 transition-colors disabled:opacity-30"
             title="Delete goal"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -202,12 +203,12 @@ export const GoalCard = ({
       <div className="mb-2 sm:mb-3 rounded-lg overflow-hidden">
         {goal.loading ? (
           <div className="w-full h-24 sm:h-32 bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">
-            <PulseLoader size={12} color="#999" />
+            <PulseLoader size={8} color="#999" />
           </div>
         ) : (
           <img
             src={
-              user?.settings?.aiTips === true
+              goal.imageUrl
                 ? goal.imageUrl || getCategoryImage(goal.category)
                 : getCategoryImage(goal.category)
             }
@@ -236,13 +237,14 @@ export const GoalCard = ({
       </div>
       <div className="flex gap-1 sm:gap-2">
         <button
+          disabled={goal.loading}
           onClick={() =>
             onStatusUpdate(
               goal._id,
               goal.status === "active" ? "completed" : "active"
             )
           }
-          className={`flex-1 py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+          className={`flex-1 py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors disabled:opacity-30 ${
             goal.status === "completed"
               ? "bg-yellow-500 hover:bg-yellow-600 text-white"
               : "bg-green-600 hover:bg-green-700 text-white"
@@ -253,7 +255,8 @@ export const GoalCard = ({
 
         <button
           onClick={() => onStartEdit(goal)}
-          className="flex-1 py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+          disabled={goal.loading}
+          className="flex-1 py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors disabled:opacity-30"
         >
           Update
         </button>
