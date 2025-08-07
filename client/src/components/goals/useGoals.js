@@ -60,6 +60,7 @@ export const useGoals = () => {
     };
 
     setGoals([optimisticGoal, ...goals]);
+    setNewGoal({ title: "", desc: "", category: "" });
 
     try {
       const response = await createGoal({
@@ -68,13 +69,13 @@ export const useGoals = () => {
         category: newGoal.category,
         status: "active",
       });
+
       setGoals((prevGoals) =>
         prevGoals.map((goal) => (goal._id === tempId ? response.goal : goal))
       );
-
-      setNewGoal({ title: "", desc: "", category: "" });
     } catch (error) {
       console.error("Error creating goal:", error);
+      setGoals((prevGoals) => prevGoals.filter((goal) => goal._id !== tempId));
     }
   };
 

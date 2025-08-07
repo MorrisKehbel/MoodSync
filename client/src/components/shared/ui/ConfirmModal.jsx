@@ -28,7 +28,7 @@ export const ConfirmModal = ({
   const colorClasses = COLOR_MAP[color] || COLOR_MAP["blue"];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-lg">
       <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm">
         <h2 className="text-lg font-semibold">{title || "Are you sure?"}</h2>
         <p className="mt-2 text-sm text-gray-600">

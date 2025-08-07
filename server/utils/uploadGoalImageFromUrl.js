@@ -2,7 +2,7 @@ import cloudinary from "cloudinary";
 import streamifier from "streamifier";
 import axios from "axios";
 
-export const uploadGoalImageFromUrl = async ({ imageUrl, goalId }) => {
+export const uploadGoalImageFromUrl = async ({ imageUrl, goalId, userId }) => {
   if (!imageUrl || !goalId) {
     throw new Error("Missing imageUrl or goalId");
   }
@@ -18,7 +18,7 @@ export const uploadGoalImageFromUrl = async ({ imageUrl, goalId }) => {
       {
         public_id: `goal_${goalId}`,
         overwrite: true,
-        folder: "goals",
+        folder: `goals/user_${userId}`,
       },
       (error, result) => {
         if (error) {

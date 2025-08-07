@@ -11,26 +11,38 @@ import { ConfirmModal } from "../../components/shared/ui/ConfirmModal.jsx";
 
 export const UserSettings = () => {
   const { user, setUser } = useUser();
-  const [formData, setFormData] = useState({
-    username: "",
-    firstname: "",
-    lastname: "",
-    password: "",
-    email: "",
-    settings: {
-      theme: "light",
-      aiTips: true,
-      notifications: true,
-    },
-    profilePicture: "",
-  });
+
   const [previewImage, setPreviewImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
 
+  const [isDeletePictureOpen, setIsDeletePictureOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  const getInitialState = (user) => ({
+    username: user.username || "",
+    firstname: user.firstname || "",
+    lastname: user.lastname || "",
+    email: user.email || "",
+    password: "",
+    settings: {
+      theme: user.settings?.theme ?? "light",
+      aiTips: user.settings?.aiTips ?? true,
+      notifications: user.settings?.notifications ?? true,
+    },
+    profilePicture: user.profilePicture || "",
+  });
+
+  const initialUserDataRef = useRef(getInitialState(user));
+  const [formData, setFormData] = useState(getInitialState(user));
+
+  useEffect(() => {
+    if (user) {
+      setPreviewImage(user.profilePicture?.url || null);
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,32 +52,6 @@ export const UserSettings = () => {
     }));
   };
 
-  const initialUserRef = useRef(null);
-
-  useEffect(() => {
-    if (user && !initialUserRef.current) {
-      initialUserRef.current = {
-        username: user.username || "",
-        firstname: user.firstname || "",
-        lastname: user.lastname || "",
-        email: user.email || "",
-        password: "",
-        settings: {
-          theme: user.settings?.theme ?? "light",
-          aiTips: user.settings?.aiTips ?? true,
-          notifications: user.settings?.notifications ?? true,
-        },
-        profilePicture: user.profilePicture || "",
-      };
-
-      setFormData({
-        ...initialUserRef.current,
-        password: "",
-      });
-
-      setPreviewImage(user.profilePicture?.url || null);
-    }
-  }, [user]);
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -90,11 +76,6 @@ export const UserSettings = () => {
   };
 
   const handleDeleteProfilePicture = async () => {
-    if (
-      !window.confirm("Are you sure you want to remove your profile picture?")
-    )
-      return;
-
     setLoading(true);
     setErrors(null);
     setSuccessMsg(null);
@@ -127,25 +108,11 @@ export const UserSettings = () => {
   };
 
   const handleCancel = () => {
-    const initial = initialUserRef.current;
-    if (!initial) return;
-
-    setFormData({
-      ...initial,
-      password: "",
-    });
-
-    setUser((prev) => ({
-      ...prev,
-      settings: {
-        ...prev.settings,
-        ...initial.settings,
-      },
-    }));
+    setFormData(initialUserDataRef.current);
   };
 
   const hasChanges = () => {
-    const initial = initialUserRef.current;
+    const initial = initialUserDataRef.current;
     if (!initial) return false;
 
     return (
@@ -183,17 +150,15 @@ export const UserSettings = () => {
       setUser((prev) => ({
         ...prev,
         ...updatedUser,
-        password: "",
         settings: {
           theme: updatedUser.settings?.theme || "light",
           aiTips: updatedUser.settings?.aiTips ?? true,
           notifications: updatedUser.settings?.notifications ?? true,
         },
       }));
-      initialUserRef.current = {
-        ...formData,
-        password: "",
-      };
+      const newInitial = getInitialState(updatedUser);
+      initialUserDataRef.current = newInitial;
+      setFormData(newInitial);
       setSuccessMsg("Settings updated successfully");
       setTimeout(() => {
         setSuccessMsg(null);
@@ -208,6 +173,23 @@ export const UserSettings = () => {
   const isValidImageUrl = (url) => {
     return typeof url === "string" && url.match(/\.(jpeg|jpg|gif|png|webp)$/i);
   };
+
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      "data-theme",
+      formData.settings.theme === "dark" ? "dark" : "light"
+    );
+
+    return () => {
+      const initial = initialUserDataRef.current;
+      if (formData.settings.theme !== initial.settings.theme) {
+        document.documentElement.setAttribute(
+          "data-theme",
+          initial.settings.theme === "dark" ? "dark" : "light"
+        );
+      }
+    };
+  }, [formData.settings.theme]);
 
   return (
     <PageSlideContainer>
@@ -385,29 +367,39 @@ export const UserSettings = () => {
                 </label>
 
                 {user.profilePicture?.url && (
-                  <button
-                    type="button"
-                    onClick={handleDeleteProfilePicture}
-                    className="bg-red-600 text-white px-3 py-1 rounded-full text-sm hover:bg-red-700 transition flex items-center cursor-pointer"
-                    disabled={loading}
-                    title="Remove profile picture"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      viewBox="0 0 24 24"
+                  <>
+                    <ConfirmModal
+                      isOpen={isDeletePictureOpen}
+                      onClose={() => setIsDeletePictureOpen(false)}
+                      onConfirm={handleDeleteProfilePicture}
+                      title="Delete your Profile Picture?"
+                      message="Are you sure you really want to delete your Profile Picture?"
+                      color="red"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setIsDeletePictureOpen(true)}
+                      className="bg-red-600 text-white px-3 py-1 rounded-full text-sm hover:bg-red-700 transition flex items-center cursor-pointer"
+                      disabled={loading}
+                      title="Remove profile picture"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                    Delete
-                  </button>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                      Delete
+                    </button>
+                  </>
                 )}
               </div>
               <ConfirmModal
@@ -449,19 +441,19 @@ export const UserSettings = () => {
                     label: "Dark Mode",
                     name: "theme",
                     isTheme: true,
-                    isActive: user.settings.theme === "dark",
+                    isActive: formData.settings.theme === "dark",
                   },
                   {
-                    label: "AI Tips",
+                    label: "AI Features",
                     name: "aiTips",
                     isTheme: false,
-                    isActive: user.settings.aiTips,
+                    isActive: formData.settings.aiTips,
                   },
                   {
                     label: "Notifications",
                     name: "notifications",
                     isTheme: false,
-                    isActive: user.settings.notifications,
+                    isActive: formData.settings.notifications,
                   },
                 ].map(({ label, name, isTheme, isActive }) => (
                   <button
@@ -474,13 +466,6 @@ export const UserSettings = () => {
                       } else {
                         newValue = !isActive;
                       }
-                      setUser((prev) => ({
-                        ...prev,
-                        settings: {
-                          ...prev.settings,
-                          [name]: newValue,
-                        },
-                      }));
                       setFormData((prev) => ({
                         ...prev,
                         settings: {
@@ -518,7 +503,7 @@ export const UserSettings = () => {
           />
           <div className="mt-12 flex flex-col sm:flex-row gap-7 items-center justify-center">
             <button
-              className="w-full sm:w-auto bg-gray-400 text-white px-4 hover:bg-gray-300 transition py-3 sm:py-2 rounded-lg cursor-pointer disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto bg-gray-400 text-white px-4 hover:bg-gray-300 transition py-3 sm:py-2 rounded-lg cursor-pointer disabled:opacity-30 disabled:cursor-default"
               onClick={handleCancel}
               disabled={!hasChanges()}
             >
@@ -527,7 +512,7 @@ export const UserSettings = () => {
             <button
               onClick={() => setIsOpen(true)}
               disabled={!hasChanges()}
-              className="w-full sm:w-auto bg-blue-600 text-white px-4 py-3 sm:py-2 rounded-lg hover:bg-blue-500 transition cursor-pointer disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto bg-blue-600 text-white px-4 py-3 sm:py-2 rounded-lg hover:bg-blue-500 transition cursor-pointer disabled:opacity-30 disabled:cursor-default"
             >
               Save Changes
             </button>

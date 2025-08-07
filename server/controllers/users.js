@@ -56,6 +56,8 @@ export const deleteUser = async (req, res, next) => {
       await cloudinary.uploader.destroy(user.profilePicture.public_id);
     }
 
+    await cloudinary.api.delete_resources_by_prefix(`goals/user_${req.userId}`);
+
     await Promise.all([
       DailyActivities.deleteMany({ userId: req.userId }),
       DailyTask.deleteMany({ userId: req.userId }),

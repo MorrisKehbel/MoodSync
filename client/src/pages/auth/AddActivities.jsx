@@ -148,6 +148,8 @@ export const AddActivities = () => {
 
   const { data } = useQuery(useDailyActivitiesQuery(effectiveDate));
 
+  console.log(data);
+
   const queryClient = useQueryClient();
 
   const toggleSelectActivities = (name) => {
@@ -212,6 +214,8 @@ export const AddActivities = () => {
         queryKey: ["DailyActivities", effectiveDate],
       });
       queryClient.invalidateQueries({ queryKey: ["allDailyActivities"] });
+
+      queryClient.invalidateQueries({ queryKey: ["dailyInsight"] });
 
       toast.success(
         data.message ||
