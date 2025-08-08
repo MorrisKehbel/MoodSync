@@ -7,6 +7,7 @@ import {
   Legend,
   Tooltip,
 } from "recharts";
+import { getAllDailyActivities } from "../../data/activities";
 
 const ACTIVITY_CATEGORIES = {
   personal: { name: "Personal", color: "#8884d8" },
@@ -96,6 +97,7 @@ export const WeeklyActivities = () => {
   const [activityData, setActivityData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [weekRange, setWeekRange] = useState("");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchWeeklyActivities();
@@ -103,12 +105,10 @@ export const WeeklyActivities = () => {
 
   const getWeekRange = () => {
     const today = new Date();
-    const startOfWeek = new Date(
-      today.setDate(today.getDate() - today.getDay())
-    );
-    const endOfWeek = new Date(
-      today.setDate(today.getDate() - today.getDay() + 6)
-    );
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
 
     const options = { month: "short", day: "numeric" };
     const start = startOfWeek.toLocaleDateString("en-US", options);
@@ -118,35 +118,65 @@ export const WeeklyActivities = () => {
   };
 
   const fetchWeeklyActivities = async () => {
+    let cancelled = false;
+
+    setLoading(true);
+    setError(null);
+
     try {
+      const payload = await getAllDailyActivities();
+      const existingEntries = payload.existingEntries || [];
+
+      // Calculate current week range
       const today = new Date();
-      const startOfWeek = new Date(
-        today.setDate(today.getDate() - today.getDay())
-      );
-      const endOfWeek = new Date(
-        today.setDate(today.getDate() - today.getDay() + 6)
-      );
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay());
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+
       setWeekRange(getWeekRange());
 
-      const response = await fetch(
-        `/api/activities?startDate=${startOfWeek.toISOString()}&endDate=${endOfWeek.toISOString()}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+      // Filter activities for this week
+      const weeklyActivities = existingEntries.filter((entry) => {
+        if (!entry.date) return false;
+        const entryDate = new Date(entry.date);
+        if (isNaN(entryDate.getTime())) return false;
+        return entryDate >= startOfWeek && entryDate <= endOfWeek;
+      });
+
+      // Extract activities from the entries
+      const allActivities = [];
+      weeklyActivities.forEach((entry) => {
+        if (entry.activities && Array.isArray(entry.activities)) {
+          entry.activities.forEach((activity) => {
+            allActivities.push({
+              name:
+                activity.name ||
+                activity.title ||
+                activity.activity ||
+                activity,
+              date: entry.date,
+            });
+          });
         }
-      );
+      });
 
-      if (!response.ok) throw new Error("Failed to fetch activities");
+      const categorizedData = processActivities(allActivities);
 
-      const activities = await response.json();
+      if (!cancelled) {
+        setActivityData(categorizedData);
+      }
+    } catch (err) {
+      if (cancelled) return;
+      if (err.name === "AbortError") return;
 
-      const categorizedData = processActivities(activities);
-      setActivityData(categorizedData);
-    } catch (error) {
-      console.error("Error fetching weekly activities:", error);
+      console.error("Error fetching weekly activities:", err);
+      setError(err.message || "Unknown error");
 
+      // Set week range even on error
       setWeekRange(getWeekRange());
+
+      // Fallback data for demonstration
       setActivityData([
         { name: "Personal", value: 30, count: 6, color: "#8884d8" },
         { name: "Social", value: 25, count: 5, color: "#82ca9d" },
@@ -155,8 +185,14 @@ export const WeeklyActivities = () => {
         { name: "Education", value: 10, count: 2, color: "#8dd1e1" },
       ]);
     } finally {
-      setLoading(false);
+      if (!cancelled) {
+        setLoading(false);
+      }
     }
+
+    return () => {
+      cancelled = true;
+    };
   };
 
   const processActivities = (activities) => {
@@ -165,10 +201,11 @@ export const WeeklyActivities = () => {
 
     activities.forEach((activity) => {
       const category = categorizeActivity(
-        activity.name || activity.title || activity.activity
+        activity.name || activity.title || activity.activity || activity
       );
       categoryCount[category] = (categoryCount[category] || 0) + 1;
     });
+
     return Object.entries(categoryCount).map(([category, count]) => ({
       name: ACTIVITY_CATEGORIES[category].name,
       value: totalActivities > 0 ? (count / totalActivities) * 100 : 0,
@@ -181,6 +218,16 @@ export const WeeklyActivities = () => {
     return (
       <div className="bg-white rounded-lg p-6 shadow-md h-full flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white rounded-lg p-6 shadow-md h-full flex items-center justify-center">
+        <div className="text-sm text-red-600">
+          Error loading activities: {error}
+        </div>
       </div>
     );
   }
