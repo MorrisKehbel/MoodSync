@@ -70,16 +70,15 @@ const SlantedTopBar = ({ x, y, width, height, fill }) => {
     Z
   `;
 
-  // return <path d={path} fill={fill} />;
   return (
     <path
       d={path}
       fill={fill}
-      focusable="false"          // <-- Add this
-      tabIndex={-1}              // <-- Add this
-      onMouseDown={(e) => e.preventDefault()}  // <-- Add this
-      onFocus={(e) => e.currentTarget.blur()}  // <-- Add this
-      style={{ outline: "none", WebkitTapHighlightColor: "transparent" }}  // <-- Add this
+      focusable="false"          
+      tabIndex={-1}              
+      onMouseDown={(e) => e.preventDefault()}  
+      onFocus={(e) => e.currentTarget.blur()}  
+      style={{ outline: "none", WebkitTapHighlightColor: "transparent" }} 
     />
   );
 };
@@ -217,7 +216,7 @@ export const EmotionMonthlyAverageChart =()  => {
   const onMouseDownCapture = (e) => {
   const tag = String(e.target.tagName).toLowerCase();
   if (tag === "path" || tag === "rect" || tag === "g" || tag === "svg") {
-    e.preventDefault();  // prevent focus on click for SVG elements
+    e.preventDefault();  
   }
   };
 
