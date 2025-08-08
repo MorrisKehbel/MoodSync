@@ -70,13 +70,46 @@ const SlantedTopBar = ({ x, y, width, height, fill }) => {
     Z
   `;
 
-  return <path d={path} fill={fill} />;
+  // return <path d={path} fill={fill} />;
+  return (
+    <path
+      d={path}
+      fill={fill}
+      focusable="false"          // <-- Add this
+      tabIndex={-1}              // <-- Add this
+      onMouseDown={(e) => e.preventDefault()}  // <-- Add this
+      onFocus={(e) => e.currentTarget.blur()}  // <-- Add this
+      style={{ outline: "none", WebkitTapHighlightColor: "transparent" }}  // <-- Add this
+    />
+  );
 };
 
 export const EmotionMonthlyAverageChart =()  => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.id = "emotion-chart-focus-fix";
+    style.innerHTML = `
+      .emotion-chart svg path,
+      .emotion-chart svg rect,
+      .emotion-chart svg g {
+        outline: none !important;
+        box-shadow: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+      }
+      .emotion-chart svg path:focus,
+      .emotion-chart svg rect:focus,
+      .emotion-chart svg g:focus {
+        outline: none !important;
+        box-shadow: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => document.getElementById("emotion-chart-focus-fix")?.remove();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -180,15 +213,24 @@ export const EmotionMonthlyAverageChart =()  => {
       />
     );
   };
+
+  const onMouseDownCapture = (e) => {
+  const tag = String(e.target.tagName).toLowerCase();
+  if (tag === "path" || tag === "rect" || tag === "g" || tag === "svg") {
+    e.preventDefault();  // prevent focus on click for SVG elements
+  }
+  };
+
  
   return(
-    <div className="h-full flex flex-col relative px-3 ">
+    <div className="emotion-chart h-full flex flex-col relative px-3 ">
       <div className="mt-[-13px] mb-2">
         <h3 className="text-xl font-bold text-gray-700">
           Progress of well-being ({new Date().getFullYear()})
         </h3>
       </div>
-      <div className="flex-1 ">
+
+      <div className="flex-1" onMouseDownCapture={onMouseDownCapture}>
         <ResponsiveContainer width="100%" height="110%">
           <BarChart
             data={rechartsData}
@@ -254,6 +296,8 @@ export const EmotionMonthlyAverageChart =()  => {
               animationEasing='ease-out' 
               radius={[5, 5, 0, 0]}
               barSize={26}
+              className="no-focus"
+              // style={{ outline: "none" }}
             >
               <LabelList
                 dataKey="displayLabel"
