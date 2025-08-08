@@ -1,9 +1,13 @@
+import { useState } from "react";
+
 import {
   categories,
   getCategoryImage,
   getCategoryDisplayStyles,
   getCategoryStyles,
 } from "./goalUtils";
+
+import { ConfirmModal } from "../shared/ui/ConfirmModal";
 
 import { PulseLoader } from "react-spinners";
 
@@ -18,6 +22,8 @@ export const GoalCard = ({
   editForm,
   onEditFormChange,
 }) => {
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
   const handleUpdateSubmit = () => {
     if (!editForm.title.trim() || !editForm.desc.trim() || !editForm.category) {
       alert("Please fill in all fields");
@@ -32,9 +38,17 @@ export const GoalCard = ({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-lg font-semibold text-gray-800">Edit Goal</h4>
+            <ConfirmModal
+              isOpen={isDeleteOpen}
+              onClose={() => setIsDeleteOpen(false)}
+              onConfirm={() => onDelete(goal._id)}
+              title="Delete Goal?"
+              message="Are you sure you really want to delete this goal?"
+              color="red"
+            />
             <button
-              onClick={() => onDelete(goal._id)}
-              className="text-gray-400 hover:text-red-500 p-1 transition-colors"
+              onClick={() => setIsDeleteOpen(true)}
+              className="text-gray-400 hover:text-red-500 p-1 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default "
               title="Delete goal"
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -118,6 +132,12 @@ export const GoalCard = ({
           </div>
           <div className="flex gap-2">
             <button
+              onClick={onCancelEdit}
+              className="flex-1 py-2 px-3 rounded-lg text-sm font-medium bg-gray-300 hover:bg-gray-400 text-gray-700 transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
               onClick={handleUpdateSubmit}
               disabled={
                 !editForm.title.trim() ||
@@ -127,12 +147,6 @@ export const GoalCard = ({
               className="flex-1 py-2 px-3 rounded-lg text-sm font-medium bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white transition-colors cursor-pointer"
             >
               Save
-            </button>
-            <button
-              onClick={onCancelEdit}
-              className="flex-1 py-2 px-3 rounded-lg text-sm font-medium bg-gray-300 hover:bg-gray-400 text-gray-700 transition-colors cursor-pointer"
-            >
-              Cancel
             </button>
           </div>
           <div className="pt-2 border-t border-gray-100">
@@ -149,7 +163,7 @@ export const GoalCard = ({
     <div className="bg-white rounded-lg shadow-md border p-3 sm:p-4 hover:shadow-lg transition-shadow">
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs text-gray-500">
-          {new Date(goal.createdAt).toLocaleDateString()}
+          {goal?.createdAt && new Date(goal.createdAt).toLocaleDateString()}
         </span>
         <div className="flex items-center gap-2">
           <span
@@ -178,8 +192,16 @@ export const GoalCard = ({
             )}
             {goal.status === "completed" ? "Completed" : "Active"}
           </span>
+          <ConfirmModal
+            isOpen={isDeleteOpen}
+            onClose={() => setIsDeleteOpen(false)}
+            onConfirm={() => onDelete(goal._id)}
+            title="Delete Goal?"
+            message="Are you sure you really want to delete this goal?"
+            color="red"
+          />
           <button
-            onClick={() => onDelete(goal._id)}
+            onClick={() => setIsDeleteOpen(true)}
             disabled={goal.loading}
             className="text-gray-400 hover:text-red-500 p-1 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default"
             title="Delete goal"

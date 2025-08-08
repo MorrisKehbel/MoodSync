@@ -104,14 +104,12 @@ export const useGoals = () => {
   };
 
   const handleDeleteGoal = async (goalId) => {
-    if (window.confirm("Are you sure you want to delete this goal?")) {
-      try {
-        await deleteGoal(goalId);
-        setGoals(goals.filter((goal) => goal._id !== goalId));
-      } catch (error) {
-        console.error("Error deleting goal:", error);
-        alert(`Failed to delete goal: ${error.message}`);
-      }
+    try {
+      await deleteGoal(goalId);
+      setGoals(goals.filter((goal) => goal._id !== goalId));
+    } catch (error) {
+      console.error("Error deleting goal:", error);
+      alert(`Failed to delete goal: ${error.message}`);
     }
   };
 

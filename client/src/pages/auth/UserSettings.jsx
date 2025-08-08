@@ -515,7 +515,7 @@ export const UserSettings = () => {
           />
           <div className="mt-12 flex flex-col sm:flex-row gap-7 items-center justify-center">
             <button
-              className="w-full sm:w-auto bg-gray-400 text-white px-4 hover:bg-gray-300 transition py-3 sm:py-2 rounded-lg cursor-pointer disabled:opacity-30 disabled:cursor-default"
+              className="w-full sm:w-auto bg-gray-600 text-white px-4 hover:bg-gray-500 transition py-3 sm:py-2 rounded-lg cursor-pointer disabled:opacity-30 disabled:cursor-default"
               onClick={handleCancel}
               disabled={!hasChanges()}
             >

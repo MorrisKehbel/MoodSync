@@ -9,7 +9,7 @@ const ChatBubble = ({ message }) => {
     <div
       className={`flex items-end ${
         isUser ? "justify-end" : "justify-start"
-      } mb-4`}
+      } mb-2`}
     >
       {!isUser && (
         <div className="mr-2 flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm select-none">
@@ -19,15 +19,15 @@ const ChatBubble = ({ message }) => {
       <div
         className={`px-4 py-2 max-w-sm min-w-0 overflow-hidden whitespace-pre-wrap rounded-lg text-sm ${
           isUser
-            ? "bg-gray-100 text-gray-900 rounded-br-none"
+            ? "bg-gray-300 text-gray-900 rounded-br-none"
             : "bg-blue-600 text-white rounded-bl-none"
         }`}
       >
         <div className="whitespace-pre-wrap  break-words">{parts[0].text}</div>
       </div>
       {isUser && (
-        <div className="ml-2 self-end flex-shrink-0 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-sm select-none">
-          {user.profilePicture ? (
+        <div className="ml-2 self-end flex-shrink-0 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-sm select-none">
+          {user?.profilePicture?.url ? (
             <img
               src={user.profilePicture.url}
               alt="Your Avatar"

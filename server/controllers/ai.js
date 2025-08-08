@@ -544,12 +544,15 @@ export const generateDailyInsight = async (req, res) => {
       }).lean();
 
       if (activityEntries.length < 3) {
-        const twoWeeksAgo = new Date();
-        twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const twoWeeksAgoDate = new Date(now);
+        twoWeeksAgoDate.setDate(now.getDate() - 14);
+        const twoWeeksAgoStr = twoWeeksAgoDate.toISOString().slice(0, 10);
 
         const fallbackActivities = await DailyActivities.find({
-          userId,
-          date: { $gte: twoWeeksAgo },
+          userId: userId,
+          date: { $gte: twoWeeksAgoStr },
         })
           .sort({ date: -1 })
           .lean();

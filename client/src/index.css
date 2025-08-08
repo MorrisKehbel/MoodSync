@@ -56,3 +56,9 @@ html[data-theme="dark"] body {
   --color-primary: #3b82f6;
   --color-text-muted: rgba(255, 255, 255, 0.8);
 }
+
+.recharts-wrapper:focus,
+.recharts-surface:focus,
+.recharts-layer:focus {
+  outline: none;
+}
