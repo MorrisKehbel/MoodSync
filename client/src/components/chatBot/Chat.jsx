@@ -11,7 +11,7 @@ const Chat = ({ messages, chatRef }) => {
 
   return (
     <div ref={chatRef} className="h-full overflow-y-auto overflow-x-hidden">
-      <div className="flex flex-col justify-end min-h-full px-4 py-2 space-y-2">
+      <div className="flex flex-col justify-end min-h-full px-4 py-1 space-y-2">
         {messages.map((msg) => (
           <ChatBubble key={msg._id} message={msg} />
         ))}

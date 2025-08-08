@@ -144,7 +144,16 @@ export const LoginModal = ({
       onClose();
       navigate("/dashboard");
     } catch (error) {
-      toast.error(error.message || "Signup failed, please try again.");
+      if (error instanceof Error) {
+        if (error.message === "Invalid email or password") {
+          setErrors({
+            login: error.message,
+            password: error.message,
+          });
+        } else {
+          toast.error(error.message || "Signup failed, please try again.");
+        }
+      }
     }
   };
 

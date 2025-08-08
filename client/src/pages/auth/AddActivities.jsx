@@ -320,7 +320,7 @@ export const AddActivities = () => {
               <div className="flex flex-col sm:flex-row justify-center w-full text-center sm:items-center gap-4 mt-8">
                 <Link
                   to="/my-journey"
-                  className="px-6 py-3 sm:py-2 w-full sm:w-auto bg-gray-400 text-white rounded-lg cursor-pointer hover:bg-gray-300 transition-colors"
+                  className="px-6 py-3 sm:py-2 w-full sm:w-auto bg-gray-600 text-white rounded-lg cursor-pointer hover:bg-gray-500 transition-colors"
                 >
                   Return
                 </Link>

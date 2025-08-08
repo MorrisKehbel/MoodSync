@@ -54,7 +54,11 @@ export const SignupModal = ({
     const newErrors = {};
 
     if (formData.username.trim().length < 3) {
-      newErrors.username = "Username must be at least 3 characters long";
+      newErrors.username = "Username must have at least 3 characters";
+    } else if (formData.username.trim().length > 32) {
+      newErrors.username = "Limit username to a maximum of 32 characters";
+    } else if (!/^[A-Za-z0-9]+$/.test(formData.username.trim())) {
+      newErrors.username = "Only letters and numbers are allowed";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -64,6 +68,8 @@ export const SignupModal = ({
 
     if (formData.password.length < 8) {
       newErrors.password = "Password must have at least 8 characters";
+    } else if (formData.password.length > 128) {
+      newErrors.password = "Limit password to a maximum of 128 characters";
     }
 
     if (formData.password !== formData.confirmPassword) {
