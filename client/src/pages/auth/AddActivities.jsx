@@ -148,8 +148,6 @@ export const AddActivities = () => {
 
   const { data } = useQuery(useDailyActivitiesQuery(effectiveDate));
 
-  console.log(data);
-
   const queryClient = useQueryClient();
 
   const toggleSelectActivities = (name) => {

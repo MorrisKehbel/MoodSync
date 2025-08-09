@@ -1,8 +1,10 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import Chat from "./Chat";
 import Form from "./Form";
 
-export const ChatBot = () => {
+import { FaExpandArrowsAlt, FaCompressArrowsAlt } from "react-icons/fa";
+
+export const ChatBot = ({ chatbotExpanded, setChatbotExpanded }) => {
   const [messages, setMessages] = useState(() => [
     {
       _id: crypto.randomUUID(),
@@ -16,7 +18,17 @@ export const ChatBot = () => {
   const chatRef = useRef(null);
 
   return (
-    <div className="bg-white rounded-lg p-3 shadow-md h-64 flex flex-col justify-between">
+    <div className="bg-white rounded-lg p-3 shadow-md h-full min-h-64 flex flex-col justify-between">
+      <button
+        onClick={() => setChatbotExpanded((prev) => !prev)}
+        className="text-gray-700 hover:text-black p-2 self-end transition hover:scale-105 cursor-pointer"
+      >
+        {chatbotExpanded ? (
+          <FaCompressArrowsAlt size="14" />
+        ) : (
+          <FaExpandArrowsAlt size="14" />
+        )}
+      </button>
       <Chat messages={messages} chatRef={chatRef} />
       <Form
         messages={messages}

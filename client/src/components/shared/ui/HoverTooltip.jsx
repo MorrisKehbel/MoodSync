@@ -17,13 +17,10 @@ export const HoverTooltip = ({
         className={`absolute left-1/2 -translate-x-1/2 ${positionClasses[position]} 
                     px-3 py-1 rounded-md bg-gray-800 text-white text-sm 
                     opacity-0 group-hover:opacity-100 transition-opacity duration-200 
-                    pointer-events-none whitespace-nowrap z-50`}
+                    pointer-events-none whitespace-nowrap z-50 flex flex-col`}
       >
         {tooltip.map((line, index) => (
-          <span key={index}>
-            {line}
-            <br />
-          </span>
+          <span key={index}>{line}</span>
         ))}
       </div>
     </div>
