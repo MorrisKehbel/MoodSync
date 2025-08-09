@@ -147,11 +147,9 @@ export const MyJourney = () => {
     nextUpdateText = aiSummary?.message || "Update available now";
   } else if (diffHours === 0) {
     nextUpdateText = `Next update in ${diffMinutes} min`;
-  } else {
+  } else if (diffHours > 0) {
     nextUpdateText = `Next update in ${diffHours}h ${diffMinutes}min`;
-  }
-
-  console.log(allDailyActivities);
+  } else null;
 
   return (
     <>

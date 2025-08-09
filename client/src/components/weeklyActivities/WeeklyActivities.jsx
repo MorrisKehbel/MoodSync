@@ -253,6 +253,7 @@ export const WeeklyActivities = () => {
                 outerRadius={60}
                 paddingAngle={2}
                 dataKey="value"
+                className="focus:outline-none"
               >
                 {activityData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />

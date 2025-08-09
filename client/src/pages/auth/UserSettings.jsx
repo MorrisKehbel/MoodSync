@@ -21,6 +21,9 @@ export const UserSettings = () => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  const fileInputRef = useRef(null);
+  const [fileInputKey, setFileInputKey] = useState(0);
+
   const getInitialState = (user) => ({
     username: user.username || "",
     firstname: user.firstname || "",
@@ -53,7 +56,7 @@ export const UserSettings = () => {
   };
 
   const handleImageChange = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
@@ -67,11 +70,12 @@ export const UserSettings = () => {
         profilePicture: updatedUser.profilePicture,
       }));
       setSuccessMsg("Profile picture updated successfully");
-      setTimeout(() => {
-        setSuccessMsg(null);
-      }, 2000);
     } catch (err) {
       setErrors(err.message);
+    } finally {
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setFileInputKey((k) => k + 1);
+      setTimeout(() => setSuccessMsg(null), 2000);
     }
   };
 
@@ -79,22 +83,18 @@ export const UserSettings = () => {
     setLoading(true);
     setErrors(null);
     setSuccessMsg(null);
-
     try {
       const res = await deleteProfilePicture();
-      setUser((prev) => ({
-        ...prev,
-        profilePicture: "",
-      }));
+      setUser((prev) => ({ ...prev, profilePicture: null }));
       setPreviewImage(null);
       setSuccessMsg(res.message || "Profile picture removed successfully");
-      setTimeout(() => {
-        setSuccessMsg(null);
-      }, 2000);
     } catch (err) {
       setErrors(err.message);
     } finally {
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setFileInputKey((k) => k + 1);
       setLoading(false);
+      setTimeout(() => setSuccessMsg(null), 2000);
     }
   };
 
@@ -371,6 +371,8 @@ export const UserSettings = () => {
                   </svg>
                   Upload
                   <input
+                    key={fileInputKey}
+                    ref={fileInputRef}
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}

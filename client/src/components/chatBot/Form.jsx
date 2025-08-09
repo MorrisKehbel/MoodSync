@@ -50,11 +50,13 @@ const Form = ({ messages, setMessages }) => {
   return (
     <form onSubmit={handleSubmit} className="flex items-center gap-2">
       <input
+        id="chatInput"
+        name="chatInput"
         type="text"
         value={prompt}
         onChange={handleChange}
         placeholder="Type message..."
-        className="flex-grow rounded-lg px-4 py-2 bg-gray-100 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="flex-grow min-w-35 rounded-lg px-4 py-2 bg-gray-100 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
         disabled={loading}
       />
       <button
