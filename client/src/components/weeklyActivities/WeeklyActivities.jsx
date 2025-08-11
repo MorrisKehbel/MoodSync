@@ -234,7 +234,7 @@ export const WeeklyActivities = () => {
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-md h-full flex flex-col">
-      <div className="mb-4 flex justify-between items-start">
+      <div className="mb-4 flex justify-between items-center">
         <h3 className="text-lg font-semibold text-gray-800">
           Weekly Activities
         </h3>

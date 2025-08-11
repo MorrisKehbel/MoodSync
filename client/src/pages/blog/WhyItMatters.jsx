@@ -7,9 +7,9 @@ export const WhyItMatters = () => {
       <div className="max-w-4xl flex flex-col justify-center items-center mx-auto p-8 rounded-2xl bg-white/40 dark:bg-white/20 border border-white/60 shadow-sm">
         <img
           src={imgWhyItMatters}
-          loading="lazy"
+          fetchpriority="high"
           className="w-full h-[250px] object-cover shadow-md rounded-2xl border border-black/20"
-          alt="Why it Matters"
+          alt="Person sitting cross-legged meditating in a calm setting"
         />
 
         <h1 className="text-4xl leading-snug font-bold my-6 text-center">

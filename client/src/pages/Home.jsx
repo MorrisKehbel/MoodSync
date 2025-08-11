@@ -70,9 +70,9 @@ export const Home = () => {
                 className="w-20 h-20 rounded-xl object-cover mb-4 select-none"
               />
               <feature.icon className="text-blue-600 text-2xl mb-2" />
-              <h3 className="text-lg font-semibold text-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800">
                 {feature.title}
-              </h3>
+              </h2>
               <p className="text-sm text-gray-600 mt-2">
                 {feature.description}
               </p>

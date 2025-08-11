@@ -81,6 +81,7 @@ export const PublicNavbar = () => {
           <div className="flex flex-col gap-6">
             <div className="flex space-x-6 sm:space-x-8">
               <button
+                aria-label="Open menu"
                 onClick={() => setMenuOpen((prev) => !prev)}
                 className="lg:hidden text-blue-500 cursor-pointer"
               >

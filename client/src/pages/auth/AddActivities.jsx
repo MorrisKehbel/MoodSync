@@ -267,6 +267,7 @@ export const AddActivities = () => {
                 >
                   <button
                     type="button"
+                    aria-label={`Select ${name}`}
                     className={`w-16 h-16 rounded-full flex justify-center items-center select-none transition-all focus-visible:outline-4 group-hover:scale-105 duration-300 cursor-pointer ${
                       isSelected
                         ? "bg-gradient-to-r from-blue-600/80 via-blue-600/90 to-blue-600/80 shadow-sm sm:shadow-md border border-white/60 text-gray-100 group-hover:bg-blue-600 outline-white"
@@ -275,9 +276,9 @@ export const AddActivities = () => {
                   >
                     <Icon size="32" />
                   </button>
-                  <h3 className="font-semibold text-md text-center text-[var(--color-text-muted)] mt-2">
+                  <h2 className="font-semibold text-md text-center text-[var(--color-text-muted)] mt-2">
                     {name}
-                  </h3>
+                  </h2>
                 </div>
               );
             })}

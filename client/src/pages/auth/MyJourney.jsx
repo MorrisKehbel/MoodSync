@@ -170,7 +170,7 @@ export const MyJourney = () => {
         <section className="flex flex-col justify-center items-center text-center">
           <div className="w-full">
             {user.settings.aiTips ? (
-              <div className="relative max-w-3xl mb-12 mx-auto px-2 pt-4 pb-2 rounded-xl overflow-hidden bg-white/40 dark:bg-white/10 backdrop-blur-md border border-white/60 dark:border-white/20 shadow-xl">
+              <div className="relative max-w-3xl mb-12 mx-auto px-2 pt-4 pb-2 rounded-xl overflow-hidden bg-white/40 dark:bg-white/10 backdrop-blur-md border border-white/60 dark:border-white/20 shadow-xl [content-visibility:auto] [contain-intrinsic-size:250px]">
                 <div className="absolute inset-0 bg-blue-200/10 dark:bg-blue-400/10 blur-2xl animate-pulse z-0" />
 
                 <div className="relative custom-scroll px-4 pb-2 z-10 max-h-[300px] overflow-y-auto text-gray-800 dark:text-white/80 text-sm leading-relaxed whitespace-pre-line text-left">
