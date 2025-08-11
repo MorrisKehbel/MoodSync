@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { generateAi, generatePersonalizedReminder } from "../../data/aiSummary";
 import insightImage from "../../assets/homePage/insight.png";
+import { useUser } from "../../context";
 
 const Motivation = () => {
   const [personalizedReminder, setPersonalizedReminder] = useState("");
@@ -8,8 +9,13 @@ const Motivation = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isGeneratingMotivation, setIsGeneratingMotivation] = useState(false);
   const [isGeneratingReminder, setIsGeneratingReminder] = useState(false);
+  const { user } = useUser();
 
   const fetchPersonalizedReminder = async () => {
+    if (!user.settings.aiTips) {
+      setPersonalizedReminder("Great! All tasks completed for today.");
+      return;
+    }
     try {
       setIsGeneratingReminder(true);
       const response = await generatePersonalizedReminder();
@@ -27,6 +33,10 @@ const Motivation = () => {
   };
 
   const generateDailyMotivation = async () => {
+    if (!user.settings.aiTips) {
+      setDailyMotivation("You've got this today!");
+      return;
+    }
     try {
       setIsGeneratingMotivation(true);
       const response = await generateAi("motivation");

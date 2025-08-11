@@ -7,7 +7,7 @@ export const MoodTracking = () => {
       <div className="max-w-4xl flex flex-col justify-center items-center mx-auto p-8 rounded-2xl bg-white/40 dark:bg-white/20 border border-white/60 shadow-sm">
         <img
           src={imgMoodTracking}
-          fetchpriority="high"
+          fetchPriority="high"
           className="w-full h-[250px] object-cover object-[50%_60%] shadow-md rounded-2xl border border-black/20"
           alt="Person analyzing a large chart of well-being statistics"
         />

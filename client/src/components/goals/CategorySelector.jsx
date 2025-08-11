@@ -13,9 +13,10 @@ export const CategorySelector = ({
           {categories.map((category) => (
             <button
               key={category.name}
+              id={`category-${category.name}`}
               type="button"
               onClick={() => onCategorySelect(category.name)}
-              className={`p-2 text-xs font-medium rounded-lg border transition-all duration-200 ${getCategoryStyles(
+              className={`p-2 text-xs font-medium rounded-lg border transition-all duration-200 cursor-pointer ${getCategoryStyles(
                 category.name,
                 selectedCategory === category.name
               )} ${

@@ -63,6 +63,8 @@ export const GoalCard = ({
           <div className="space-y-3">
             <input
               type="text"
+              id="updated-goal-title"
+              name="updated-goal-title"
               value={editForm.title}
               onChange={(e) =>
                 onEditFormChange({
@@ -77,6 +79,8 @@ export const GoalCard = ({
 
             <textarea
               value={editForm.desc}
+              id="updated-goal-description"
+              name="updated-goal-description"
               onChange={(e) =>
                 onEditFormChange({
                   ...editForm,
