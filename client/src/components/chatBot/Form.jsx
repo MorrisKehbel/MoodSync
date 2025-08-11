@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { chatBot } from "../../data/chat";
+import { useUser } from "../../context";
 
 const Form = ({ messages, setMessages }) => {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
+  const { user } = useUser();
 
   const handleChange = (e) => setPrompt(e.target.value);
 
@@ -61,8 +63,9 @@ const Form = ({ messages, setMessages }) => {
       />
       <button
         type="submit"
+        aria-label="Send message"
         className="bg-blue-600 hover:bg-blue-500 text-white rounded-lg p-2 transition cursor-pointer disabled:opacity-30 disabled:cursor-default"
-        disabled={loading}
+        disabled={loading || !user.settings.aiTips}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

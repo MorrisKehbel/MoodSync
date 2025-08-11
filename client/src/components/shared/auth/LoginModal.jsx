@@ -144,6 +144,10 @@ export const LoginModal = ({
       onClose();
       navigate("/dashboard");
     } catch (error) {
+      if (error instanceof TypeError && error.message === "Failed to fetch") {
+        toast.error("Connection to the server failed. Please try again later.");
+        return;
+      }
       if (error instanceof Error) {
         if (error.message === "Invalid email or password") {
           setErrors({
@@ -151,8 +155,10 @@ export const LoginModal = ({
             password: error.message,
           });
         } else {
-          toast.error(error.message || "Signup failed, please try again.");
+          toast.error(error.message || "Sign-in failed. Please try again.");
         }
+      } else {
+        toast.error("An unknown error has occurred. Please try again.");
       }
     }
   };
@@ -161,7 +167,7 @@ export const LoginModal = ({
     <>
       <ToastContainer
         position="top-center"
-        autoClose={2000}
+        autoClose={3000}
         hideProgressBar={false}
         newestOnTop
         pauseOnFocusLoss

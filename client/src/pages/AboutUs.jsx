@@ -10,10 +10,15 @@ export const AboutUs = () => {
       avatar: "https://avatars.githubusercontent.com/u/207028766?v=4",
       contact: [
         {
+          link: "LinkedIn",
           href: "https://www.linkedin.com/in/morris-kehbel/",
           Icon: FaLinkedin,
         },
-        { href: "https://github.com/MorrisKehbel", Icon: FaGithubSquare },
+        {
+          link: "GitHub",
+          href: "https://github.com/MorrisKehbel",
+          Icon: FaGithubSquare,
+        },
       ],
     },
     {
@@ -24,10 +29,12 @@ export const AboutUs = () => {
         "https://avatars.githubusercontent.com/u/207018621?s=400&u=8c00e4adc4f5c1a510969d67c1fe1fd6855b9657&v=4",
       contact: [
         {
+          link: "LinkedIn",
           href: "https://www.linkedin.com/in/shraddhabhikadiya/",
           Icon: FaLinkedin,
         },
         {
+          link: "GitHub",
           href: "https://github.com/shraddhabhikadiya2017",
           Icon: FaGithubSquare,
         },
@@ -41,10 +48,15 @@ export const AboutUs = () => {
         "https://avatars.githubusercontent.com/u/67388693?s=400&u=89e654a6895040531f9d71cc57a0acfb839ee407&v=4",
       contact: [
         {
+          link: "LinkedIn",
           href: "https://www.linkedin.com/in/elham-nakhkoob/",
           Icon: FaLinkedin,
         },
-        { href: "https://github.com/ElhamNakhkoob", Icon: FaGithubSquare },
+        {
+          link: "GitHub",
+          href: "https://github.com/ElhamNakhkoob",
+          Icon: FaGithubSquare,
+        },
       ],
     },
     {
@@ -54,10 +66,15 @@ export const AboutUs = () => {
       avatar: "https://avatars.githubusercontent.com/u/207185993?v=4",
       contact: [
         {
+          link: "LinkedIn",
           href: "https://www.linkedin.com/in/marynashymkova/",
           Icon: FaLinkedin,
         },
-        { href: "https://github.com/Maryna2221", Icon: FaGithubSquare },
+        {
+          link: "GitHub",
+          href: "https://github.com/Maryna2221",
+          Icon: FaGithubSquare,
+        },
       ],
     },
   ];
@@ -95,14 +112,15 @@ export const AboutUs = () => {
                 alt={`Avatar of ${name}`}
                 className="w-24 h-24 rounded-full border-2 border-white/40 shadow-md mb-2"
               />
-              <h3 className="font-semibold text-lg text-[var(--color-text)]">
+              <h2 className="font-semibold text-lg text-[var(--color-text)]">
                 {name}
-              </h3>
+              </h2>
               <p className="text-sm text-[var(--color-text-muted)]">{role}</p>
               <div className="flex gap-4 mt-4">
-                {contact.map(({ href, Icon }, i) => (
+                {contact.map(({ href, Icon, link }, i) => (
                   <a
                     key={i}
+                    aria-label={`Link to ${name}'s ${link}`}
                     href={href}
                     className="text-[var(--color-text)] hover:scale-105 transition"
                     target="_blank"

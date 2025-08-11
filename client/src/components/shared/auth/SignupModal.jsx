@@ -109,7 +109,11 @@ export const SignupModal = ({
 
       toast.success("Account created successfully! Please login to continue.");
     } catch (error) {
-      toast.error(error.message || "Signup failed, please try again.");
+      if (error instanceof TypeError && error.message === "Failed to fetch") {
+        toast.error("Connection to the server failed. Please try again later.");
+      } else {
+        toast.error(error.message || "Signup failed, please try again.");
+      }
     }
   };
 
@@ -117,7 +121,7 @@ export const SignupModal = ({
     <>
       <ToastContainer
         position="top-center"
-        autoClose={2000}
+        autoClose={3000}
         hideProgressBar={false}
         newestOnTop
         pauseOnFocusLoss

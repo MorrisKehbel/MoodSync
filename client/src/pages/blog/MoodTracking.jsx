@@ -7,9 +7,9 @@ export const MoodTracking = () => {
       <div className="max-w-4xl flex flex-col justify-center items-center mx-auto p-8 rounded-2xl bg-white/40 dark:bg-white/20 border border-white/60 shadow-sm">
         <img
           src={imgMoodTracking}
-          loading="lazy"
+          fetchpriority="high"
           className="w-full h-[250px] object-cover object-[50%_60%] shadow-md rounded-2xl border border-black/20"
-          alt="Mood Tracking"
+          alt="Person analyzing a large chart of well-being statistics"
         />
 
         <h1 className="text-4xl leading-snug font-bold my-6 text-center">

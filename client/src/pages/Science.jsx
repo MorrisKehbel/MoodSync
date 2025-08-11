@@ -13,25 +13,25 @@ const blogItems = [
     to: "/blog/why-it-matters",
     title: "Why it Matters",
     src: imgWhyItMatters,
-    alt: "Why it Matters",
+    alt: "Person sitting cross-legged meditating in a calm setting",
   },
   {
     to: "/blog/research-methods",
     title: "From Research to Recovery",
     src: imgResearchMethods,
-    alt: "Research Methods",
+    alt: "Smartphone screen displaying a thought-tracking app",
   },
   {
     to: "/blog/mood-tracking",
     title: "Mood Tracking - Makes a Difference",
     src: imgMoodTracking,
-    alt: "Mood Tracking",
+    alt: "Person analyzing a large chart of well-being statistics",
   },
   {
     to: "/blog/dimensions-of-wellbeing",
     title: "The Dimensions of Well-Being",
     src: imgDimensionsWellbeing,
-    alt: "Dimensions of Wellbeing",
+    alt: "Person meditating while visualizing their overall well-being",
   },
 ];
 
@@ -61,7 +61,7 @@ export const Science = () => {
             <Link to={to} key={to} className="group">
               <img
                 src={src}
-                loading="lazy"
+                fetchpriority="high"
                 alt={alt}
                 className="
                   w-full aspect-[3/2] max-w-sm object-cover shadow-md 
