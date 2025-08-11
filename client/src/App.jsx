@@ -23,6 +23,8 @@ import {
   UserSettings,
 } from "./pages/auth";
 import { ChildrenCare } from "./pages/child/ActivitiesChildren";
+import { AngryStories, ScaredStories, SadStories } from "./pages/child";
+
 import {
   WhyItMatters,
   ResearchMethods,
@@ -119,6 +121,10 @@ const App = () => {
         <Route path="reset-password" element={<ResetPasswordPage />} />
 
         <Route path="child-care" element={<ChildrenCare />} />
+        <Route path="child-care/angry" element={<AngryStories />} />
+        <Route path="child-care/sad" element={<SadStories />} />
+        <Route path="child-care/scared" element={<ScaredStories />} />
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     )

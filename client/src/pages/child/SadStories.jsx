@@ -1,7 +1,7 @@
 import { PageSlideContainer } from "../../components/shared/wrapper/PageSlideContainer";
 import { Link } from "react-router";
 
-export const AngryStories = () => {
+export const SadStories = () => {
   return (
     <PageSlideContainer>
       <section className="flex flex-col text-[var(--color-text)]">
