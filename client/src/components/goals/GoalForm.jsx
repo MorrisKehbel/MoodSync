@@ -52,11 +52,16 @@ export const GoalForm = ({
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="space-y-3">
           <div className="space-y-1">
-            <label className="block text-xs font-medium text-gray-700">
+            <label
+              htmlFor="goal-title"
+              className="block text-xs font-medium text-gray-700"
+            >
               🎯 Goal Title
             </label>
             <input
               type="text"
+              id="goal-title"
+              name="goal-title"
               value={goalData.title}
               onChange={(e) =>
                 onGoalChange({ ...goalData, title: e.target.value })
@@ -68,11 +73,16 @@ export const GoalForm = ({
           </div>
 
           <div className="space-y-1">
-            <label className="block text-xs font-medium text-gray-700">
+            <label
+              htmlFor="goal-description"
+              className="block text-xs font-medium text-gray-700"
+            >
               📝 Description
             </label>
             <textarea
               value={goalData.desc}
+              id="goal-description"
+              name="goal-description"
               onChange={(e) =>
                 onGoalChange({ ...goalData, desc: e.target.value })
               }
@@ -85,7 +95,10 @@ export const GoalForm = ({
         </div>
 
         <div className="space-y-1">
-          <label className="block text-xs font-medium text-gray-700">
+          <label
+            id="category-label"
+            className="block text-xs font-medium text-gray-700"
+          >
             🏷️ Category
           </label>
           <CategorySelector

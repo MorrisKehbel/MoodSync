@@ -64,7 +64,7 @@ export const ChildrenCare = () => {
                   <div className="text-gray-700 group-hover:text-black group-hover:scale-105 transition duration-300">
                     <img
                       src={mood.icon}
-                      alt={mood.label}
+                      alt={`${mood.label} creature illustration`}
                       className="w-auto h-24 object-contain"
                     />
                     <span className="font-bold text-lg mt-2 group-hover:scale-103 transition duration-300">

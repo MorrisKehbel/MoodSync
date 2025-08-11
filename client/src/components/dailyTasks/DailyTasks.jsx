@@ -87,7 +87,7 @@ const DailyTasks = () => {
           <h3 className="text-lg font-semibold text-gray-800">Daily Tasks</h3>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
+            className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer"
             disabled={isAddingTask}
           >
             {isAddingTask ? "Adding..." : "add daily task"}

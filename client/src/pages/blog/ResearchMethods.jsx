@@ -7,7 +7,7 @@ export const ResearchMethods = () => {
       <div className="max-w-4xl flex flex-col justify-center items-center mx-auto p-8 rounded-2xl bg-white/40 dark:bg-white/20 border border-white/60 shadow-sm">
         <img
           src={imgResearchMethods}
-          fetchpriority="high"
+          fetchPriority="high"
           className="w-full h-[250px] object-cover shadow-md rounded-2xl border border-black/20"
           alt="Smartphone screen displaying a thought-tracking app"
         />

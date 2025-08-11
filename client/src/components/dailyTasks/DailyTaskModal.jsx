@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { generateTaskSuggestions } from "../../data/aiSummary";
+import { useUser } from "../../context";
 
 const DailyTaskModal = ({ isOpen, onClose, onSubmit }) => {
   const [taskTitle, setTaskTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const { user } = useUser();
 
   useEffect(() => {
     if (isOpen) {
@@ -18,6 +20,7 @@ const DailyTaskModal = ({ isOpen, onClose, onSubmit }) => {
   }, [isOpen]);
 
   const fetchSuggestions = async () => {
+    if (!user.settings.aiTips) return;
     try {
       setIsLoadingSuggestions(true);
       const response = await generateTaskSuggestions();
@@ -65,8 +68,9 @@ const DailyTaskModal = ({ isOpen, onClose, onSubmit }) => {
           </h2>
           <button
             onClick={handleClose}
+            aria-label="Close"
             disabled={isSubmitting}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
           >
             <svg
               className="w-6 h-6"
@@ -102,7 +106,7 @@ const DailyTaskModal = ({ isOpen, onClose, onSubmit }) => {
               <span>Suggested tasks</span>
             </h4>
 
-            {isLoadingSuggestions ? (
+            {isLoadingSuggestions && user.settings.aiTips ? (
               <div className="flex flex-wrap gap-2">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <div
@@ -117,7 +121,7 @@ const DailyTaskModal = ({ isOpen, onClose, onSubmit }) => {
                   <button
                     key={index}
                     onClick={() => handleSuggestionClick(suggestion)}
-                    className="bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full border border-blue-200 transition-colors"
+                    className="bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full border border-blue-200 transition-colors cursor-pointer"
                   >
                     {suggestion}
                   </button>
@@ -154,16 +158,18 @@ const DailyTaskModal = ({ isOpen, onClose, onSubmit }) => {
           <div className="flex space-x-3">
             <button
               type="button"
+              aria-label="Cancel"
               onClick={handleClose}
               disabled={isSubmitting}
-              className="flex-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 text-white bg-gray-600 rounded-md hover:bg-gray-500 transition-colors disabled:opacity-30 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
+              aria-label="Add Task"
               disabled={!taskTitle.trim() || isSubmitting}
-              className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
             >
               {isSubmitting ? "Adding..." : "Add Task"}
             </button>

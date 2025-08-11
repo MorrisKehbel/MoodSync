@@ -82,12 +82,12 @@ export const Home = () => {
       </section>
       <section className="px-6 pb-16 pt-16 text-center">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl md:text-3xl text-[var(--color-text)] font-extrabold">
+          <h2 className="text-2xl md:text-3xl text-[var(--color-text)] font-extrabold">
             Transform Your{" "}
             <span className="bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent">
               Mental Well-being
             </span>
-          </h1>
+          </h2>
           <p className="text-[var(--color-text-muted)] text-lg mt-4 mb-8 ">
             Discover emotional patterns, build healthier habits, and get smart,
             AI-powered insights tailored for you.

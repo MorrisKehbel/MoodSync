@@ -61,7 +61,7 @@ export const Science = () => {
             <Link to={to} key={to} className="group">
               <img
                 src={src}
-                fetchpriority="high"
+                fetchPriority="high"
                 alt={alt}
                 className="
                   w-full aspect-[3/2] max-w-sm object-cover shadow-md 

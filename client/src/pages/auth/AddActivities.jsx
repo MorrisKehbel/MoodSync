@@ -292,6 +292,7 @@ export const AddActivities = () => {
                     key={id}
                     onClick={() => setSelectedEmotion(name)}
                     type="button"
+                    aria-label={`Select ${name}`}
                     className={`w-full max-w-[70px] aspect-square bg-cover bg-center select-none cursor-pointer hover:opacity-100 transition-all duration-300 rounded-full focus-visible:outline-4 focus:outline-blue-500 ${
                       isSelected
                         ? "opacity-100 outline-3 outline-blue-600/80 scale-110 rounded-full"
@@ -325,6 +326,7 @@ export const AddActivities = () => {
                 </Link>
                 <button
                   type="submit"
+                  aria-label="Submit Day"
                   disabled={isFuture || !isModified}
                   className="px-6 py-3 sm:py-2 w-full sm:w-auto bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-500 transition-colors disabled:opacity-30 disabled:cursor-default"
                 >
