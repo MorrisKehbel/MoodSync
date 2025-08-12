@@ -4,26 +4,11 @@ import Goals from "../models/Goals.js";
 import User from "../models/User.js";
 import DailyTask from "../models/DailyTasks.js";
 import AISummary from "../models/Ai.js";
-import { buildAIPrompt, ACTIVITY_CATEGORIES } from "../utils/openAiUtils.js";
+import { buildAIPrompt } from "../utils/openAiUtils.js";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
-const calculateFallbackScore = (entries, categoryMap) => {
-  const covered = new Set();
-
-  for (const entry of entries) {
-    for (const activity of entry.activities ?? []) {
-      const category = categoryMap[activity];
-      if (category) covered.add(category);
-    }
-  }
-
-  const totalCategories = new Set(Object.values(categoryMap));
-  const ratio = covered.size / totalCategories.size;
-  return Math.round(ratio * 100);
-};
 
 const checkAIEnabled = async (req, res) => {
   const { userId } = req;
@@ -39,129 +24,6 @@ const checkAIEnabled = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Server error", details: error.message });
     return false;
-  }
-};
-
-export const generateAISummary = async (req, res) => {
-  const { userId } = req;
-
-  const isAllowed = await checkAIEnabled(req, res);
-  if (!isAllowed) return;
-
-  try {
-    const latestActivity = await DailyActivities.findOne({ userId })
-      .sort({ updatedAt: -1 })
-      .lean();
-
-    if (!latestActivity) {
-      return res.status(404).json({ error: "No activity entries found." });
-    }
-
-    const latestSummary = await AISummary.findOne({ userId }).lean();
-
-    let activityEntries = [];
-    let goalsEntries = [];
-    let taskEntries = [];
-
-    if (!latestSummary || !latestSummary?.summaryUpdatedAt) {
-      activityEntries = await DailyActivities.find({ userId }).lean();
-      goalsEntries = await Goals.find({ userId }).lean();
-      taskEntries = await DailyTask.find({ userId }).lean();
-    } else {
-      const activityDate = new Date(latestActivity.updatedAt);
-      const summaryDate = new Date(latestSummary.summaryUpdatedAt);
-
-      const diffInDays = (activityDate - summaryDate) / (1000 * 60 * 60 * 24);
-
-      if (diffInDays >= 3.99) {
-        activityEntries = await DailyActivities.find({
-          userId,
-          updatedAt: { $gt: summaryDate },
-        }).lean();
-        taskEntries = await DailyTask.find({
-          userId,
-          updatedAt: { $gt: summaryDate },
-        }).lean();
-        goalsEntries = await Goals.find({
-          userId,
-          updatedAt: { $gt: summaryDate },
-        }).lean();
-      }
-    }
-
-    if (activityEntries.length === 0) {
-      return res
-        .status(204)
-        .json({ message: "No new activities to summarize." });
-    }
-
-    const prompt = buildAIPrompt(
-      { activities: activityEntries, goals: goalsEntries, tasks: taskEntries },
-      "AISummary"
-    );
-
-    const previousRaw = latestSummary?.summary;
-    const previousResponse =
-      typeof previousRaw === "string" && previousRaw.trim().length > 0
-        ? previousRaw.trim()
-        : null;
-
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: `
-        You are a helpful and psychologically informed assistant that analyzes a user's emotional well-being and life balance based on their recent journal entries.
-        Use scientific frameworks (e.g. PERMA, WHO-5) and research-based reasoning to evaluate how balanced their activities are.
-        Be empathetic, concise, and solution-focused. Recommend realistic improvements if balance is lacking.
-      `,
-        },
-        { role: "user", content: prompt },
-        ...(previousResponse
-          ? [
-              {
-                role: "user",
-                content: `This was your previous summary: ${previousResponse} Use it only for reference to track user progress, tone, and structure.`,
-              },
-            ]
-          : []),
-      ],
-      temperature: 0.6,
-      user: userId?.toString(),
-    });
-
-    const advice = completion.choices[0]?.message?.content;
-
-    if (!advice) {
-      return res.status(500).json({ error: "No response from OpenAI." });
-    }
-
-    const scoreMatch = advice.match(/Balance Score:\s*(\d{1,3})/i);
-    let score = scoreMatch ? parseInt(scoreMatch[1], 10) : null;
-
-    if (score === null || isNaN(score) || score < 0 || score > 100) {
-      console.warn("AI response missing or invalid score. Fallback applied.");
-      score = calculateFallbackScore(activityEntries, ACTIVITY_CATEGORIES);
-    }
-
-    const updated = await AISummary.findOneAndUpdate(
-      { userId },
-      { summary: advice, summaryUpdatedAt: new Date(), score: score },
-      { new: true, upsert: true }
-    );
-
-    return res.status(200).json({
-      summary: updated.summary,
-      score: updated.score,
-      summaryUpdatedAt: updated.summaryUpdatedAt,
-    });
-  } catch (error) {
-    console.error("AI summary generation failed:", error);
-    return res.status(500).json({
-      error: "Internal server error",
-      details: error.message,
-    });
   }
 };
 
@@ -184,103 +46,6 @@ export const getAISummary = async (req, res) => {
   }
 };
 
-export const generateGoalsInsight = async (req, res) => {
-  const { userId } = req;
-
-  const isAllowed = await checkAIEnabled(req, res);
-  if (!isAllowed) return;
-
-  try {
-    const latestGoal = await Goals.findOne({ userId })
-      .sort({ updatedAt: -1 })
-      .lean();
-
-    if (!latestGoal) {
-      return res.status(404).json({ error: "No goals entries found." });
-    }
-
-    const latestSummary = await AISummary.findOne({ userId }).lean();
-
-    let goalsEntries = [];
-
-    if (!latestSummary || !latestSummary?.goalInsightUpdatedAt) {
-      goalsEntries = await Goals.find({ userId }).lean();
-    } else {
-      const goalDate = new Date(latestGoal.updatedAt);
-      const summaryDate = new Date(latestSummary.goalInsightUpdatedAt);
-
-      const diffInDays = (goalDate - summaryDate) / (1000 * 60 * 60 * 24);
-
-      if (diffInDays >= 0.99) {
-        goalsEntries = await Goals.find({
-          userId,
-          updatedAt: { $gt: summaryDate },
-        }).lean();
-      }
-    }
-
-    if (goalsEntries.length === 0) {
-      return res.status(204).json({ message: "No new goals to summarize." });
-    }
-
-    const prompt = buildAIPrompt({ goals: goalsEntries }, "goalInsight");
-
-    const previousRaw = latestSummary?.goalInsight;
-    const previousResponse =
-      typeof previousRaw === "string" && previousRaw.trim().length > 0
-        ? previousRaw.trim()
-        : null;
-
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: `
-        You are a helpful and psychologically informed assistant that analyzes a user's well-being and life balance based on their recent goals entries.
-        Use scientific frameworks (e.g. PERMA, WHO-5) and research-based reasoning. Your goal is to help the user improve their overall wellbeing by balancing life domains and achieving their personal goals.
-        Be empathetic, concise, and solution-focused.
-      `,
-        },
-        { role: "user", content: prompt },
-        ...(previousResponse
-          ? [
-              {
-                role: "user",
-                content: `This was your previous summary: ${previousResponse} Use it only for reference to track user progress, tone, and structure.`,
-              },
-            ]
-          : []),
-      ],
-      temperature: 0.6,
-      user: userId?.toString(),
-    });
-
-    const advice = completion.choices[0]?.message?.content;
-
-    if (!advice) {
-      return res.status(500).json({ error: "No response from OpenAI." });
-    }
-
-    const updated = await AISummary.findOneAndUpdate(
-      { userId },
-      { goalInsight: advice, goalInsightUpdatedAt: new Date() },
-      { new: true, upsert: true }
-    );
-
-    return res.status(200).json({
-      goalInsight: updated.goalInsight,
-      updatedAt: updated.goalInsightUpdatedAt,
-    });
-  } catch (error) {
-    console.error("AI goals summary generation failed:", error);
-    return res.status(500).json({
-      error: "Internal server error",
-      details: error.message,
-    });
-  }
-};
-
 export const generateDailyTaskSuggestions = async (req, res) => {
   const { userId } = req;
 
@@ -292,21 +57,16 @@ export const generateDailyTaskSuggestions = async (req, res) => {
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
-    const activityEntries = await DailyActivities.find({
-      userId,
-      updatedAt: { $gte: threeDaysAgo },
-    }).lean();
+    const activityEntries = await DailyActivities.find({ userId })
+      .sort({ date: -1 })
+      .select("note activities emotion -_id")
+      .limit(7)
+      .lean();
 
     const taskEntries = await DailyTask.find({
       userId,
       date: today,
     }).lean();
-
-    if (activityEntries.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No recent activity entries found for suggestions." });
-    }
 
     const prompt = buildAIPrompt(
       { activities: activityEntries, tasks: taskEntries },
@@ -498,7 +258,7 @@ export const generateDailyInsight = async (req, res) => {
 
   try {
     const latestActivity = await DailyActivities.findOne({ userId })
-      .sort({ updatedAt: -1 })
+      .sort({ date: -1 })
       .lean();
 
     if (!latestActivity) {
@@ -507,15 +267,7 @@ export const generateDailyInsight = async (req, res) => {
 
     const latestSummary = await AISummary.findOne({ userId }).lean();
 
-    let activityEntries = [];
-    let taskEntries = [];
-
-    if (!latestSummary || !latestSummary?.activityInsightUpdatedAt) {
-      activityEntries = await DailyActivities.find({ userId })
-        .sort({ date: -1 })
-        .lean();
-      taskEntries = await DailyTask.find({ userId }).lean();
-    } else {
+    if (latestSummary?.activityInsightUpdatedAt && latestActivity?.updatedAt) {
       const activityDate = new Date(latestActivity.updatedAt);
       const summaryDate = new Date(latestSummary.activityInsightUpdatedAt);
 
@@ -530,48 +282,13 @@ export const generateDailyInsight = async (req, res) => {
           reused: true,
         });
       }
-
-      activityEntries = await DailyActivities.find({
-        userId,
-        updatedAt: { $gt: summaryDate },
-      })
-        .sort({ date: -1 })
-        .lean();
-
-      taskEntries = await DailyTask.find({
-        userId,
-        updatedAt: { $gt: summaryDate },
-      }).lean();
-
-      if (activityEntries.length < 3) {
-        const now = new Date();
-        now.setHours(0, 0, 0, 0);
-        const twoWeeksAgoDate = new Date(now);
-        twoWeeksAgoDate.setDate(now.getDate() - 14);
-        const twoWeeksAgoStr = twoWeeksAgoDate.toISOString().slice(0, 10);
-
-        const fallbackActivities = await DailyActivities.find({
-          userId: userId,
-          date: { $gte: twoWeeksAgoStr },
-        })
-          .sort({ date: -1 })
-          .lean();
-
-        const existingIds = activityEntries.map((entry) =>
-          entry._id.toString()
-        );
-
-        const fallbackToAdd = fallbackActivities.filter(
-          (entry) => !existingIds.includes(entry._id.toString())
-        );
-
-        const needed = 3 - activityEntries.length;
-        activityEntries = [
-          ...activityEntries,
-          ...fallbackToAdd.slice(0, needed),
-        ];
-      }
     }
+
+    const activityEntries = await DailyActivities.find({ userId })
+      .sort({ date: -1 })
+      .select("note activities emotion -_id")
+      .limit(7)
+      .lean();
 
     if (activityEntries.length === 0) {
       return res.status(200).json({
@@ -582,6 +299,12 @@ export const generateDailyInsight = async (req, res) => {
         reused: true,
       });
     }
+
+    const taskEntries = await DailyTask.find({ userId })
+      .sort({ createdAt: -1 })
+      .select("title completed date -_id")
+      .limit(7)
+      .lean();
 
     const prompt = buildAIPrompt(
       { activities: activityEntries, tasks: taskEntries },
@@ -609,8 +332,8 @@ export const generateDailyInsight = async (req, res) => {
         ...(previousResponse
           ? [
               {
-                role: "user",
-                content: `This was your previous summary: ${previousResponse} Use it only for reference to track user progress, tone, and structure.`,
+                role: "assistant",
+                content: `This was your previous summary (for reference): ${previousResponse} Use it only for reference to track user progress, tone, and structure.`,
               },
             ]
           : []),
@@ -676,10 +399,10 @@ export const generateAiChat = async (req, res) => {
       .select("note activities emotion -_id")
       .lean();
 
-    const GoalsData = await Goals.find({
-      userId,
-    })
+    const GoalsData = await Goals.find({ userId })
       .select("title description -_id")
+      .sort({ createdAt: -1 })
+      .limit(5)
       .lean();
 
     const userPrompt = `
@@ -698,19 +421,17 @@ Please analyze the user's current state and respond directly to their message in
 `;
 
     const stream = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o",
       messages: [
         {
           role: "system",
           content: `
-    You are a helpful and psychologically informed AI assistant.
-    You analyze a user's emotional well-being and life balance based on their recent activity logs and goals.
-    Use psychological frameworks and research-based reasoning.
-    Focus on offering a meaningful takeaway or one simple, realistic suggestion the user could consider. Avoid summarizing all activities or repeating data unless it's directly relevant.
-    Respond directly to the user's latest message in a natural, human-like way, as if continuing a friendly conversation.
-    Be empathetic, concise, and solution-focused.
-    If balance is lacking, suggest realistic, specific improvements.
-    Keep your language motivating and accessible.
+You are a friendly, psychologically informed AI assistant.
+You can analyze a user's emotional well-being and life balance based on their recent activity logs and goals, but only if the user's question is about them or related to well-being, emotions, or balance.
+Use psychological frameworks and research-based reasoning.
+If balance is lacking, suggest realistic, specific improvements, offer at most one simple, realistic suggestion.
+Respond briefly, clearly, and in a solution-focused conversational tone.
+Stay motivating, accessible, and avoid unnecessary summaries or repetition.
           `,
         },
         { role: "user", content: userPrompt },

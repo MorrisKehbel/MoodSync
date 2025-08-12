@@ -1,36 +1,57 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { generateTaskSuggestions } from "../../data/aiSummary";
 import { useUser } from "../../context";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useTaskSuggestionsQuery } from "../../queries/queryHooks";
 
 const DailyTaskModal = ({ isOpen, onClose, onSubmit }) => {
   const [taskTitle, setTaskTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [suggestions, setSuggestions] = useState([]);
-  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const { user } = useUser();
+  const hasTriggeredRef = useRef(false);
+  const queryClient = useQueryClient();
+  const {
+    data: { suggestions = [] } = {},
+    refetch,
+    isLoading: isLoadingSuggestions,
+    isFetching,
+    error,
+  } = useQuery({
+    ...useTaskSuggestionsQuery(),
+    enabled: false,
+  });
 
   useEffect(() => {
+    if (
+      isOpen &&
+      !hasTriggeredRef.current &&
+      user?.settings?.aiTips &&
+      !suggestions.length
+    ) {
+      hasTriggeredRef.current = true;
+      void refetch();
+    }
+
     if (isOpen) {
       document.body.style.overflow = "hidden";
-      fetchSuggestions();
     }
     return () => {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
 
-  const fetchSuggestions = async () => {
-    if (!user.settings.aiTips) return;
-    try {
-      setIsLoadingSuggestions(true);
-      const response = await generateTaskSuggestions();
-      setSuggestions(response.suggestions || []);
-    } catch (error) {
-      console.error("Error fetching AI suggestions:", error);
-    } finally {
-      setIsLoadingSuggestions(false);
-    }
-  };
+  // const fetchSuggestions = async () => {
+  //   if (!user.settings.aiTips) return;
+  //   try {
+  //     setIsLoadingSuggestions(true);
+  //     const response = await generateTaskSuggestions();
+  //     setSuggestions(response.suggestions || []);
+  //   } catch (error) {
+  //     console.error("Error fetching AI suggestions:", error);
+  //   } finally {
+  //     setIsLoadingSuggestions(false);
+  //   }
+  // };
 
   const handleSuggestionClick = (suggestion) => {
     setTaskTitle(suggestion);
@@ -46,13 +67,19 @@ const DailyTaskModal = ({ isOpen, onClose, onSubmit }) => {
       setTaskTitle("");
     } finally {
       setIsSubmitting(false);
+
+      queryClient.refetchQueries({
+        queryKey: ["personalizedReminder"],
+        type: "all",
+      });
+      queryClient.refetchQueries({ queryKey: ["motivation"], type: "all" });
     }
   };
 
   const handleClose = () => {
     if (!isSubmitting) {
       setTaskTitle("");
-      setSuggestions([]);
+      // setSuggestions([]);
       onClose();
     }
   };
@@ -87,7 +114,7 @@ const DailyTaskModal = ({ isOpen, onClose, onSubmit }) => {
             </svg>
           </button>
         </div>
-        {(suggestions.length > 0 || isLoadingSuggestions) && (
+        {(suggestions?.length > 0 || isLoadingSuggestions) && (
           <div className="mb-4">
             <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center space-x-2">
               <svg

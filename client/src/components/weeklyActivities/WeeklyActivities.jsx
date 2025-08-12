@@ -8,6 +8,8 @@ import {
   Tooltip,
 } from "recharts";
 import { getAllDailyActivities } from "../../data/activities";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useAllDailyActivitiesQuery } from "../../queries/queryHooks";
 
 const ACTIVITY_CATEGORIES = {
   personal: { name: "Personal", color: "#8884d8" },
@@ -95,18 +97,27 @@ const CustomTooltip = ({ active, payload }) => {
 
 export const WeeklyActivities = () => {
   const [activityData, setActivityData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [weekRange, setWeekRange] = useState("");
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
+
+  const {
+    data: { existingEntries = [] } = {},
+    isLoading: loading,
+    isError: error,
+  } = useQuery(useAllDailyActivitiesQuery());
 
   useEffect(() => {
     fetchWeeklyActivities();
-  }, []);
+  }, [loading]);
 
   const getWeekRange = () => {
     const today = new Date();
+    const day = today.getDay();
+    const diff = (day === 0 ? -6 : 1) - day;
     const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay());
+    startOfWeek.setDate(today.getDate() + diff);
+
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
 
@@ -120,19 +131,27 @@ export const WeeklyActivities = () => {
   const fetchWeeklyActivities = async () => {
     let cancelled = false;
 
-    setLoading(true);
-    setError(null);
+    // setLoading(true);
+    // setError(null);
 
     try {
-      const payload = await getAllDailyActivities();
-      const existingEntries = payload.existingEntries || [];
+      // const payload = await getAllDailyActivities();
+      // const existingEntries = payload.existingEntries || [];
 
       // Calculate current week range
       const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const day = today.getDay();
+      const diff = (day === 0 ? -6 : 1) - day;
+
       const startOfWeek = new Date(today);
-      startOfWeek.setDate(today.getDate() - today.getDay());
+      startOfWeek.setDate(today.getDate() + diff);
+      startOfWeek.setHours(0, 0, 0, 0);
+
       const endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(startOfWeek.getDate() + 6);
+      endOfWeek.setHours(23, 59, 59, 999);
 
       setWeekRange(getWeekRange());
 
@@ -140,7 +159,7 @@ export const WeeklyActivities = () => {
       const weeklyActivities = existingEntries.filter((entry) => {
         if (!entry.date) return false;
         const entryDate = new Date(entry.date);
-        if (isNaN(entryDate.getTime())) return false;
+        entryDate.setHours(0, 0, 0, 0);
         return entryDate >= startOfWeek && entryDate <= endOfWeek;
       });
 
@@ -171,7 +190,7 @@ export const WeeklyActivities = () => {
       if (err.name === "AbortError") return;
 
       console.error("Error fetching weekly activities:", err);
-      setError(err.message || "Unknown error");
+      // setError(err.message || "Unknown error");
 
       // Set week range even on error
       setWeekRange(getWeekRange());
@@ -186,7 +205,7 @@ export const WeeklyActivities = () => {
       ]);
     } finally {
       if (!cancelled) {
-        setLoading(false);
+        // setLoading(false);
       }
     }
 

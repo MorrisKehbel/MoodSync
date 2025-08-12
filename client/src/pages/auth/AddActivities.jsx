@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { useSearchParams, Link } from "react-router";
+import { useSearchParams, Link, useNavigate } from "react-router";
 
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useDailyActivitiesQuery } from "../../queries/queryHooks";
@@ -149,6 +149,7 @@ export const AddActivities = () => {
   const { data } = useQuery(useDailyActivitiesQuery(effectiveDate));
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const toggleSelectActivities = (name) => {
     setSelectedActivities((prev) => {
@@ -161,6 +162,31 @@ export const AddActivities = () => {
   };
 
   const initialEntryRef = useRef({});
+
+  useEffect(() => {
+    if (!dateParam) {
+      navigate("/my-journey");
+      return;
+    }
+
+    const [year, month, day] = dateParam.split("-").map(Number);
+
+    if ([year, month, day].some((v) => Number.isNaN(v))) {
+      navigate("/my-journey");
+      return;
+    }
+
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    const isValid =
+      date.getUTCFullYear() === year &&
+      date.getUTCMonth() === month - 1 &&
+      date.getUTCDate() === day;
+
+    if (!isValid) {
+      navigate("/my-journey");
+    }
+  }, [dateParam]);
 
   useEffect(() => {
     const entry = data?.existingEntry;
@@ -211,9 +237,16 @@ export const AddActivities = () => {
       queryClient.invalidateQueries({
         queryKey: ["DailyActivities", effectiveDate],
       });
-      queryClient.invalidateQueries({ queryKey: ["allDailyActivities"] });
 
-      queryClient.invalidateQueries({ queryKey: ["dailyInsight"] });
+      queryClient.refetchQueries({
+        queryKey: ["allDailyActivities"],
+        type: "all",
+      });
+
+      queryClient.refetchQueries({
+        queryKey: ["dailyInsight"],
+        type: "all",
+      });
 
       toast.success(
         data.message ||

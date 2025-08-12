@@ -33,7 +33,7 @@ const Form = ({ messages, setMessages }) => {
       role: msg.role,
       content: msg.parts[0].text,
     }));
-
+    setPrompt("");
     try {
       await chatBot({
         messages: openAIMessages,
@@ -45,7 +45,6 @@ const Form = ({ messages, setMessages }) => {
       console.error("Chat error:", error);
     } finally {
       setLoading(false);
-      setPrompt("");
     }
   };
 

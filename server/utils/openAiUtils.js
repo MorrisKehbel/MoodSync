@@ -148,7 +148,7 @@ Categories and weights:
 ${weightsText}
 
 Category Score Summary:
-${categorySummary}
+${categorySummary} 
 
 User Journal Entries:
 ${formattedEntries}
@@ -159,6 +159,8 @@ Provide EXACTLY 4-6 short, actionable task suggestions. Each task should:
 - Target an underrepresented wellbeing category
 - Be achievable in 15-60 minutes
 - Be personalized based on the user's recent mood and activities
+- If inputs are missing, suggest tasks based on common wellness activities.
+- Dont add any similar tasks as from Current daily tasks entries.
 
 Format your response as a simple list, one task per line, like this:
 - Call mom
@@ -194,11 +196,10 @@ ${formattedEntries}
 
 Output:
 Write a very short action reminder (maximum 6-8 words) that:
-- Does NOT mention specific task names
-- Gently reminds the user to DO something
-- Uses action-oriented language
+- Gently remind the user to DO their tasks with a suggestion for solving their tasks
+- Uses action-oriented language with Tips
 - Is a gentle nudge, not motivation
-- Focuses on taking steps or actions
+- Focuses on taking steps or actions on solving their tasks
 
 Examples:
 "Time to tackle your wellness tasks"

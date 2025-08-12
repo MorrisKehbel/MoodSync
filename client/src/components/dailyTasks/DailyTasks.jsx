@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { dailyTasksAPI } from "../../data/dailyTasks";
+import { useQueryClient } from "@tanstack/react-query";
 import DailyTaskModal from "./DailyTaskModal";
 
 const DailyTasks = () => {
@@ -9,6 +10,7 @@ const DailyTasks = () => {
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isUpdatingTask, setIsUpdatingTask] = useState(false);
   const today = new Date().toISOString().split("T")[0];
+  const queryClient = useQueryClient();
 
   const fetchTasks = async () => {
     try {
@@ -53,6 +55,11 @@ const DailyTasks = () => {
       console.error("Error updating daily task:", error);
     } finally {
       setIsUpdatingTask(false);
+      queryClient.refetchQueries({
+        queryKey: ["personalizedReminder"],
+        type: "all",
+      });
+      queryClient.refetchQueries({ queryKey: ["motivation"], type: "all" });
     }
   };
 
