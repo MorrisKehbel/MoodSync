@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { 
+import {
   BarChart,
   Bar,
-  XAxis,  
+  XAxis,
   YAxis,
   Tooltip,
-  CartesianGrid, 
+  CartesianGrid,
   ResponsiveContainer,
   LabelList,
 } from "recharts";
@@ -16,6 +16,9 @@ import {
   imgSad,
   imgAngry,
 } from "../../../assets/emotions/";
+
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useAllDailyActivitiesQuery } from "../../../queries/queryHooks";
 
 import { getAllDailyActivities } from "../../../data/activities";
 import { easeIn } from "framer-motion";
@@ -47,7 +50,7 @@ const getEmotionNameById = (id) => {
 const MONTH_LABELS = [
   "Jan",
   "Feb",
-  "Mar",  
+  "Mar",
   "Apr",
   "May",
   "Jun",
@@ -60,7 +63,7 @@ const MONTH_LABELS = [
 ];
 
 const SlantedTopBar = ({ x, y, width, height, fill }) => {
-  const slantHeight = 8; 
+  const slantHeight = 8;
 
   const path = `
     M ${x},${y + slantHeight}
@@ -74,19 +77,25 @@ const SlantedTopBar = ({ x, y, width, height, fill }) => {
     <path
       d={path}
       fill={fill}
-      focusable="false"          
-      tabIndex={-1}              
-      onMouseDown={(e) => e.preventDefault()}  
-      onFocus={(e) => e.currentTarget.blur()}  
-      style={{ outline: "none", WebkitTapHighlightColor: "transparent" }} 
+      focusable="false"
+      tabIndex={-1}
+      onMouseDown={(e) => e.preventDefault()}
+      onFocus={(e) => e.currentTarget.blur()}
+      style={{ outline: "none", WebkitTapHighlightColor: "transparent" }}
     />
   );
 };
 
-export const EmotionMonthlyAverageChart =()  => {
+export const EmotionMonthlyAverageChart = () => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
+
+  const {
+    data: { existingEntries = [] } = {},
+    isLoading: loading,
+    isError: error,
+  } = useQuery(useAllDailyActivitiesQuery());
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -114,38 +123,39 @@ export const EmotionMonthlyAverageChart =()  => {
     let cancelled = false;
 
     const fetchActivities = async () => {
-      setLoading(true);
-      setError(null);
+      // setLoading(true);
+      // setError(null);
       try {
-        const payload = await getAllDailyActivities(); 
+        // const payload = await getAllDailyActivities();
 
-        const existingEntries = payload.existingEntries || [];
+        // const existingEntries = payload.existingEntries || [];
 
         const now = new Date();
         const currentYear = now.getFullYear();
 
         const buckets = {};
-        for (let i=0; i<12; i++){
-          buckets[i] = {sum: 0, count: 0};
+        for (let i = 0; i < 12; i++) {
+          buckets[i] = { sum: 0, count: 0 };
         }
 
         existingEntries.forEach((entry) => {
           if (!entry.date || !entry.emotion) return;
           const dt = new Date(entry.date);
-          if(isNaN(dt.getTime())) return;
-          if(dt.getFullYear() !== currentYear) return;
+          if (isNaN(dt.getTime())) return;
+          if (dt.getFullYear() !== currentYear) return;
           const month = dt.getMonth();
 
-          const emotionObj = emotions.find((e) => e.name.toLowerCase() === entry.emotion.toLowerCase());
-          if(!emotionObj) return;
+          const emotionObj = emotions.find(
+            (e) => e.name.toLowerCase() === entry.emotion.toLowerCase()
+          );
+          if (!emotionObj) return;
           buckets[month].sum += emotionObj.id;
           buckets[month].count += 1;
-
         });
 
         const chartData = [];
-        for(let i=0; i<12; i++){
-          const {sum, count} = buckets[i];
+        for (let i = 0; i < 12; i++) {
+          const { sum, count } = buckets[i];
           chartData.push({
             monthIndex: i,
             averageEmotion: count > 0 ? sum / count : null,
@@ -156,47 +166,46 @@ export const EmotionMonthlyAverageChart =()  => {
       } catch (err) {
         if (cancelled) return;
         if (err.name === "AbortError") return;
-        setError(err.message || "Unknown error");
+        // setError(err.message || "Unknown error");
       } finally {
-         if (!cancelled) setLoading(false);
+        // if (!cancelled) setLoading(false);
       }
     };
 
     fetchActivities();
-      return () => {
-        cancelled = true;
-      };
-    }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [loading]);
 
   const rechartsData = useMemo(() => {
-    if(!data) return [];
+    if (!data) return [];
     return data.map((d) => ({
       month: MONTH_LABELS[d.monthIndex],
       averageEmotion: d.averageEmotion,
-      displayLabel: 
+      displayLabel:
         d.averageEmotion !== undefined
-          ? getEmotionNameById(d.averageEmotion) : "No Data",
+          ? getEmotionNameById(d.averageEmotion)
+          : "No Data",
     }));
   }, [data]);
 
-  if(loading) {
-    return(
+  if (loading) {
+    return (
       <div className="h-full flex items-center justify-center">
         <div className="text-sm font-medium">Loading emotion averages...</div>
       </div>
     );
   }
 
-  if(error) {
-    return(
+  if (error) {
+    return (
       <div className="h-full flex items-center justify-center">
-        <div className="text-sm text-red-600">
-          Error loading data: {error}
-        </div>
+        <div className="text-sm text-red-600">Error loading data: {error}</div>
       </div>
     );
   }
-  
+
   const EmojiYAxisTick = ({ x, y, payload }) => {
     const val = Math.round(payload.value);
     const src = emotionImageMap[val];
@@ -205,7 +214,7 @@ export const EmotionMonthlyAverageChart =()  => {
     return (
       <image
         href={src}
-        x={x - size - 4} 
+        x={x - size - 4}
         y={y - size / 2 + 4}
         width={size}
         height={size}
@@ -214,14 +223,13 @@ export const EmotionMonthlyAverageChart =()  => {
   };
 
   const onMouseDownCapture = (e) => {
-  const tag = String(e.target.tagName).toLowerCase();
-  if (tag === "path" || tag === "rect" || tag === "g" || tag === "svg") {
-    e.preventDefault();  
-  }
+    const tag = String(e.target.tagName).toLowerCase();
+    if (tag === "path" || tag === "rect" || tag === "g" || tag === "svg") {
+      e.preventDefault();
+    }
   };
 
- 
-  return(
+  return (
     <div className="emotion-chart h-full flex flex-col relative px-3 ">
       <div className="mt-[-13px] mb-2">
         <h3 className="text-xl font-bold text-gray-700">
@@ -233,66 +241,78 @@ export const EmotionMonthlyAverageChart =()  => {
         <ResponsiveContainer width="100%" height="110%">
           <BarChart
             data={rechartsData}
-            margin={{top:10, right: 16, left: 0, bottom: 0}}
+            margin={{ top: 10, right: 16, left: 0, bottom: 0 }}
           >
             <defs>
               <linearGradient id="emotionGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#2563EB" />     
-                <stop offset="100%" stopColor="#93C5FD" />  
+                <stop offset="0%" stopColor="#2563EB" />
+                <stop offset="100%" stopColor="#93C5FD" />
               </linearGradient>
             </defs>
-            <CartesianGrid vertical={false}  strokeDasharray="3 3" stroke="	#BFDBFE"/>
-            <XAxis 
-              dataKey="month"
-              tick={{fill: "#60A5FA", fontSize:12, fontWeight:600}}
+            <CartesianGrid
+              vertical={false}
+              strokeDasharray="3 3"
+              stroke="	#BFDBFE"
             />
-            <YAxis 
+            <XAxis
+              dataKey="month"
+              tick={{ fill: "#60A5FA", fontSize: 12, fontWeight: 600 }}
+            />
+            <YAxis
               domain={[0, 5]}
               allowDecimals={false}
               ticks={[0, 1, 2, 3, 4, 5]}
               tick={({ x, y, payload }) => (
                 <EmojiYAxisTick x={x} y={y} payload={payload} />
               )}
-              width={50} 
+              width={50}
               axisLine={false}
               tickLine={false}
             />
-            
+
             <Tooltip
-              cursor={{ fill: "rgba(79, 70, 229, 0.1)" }} 
+              cursor={{ fill: "rgba(79, 70, 229, 0.1)" }}
               contentStyle={{
-                backgroundColor: "rgba(255, 255, 255, 0.9)", 
-                border: "2px solid rgba(37, 99, 235, 0.5)",   
+                backgroundColor: "rgba(255, 255, 255, 0.9)",
+                border: "2px solid rgba(37, 99, 235, 0.5)",
                 borderRadius: 10,
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",  
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
               }}
-            formatter={(value) => {
-              if (value === null || value === undefined) return ["No data", "Avg Emotion"];
-              const avg = parseFloat(value).toFixed(2);
-              const rounded = Math.round(value);
-              const emotionName = getEmotionNameById(value);
-              const emojiSrc = emotionImageMap[rounded];
-              return [
-                <span key="tooltip-content" className="flex items-center gap-1">
-                  {emojiSrc && (
-                    <img
-                      src={emojiSrc}
-                      alt={emotionName}
-                      style={{ width: 16, height: 16, display: "inline-block" }}
-                    />
-                  )}
-                  {`${avg} (${emotionName})`}
-                </span>,
-                "Avg Emotion",
+              formatter={(value) => {
+                if (value === null || value === undefined)
+                  return ["No data", "Avg Emotion"];
+                const avg = parseFloat(value).toFixed(2);
+                const rounded = Math.round(value);
+                const emotionName = getEmotionNameById(value);
+                const emojiSrc = emotionImageMap[rounded];
+                return [
+                  <span
+                    key="tooltip-content"
+                    className="flex items-center gap-1"
+                  >
+                    {emojiSrc && (
+                      <img
+                        src={emojiSrc}
+                        alt={emotionName}
+                        style={{
+                          width: 16,
+                          height: 16,
+                          display: "inline-block",
+                        }}
+                      />
+                    )}
+                    {`${avg} (${emotionName})`}
+                  </span>,
+                  "Avg Emotion",
                 ];
               }}
             />
-            <Bar 
+            <Bar
               dataKey="averageEmotion"
               fill="url(#emotionGradient)"
               shape={<SlantedTopBar />}
               isAnimationActive
-              animationEasing='ease-out' 
+              animationEasing="ease-out"
               radius={[5, 5, 0, 0]}
               barSize={26}
               className="no-focus"
@@ -312,9 +332,9 @@ export const EmotionMonthlyAverageChart =()  => {
         </ResponsiveContainer>
         {rechartsData.every((d) => d.averageEmotion === null) && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-           <div className="bg-white/80 px-4 py-2 rounded text-gray-600">
-            No activity entries for this year.
-           </div> 
+            <div className="bg-white/80 px-4 py-2 rounded text-gray-600">
+              No activity entries for this year.
+            </div>
           </div>
         )}
       </div>

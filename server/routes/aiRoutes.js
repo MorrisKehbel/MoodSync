@@ -3,9 +3,7 @@ import { Router } from "express";
 import verifyToken from "../middlewares/verifyToken.js";
 import validateSchema from "../middlewares/validateSchema.js";
 import {
-  generateAISummary,
   generateDailyInsight,
-  generateGoalsInsight,
   generateDailyTaskSuggestions,
   generateDailyMotivation,
   generatePersonalizedReminder,
@@ -17,14 +15,9 @@ import { userMessageSchema } from "../schemas/chat.js";
 
 const aiRouter = Router();
 
-aiRouter
-  .route("/summary")
-  .post(verifyToken, generateAISummary)
-  .get(verifyToken, getAISummary);
+aiRouter.route("/summary").get(verifyToken, getAISummary);
 
 aiRouter.route("/dailyinsight").post(verifyToken, generateDailyInsight);
-
-aiRouter.route("/goalsinsight").post(verifyToken, generateGoalsInsight);
 
 aiRouter
   .route("/task-suggestions")

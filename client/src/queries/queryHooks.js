@@ -3,7 +3,12 @@ import {
   getDailyActivitiesById,
 } from "../data/activities";
 
-import { fetchSummary, generateAi } from "../data/aiSummary";
+import {
+  fetchSummary,
+  generateAi,
+  generateTaskSuggestions,
+  generatePersonalizedReminder,
+} from "../data/aiSummary";
 
 export const useDailyActivitiesQuery = (date) => ({
   queryKey: ["DailyActivities", date],
@@ -25,6 +30,24 @@ export const useAiSummary = () => ({
 export const useDailyInsight = () => ({
   queryKey: ["dailyInsight"],
   queryFn: ({ signal }) => generateAi("dailyinsight", signal),
+  retry: false,
+});
+
+export const useTaskSuggestionsQuery = () => ({
+  queryKey: ["taskSuggestions"],
+  queryFn: ({ signal }) => generateTaskSuggestions(signal),
+  retry: false,
+});
+
+export const usePersonalizedReminderQuery = () => ({
+  queryKey: ["personalizedReminder"],
+  queryFn: ({ signal }) => generatePersonalizedReminder(signal),
+  retry: false,
+});
+
+export const useMotivationQuery = () => ({
+  queryKey: ["motivation"],
+  queryFn: ({ signal }) => generateAi("motivation", signal),
   retry: false,
 });
 

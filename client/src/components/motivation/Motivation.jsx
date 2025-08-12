@@ -3,13 +3,34 @@ import { generateAi, generatePersonalizedReminder } from "../../data/aiSummary";
 import insightImage from "../../assets/homePage/insight.png";
 import { useUser } from "../../context";
 
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import {
+  usePersonalizedReminderQuery,
+  useMotivationQuery,
+} from "../../queries/queryHooks";
+
 const Motivation = () => {
   const [personalizedReminder, setPersonalizedReminder] = useState("");
   const [dailyMotivation, setDailyMotivation] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [isGeneratingMotivation, setIsGeneratingMotivation] = useState(false);
-  const [isGeneratingReminder, setIsGeneratingReminder] = useState(false);
+  // const [isGeneratingMotivation, setIsGeneratingMotivation] = useState(false);
+  // const [isGeneratingReminder, setIsGeneratingReminder] = useState(false);
   const { user } = useUser();
+
+  const { data: responseReminder = {}, isFetching: isGeneratingReminder } =
+    useQuery({
+      ...usePersonalizedReminderQuery(),
+      enabled: user?.settings?.aiTips === true,
+    });
+
+  const {
+    data: responseMotivation = {},
+
+    isFetching: isGeneratingMotivation,
+  } = useQuery({
+    ...useMotivationQuery(),
+    enabled: user?.settings?.aiTips === true,
+  });
 
   const fetchPersonalizedReminder = async () => {
     if (!user.settings.aiTips) {
@@ -17,10 +38,10 @@ const Motivation = () => {
       return;
     }
     try {
-      setIsGeneratingReminder(true);
-      const response = await generatePersonalizedReminder();
-      if (response && response.reminder) {
-        setPersonalizedReminder(response.reminder);
+      // setIsGeneratingReminder(true);
+      // const response = await generatePersonalizedReminder();
+      if (responseReminder && responseReminder.reminder) {
+        setPersonalizedReminder(responseReminder.reminder);
       } else {
         setPersonalizedReminder("Great! All tasks completed for today.");
       }
@@ -28,7 +49,7 @@ const Motivation = () => {
       console.error("Error generating personalized reminder:", error);
       setPersonalizedReminder("Keep making progress on your wellness journey!");
     } finally {
-      setIsGeneratingReminder(false);
+      // setIsGeneratingReminder(false);
     }
   };
 
@@ -38,10 +59,10 @@ const Motivation = () => {
       return;
     }
     try {
-      setIsGeneratingMotivation(true);
-      const response = await generateAi("motivation");
-      if (response && response.motivation) {
-        setDailyMotivation(response.motivation);
+      // setIsGeneratingMotivation(true);
+      // const response = await generateAi("motivation");
+      if (responseMotivation && responseMotivation.motivation) {
+        setDailyMotivation(responseMotivation.motivation);
       } else {
         setDailyMotivation("Keep moving forward!");
       }
@@ -49,22 +70,22 @@ const Motivation = () => {
       console.error("Error generating motivation:", error);
       setDailyMotivation("You've got this today!");
     } finally {
-      setIsGeneratingMotivation(false);
+      // setIsGeneratingMotivation(false);
     }
   };
 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      await Promise.all([
-        fetchPersonalizedReminder(),
-        generateDailyMotivation(),
-      ]);
+      // await Promise.all([
+      fetchPersonalizedReminder();
+      generateDailyMotivation();
+      // ]);
       setIsLoading(false);
     };
 
     loadData();
-  }, []);
+  }, [isGeneratingMotivation, isGeneratingReminder]);
 
   if (isLoading) {
     return (

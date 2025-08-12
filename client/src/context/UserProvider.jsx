@@ -16,6 +16,7 @@ export const UserProvider = ({ children }) => {
     await signout();
     setIsAuthenticated(false);
     setUser(null);
+    window.location.href = "/";
   };
 
   useEffect(() => {

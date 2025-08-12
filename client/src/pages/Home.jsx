@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { PageSlideContainer } from "../components/shared/wrapper/PageSlideContainer";
 import { useUser } from "../context";
 import {
@@ -16,7 +16,8 @@ import imgAnalytics from "../assets/homePage/img_analytics.jpg";
 import imgTips from "../assets/homePage/image-tips.png";
 
 export const Home = () => {
-  const { setShowAuth, setCurrentMode } = useUser();
+  const { setShowAuth, setCurrentMode, user } = useUser();
+  const navigate = useNavigate();
 
   const features = [
     {
@@ -94,10 +95,11 @@ export const Home = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <button
-              onClick={() => {
-                setShowAuth(true);
-                setCurrentMode("signup");
-              }}
+              onClick={() =>
+                user
+                  ? navigate("/dashboard")
+                  : (setShowAuth(true), setCurrentMode("signup"))
+              }
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold text-base flex items-center gap-2 transition-all cursor-pointer"
             >
               Start Your Journey <FaArrowRight />
