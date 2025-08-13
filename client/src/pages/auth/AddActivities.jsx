@@ -164,8 +164,11 @@ export const AddActivities = () => {
   const initialEntryRef = useRef({});
 
   useEffect(() => {
-    if (!dateParam) {
-      navigate("/my-journey");
+    const keys = Array.from(searchParams.keys());
+    if (keys.length === 0) return;
+
+    if (!(keys.length === 1 && keys[0] === "date")) {
+      navigate("/my-journey", { replace: true });
       return;
     }
 
