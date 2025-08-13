@@ -59,6 +59,10 @@ const DailyTasks = () => {
         queryKey: ["personalizedReminder"],
         type: "all",
       });
+      queryClient.refetchQueries({
+        queryKey: ["allDailyActivities"],
+        type: "all",
+      });
       queryClient.refetchQueries({ queryKey: ["motivation"], type: "all" });
     }
   };
