@@ -10,6 +10,7 @@ import {
 import { getAllDailyActivities } from "../../data/activities";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useAllDailyActivitiesQuery } from "../../queries/queryHooks";
+import { dailyTasksAPI } from "../../data/dailyTasks";
 
 const ACTIVITY_CATEGORIES = {
   personal: { name: "Personal", color: "#8884d8" },
@@ -108,6 +109,7 @@ export const WeeklyActivities = () => {
   const [activityData, setActivityData] = useState([]);
   // const [loading, setLoading] = useState(true);
   const [weekRange, setWeekRange] = useState("");
+  const [tasks, setTasks] = useState([]);
   // const [error, setError] = useState(null);
 
   const {
@@ -136,6 +138,23 @@ export const WeeklyActivities = () => {
 
     return `${start} - ${end}`;
   };
+
+  const fetchTasks = async () => {
+    try {
+      // setIsLoading(true);
+      const response = await dailyTasksAPI.getTasks();
+      setTasks(response.tasks || []);
+    } catch (error) {
+      console.error("Error fetching daily tasks:", error);
+      setTasks([]);
+    } finally {
+      // setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
   const fetchWeeklyActivities = async () => {
     let cancelled = false;
@@ -189,7 +208,26 @@ export const WeeklyActivities = () => {
         }
       });
 
-      const categorizedData = processActivities(allActivities);
+      const weeklyTasks = tasks.filter((entry) => {
+        if (!entry.date) return false;
+        const entryDate = new Date(entry.date);
+        entryDate.setHours(0, 0, 0, 0);
+        return entryDate >= startOfWeek && entryDate <= endOfWeek;
+      });
+
+      const allTasks = [];
+      weeklyTasks.forEach((entry) => {
+        if (entry.completed) {
+          allTasks.push({
+            name: entry.title,
+            date: entry.date,
+          });
+        }
+      });
+
+      const allData = [...allActivities, ...allTasks];
+
+      const categorizedData = processActivities(allData);
 
       if (!cancelled) {
         setActivityData(categorizedData);
