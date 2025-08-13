@@ -107,20 +107,44 @@ const CustomTooltip = ({ active, payload }) => {
 
 export const WeeklyActivities = () => {
   const [activityData, setActivityData] = useState([]);
-  // const [loading, setLoading] = useState(true);
   const [weekRange, setWeekRange] = useState("");
   const [tasks, setTasks] = useState([]);
-  // const [error, setError] = useState(null);
+  const [tasksLoading, setTasksLoading] = useState(true);
+  const [tasksError, setTasksError] = useState(null);
 
   const {
     data: { existingEntries = [] } = {},
-    isLoading: loading,
-    isError: error,
+    isLoading: entriesLoading,
+    isFetching: entriesFetching,
+    isError: entriesIsError,
+    error: entriesError,
   } = useQuery(useAllDailyActivitiesQuery());
 
   useEffect(() => {
-    fetchWeeklyActivities();
-  }, [loading]);
+    let alive = true;
+    (async () => {
+      try {
+        const response = await dailyTasksAPI.getTasks();
+        if (!alive) return;
+        setTasks(response?.tasks || []);
+      } catch (e) {
+        if (!alive) return;
+        console.error("Error fetching daily tasks:", e);
+        setTasks([]);
+        setTasksError(e);
+      } finally {
+        if (!alive) return;
+        setTasksLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [entriesFetching]);
+
+  useEffect(() => {
+    setWeekRange(getWeekRange());
+  }, []);
 
   const getWeekRange = () => {
     const today = new Date();
@@ -139,131 +163,9 @@ export const WeeklyActivities = () => {
     return `${start} - ${end}`;
   };
 
-  const fetchTasks = async () => {
-    try {
-      // setIsLoading(true);
-      const response = await dailyTasksAPI.getTasks();
-      setTasks(response.tasks || []);
-    } catch (error) {
-      console.error("Error fetching daily tasks:", error);
-      setTasks([]);
-    } finally {
-      // setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const fetchWeeklyActivities = async () => {
-    let cancelled = false;
-
-    // setLoading(true);
-    // setError(null);
-
-    try {
-      // const payload = await getAllDailyActivities();
-      // const existingEntries = payload.existingEntries || [];
-
-      // Calculate current week range
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const day = today.getDay();
-      const diff = (day === 0 ? -6 : 1) - day;
-
-      const startOfWeek = new Date(today);
-      startOfWeek.setDate(today.getDate() + diff);
-      startOfWeek.setHours(0, 0, 0, 0);
-
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
-      endOfWeek.setHours(23, 59, 59, 999);
-
-      setWeekRange(getWeekRange());
-
-      // Filter activities for this week
-      const weeklyActivities = existingEntries.filter((entry) => {
-        if (!entry.date) return false;
-        const entryDate = new Date(entry.date);
-        entryDate.setHours(0, 0, 0, 0);
-        return entryDate >= startOfWeek && entryDate <= endOfWeek;
-      });
-
-      // Extract activities from the entries
-      const allActivities = [];
-      weeklyActivities.forEach((entry) => {
-        if (entry.activities && Array.isArray(entry.activities)) {
-          entry.activities.forEach((activity) => {
-            allActivities.push({
-              name:
-                activity.name ||
-                activity.title ||
-                activity.activity ||
-                activity,
-              date: entry.date,
-            });
-          });
-        }
-      });
-
-      const weeklyTasks = tasks.filter((entry) => {
-        if (!entry.date) return false;
-        const entryDate = new Date(entry.date);
-        entryDate.setHours(0, 0, 0, 0);
-        return entryDate >= startOfWeek && entryDate <= endOfWeek;
-      });
-
-      const allTasks = [];
-      weeklyTasks.forEach((entry) => {
-        if (entry.completed) {
-          allTasks.push({
-            name: entry.title,
-            date: entry.date,
-          });
-        }
-      });
-
-      const allData = [...allActivities, ...allTasks];
-
-      const categorizedData = processActivities(allData);
-
-      if (!cancelled) {
-        setActivityData(categorizedData);
-      }
-    } catch (err) {
-      if (cancelled) return;
-      if (err.name === "AbortError") return;
-
-      console.error("Error fetching weekly activities:", err);
-      // setError(err.message || "Unknown error");
-
-      // Set week range even on error
-      setWeekRange(getWeekRange());
-
-      // Fallback data for demonstration
-      setActivityData([
-        { name: "Personal", value: 30, count: 6, color: "#8884d8" },
-        { name: "Social", value: 25, count: 5, color: "#82ca9d" },
-        { name: "Work", value: 20, count: 4, color: "#ffc658" },
-        { name: "Health", value: 15, count: 3, color: "#ff7c7c" },
-        { name: "Education", value: 10, count: 2, color: "#8dd1e1" },
-      ]);
-    } finally {
-      if (!cancelled) {
-        // setLoading(false);
-      }
-    }
-
-    return () => {
-      cancelled = true;
-    };
-  };
-
   const processActivities = (activities) => {
     const categoryCount = {};
-    let totalActivities = activities.length;
+    const totalActivities = activities.length;
 
     activities.forEach((activity) => {
       const category = categorizeActivity(
@@ -275,12 +177,63 @@ export const WeeklyActivities = () => {
     return Object.entries(categoryCount).map(([category, count]) => ({
       name: ACTIVITY_CATEGORIES[category].name,
       value: totalActivities > 0 ? (count / totalActivities) * 100 : 0,
-      count: count,
+      count,
       color: ACTIVITY_CATEGORIES[category].color,
     }));
   };
 
-  if (loading) {
+  useEffect(() => {
+    if (entriesLoading || tasksLoading) return;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const day = today.getDay();
+    const diff = (day === 0 ? -6 : 1) - day;
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() + diff);
+    startOfWeek.setHours(0, 0, 0, 0);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    const inThisWeek = (d) => {
+      if (!d) return false;
+      const nd = new Date(d);
+      nd.setHours(0, 0, 0, 0);
+      return nd >= startOfWeek && nd <= endOfWeek;
+    };
+
+    const weeklyActivities = (existingEntries || []).filter((e) =>
+      inThisWeek(e.date)
+    );
+    const allActivities = [];
+    weeklyActivities.forEach((entry) => {
+      if (Array.isArray(entry.activities)) {
+        entry.activities.forEach((activity) => {
+          allActivities.push({
+            name:
+              activity?.name ||
+              activity?.title ||
+              activity?.activity ||
+              activity,
+            date: entry.date,
+          });
+        });
+      }
+    });
+
+    const weeklyTasks = (tasks || []).filter((t) => inThisWeek(t.date));
+    const doneTasks = weeklyTasks
+      .filter((t) => t.completed && t.title)
+      .map((t) => ({ name: t.title, date: t.date }));
+
+    const allData = [...allActivities, ...doneTasks];
+
+    const categorized = processActivities(allData);
+    setActivityData(categorized);
+  }, [entriesLoading, tasksLoading, existingEntries, tasks]);
+
+  if (entriesLoading || tasksLoading) {
     return (
       <div className="bg-white rounded-lg p-6 shadow-md h-full flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -288,11 +241,12 @@ export const WeeklyActivities = () => {
     );
   }
 
-  if (error) {
+  if (entriesIsError || tasksError) {
     return (
       <div className="bg-white rounded-lg p-6 shadow-md h-full flex items-center justify-center">
         <div className="text-sm text-red-600">
-          Error loading activities: {error}
+          Error loading activities:{" "}
+          {entriesError?.message || tasksError?.message || "Unknown error"}
         </div>
       </div>
     );
