@@ -30,6 +30,10 @@ const categorizeActivity = (activityName) => {
     activity.includes("run") ||
     activity.includes("workout") ||
     activity.includes("walk") ||
+    activity.includes("sleep") ||
+    activity.includes("sport") ||
+    activity.includes("eating") ||
+    activity.includes("hydration") ||
     activity.includes("yoga")
   ) {
     return "health";
@@ -37,6 +41,7 @@ const categorizeActivity = (activityName) => {
   if (
     activity.includes("friend") ||
     activity.includes("family") ||
+    activity.includes("dating") ||
     activity.includes("social") ||
     activity.includes("party") ||
     activity.includes("meeting")
@@ -47,6 +52,8 @@ const categorizeActivity = (activityName) => {
     activity.includes("work") ||
     activity.includes("job") ||
     activity.includes("office") ||
+    activity.includes("finances") ||
+    activity.includes("planning") ||
     activity.includes("project")
   ) {
     return "work";
@@ -62,7 +69,8 @@ const categorizeActivity = (activityName) => {
   }
   if (
     activity.includes("hobby") ||
-    activity.includes("game") ||
+    activity.includes("gaming") ||
+    activity.includes("tv") ||
     activity.includes("music") ||
     activity.includes("art") ||
     activity.includes("craft")
@@ -73,6 +81,7 @@ const categorizeActivity = (activityName) => {
     activity.includes("personal") ||
     activity.includes("self") ||
     activity.includes("meditation") ||
+    activity.includes("me-time") ||
     activity.includes("journal")
   ) {
     return "personal";

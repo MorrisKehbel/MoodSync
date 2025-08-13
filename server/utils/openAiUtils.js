@@ -235,8 +235,7 @@ ${formattedEntries}
 
 Output:
 Write a very short motivation message (6-8 words maximum) that:
-- Acknowledges their recent efforts or progress
-- Encourages them towards their goals or pending tasks
+- Encourages them towards their goals or pending tasks and show benefits of doing the tasks
 - Is positive and uplifting
 - Feels personal and specific to their situation
 
